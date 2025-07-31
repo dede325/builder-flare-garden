@@ -340,22 +340,27 @@ export default function CleaningForms() {
 
   const generateQRCode = async (formCode: string) => {
     try {
-      // Create Supabase Storage URL for the form
-      const supabaseStorageUrl = `${window.location.origin}/storage/v1/object/public/cleaning-forms/${formCode}`;
-      const fallbackUrl = `${window.location.origin}/cleaning-forms/${formCode}`;
+      let finalUrl: string;
 
-      // Use Supabase Storage URL if available, otherwise fallback to direct link
-      const finalUrl = import.meta.env.VITE_SUPABASE_URL ? supabaseStorageUrl : fallbackUrl;
+      if (isSecureMode) {
+        // Generate secure QR data with authentication token
+        finalUrl = await generateSecureQRData(formCode);
+      } else {
+        // Fallback to regular URL
+        const supabaseStorageUrl = `${window.location.origin}/storage/v1/object/public/cleaning-forms/${formCode}`;
+        finalUrl = import.meta.env.VITE_SUPABASE_URL ? supabaseStorageUrl : `${window.location.origin}/cleaning-forms/${formCode}`;
+      }
 
       const qrCodeDataURL = await QRCode.toDataURL(finalUrl, {
         width: 250,
         margin: 2,
         color: {
-          dark: '#1e293b',
+          dark: '#0f172a', // Darker for better security indication
           light: '#ffffff'
         },
-        errorCorrectionLevel: 'M'
+        errorCorrectionLevel: 'H' // Higher error correction for security
       });
+
       return qrCodeDataURL;
     } catch (error) {
       console.error('Error generating QR code:', error);
