@@ -526,33 +526,42 @@ export default function CleaningForms() {
                         <CardContent className="p-4">
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             <div className="space-y-2">
-                              <Label className="text-white">Nome</Label>
+                              <Label className="text-white">Nome *</Label>
                               <Input
                                 value={employee.name}
                                 onChange={(e) => updateEmployee(index, 'name', e.target.value)}
-                                className="aviation-input"
+                                className={`aviation-input ${formErrors[`employee_${index}_name`] ? 'border-red-500' : ''}`}
                                 placeholder="Nome completo"
                               />
+                              {formErrors[`employee_${index}_name`] &&
+                                <p className="text-red-400 text-sm">{formErrors[`employee_${index}_name`]}</p>
+                              }
                             </div>
 
                             <div className="space-y-2">
-                              <Label className="text-white">Tarefa</Label>
+                              <Label className="text-white">Tarefa *</Label>
                               <Input
                                 value={employee.task}
                                 onChange={(e) => updateEmployee(index, 'task', e.target.value)}
-                                className="aviation-input"
+                                className={`aviation-input ${formErrors[`employee_${index}_task`] ? 'border-red-500' : ''}`}
                                 placeholder="Descrição da tarefa"
                               />
+                              {formErrors[`employee_${index}_task`] &&
+                                <p className="text-red-400 text-sm">{formErrors[`employee_${index}_task`]}</p>
+                              }
                             </div>
 
                             <div className="space-y-2">
-                              <Label className="text-white">Telefone</Label>
+                              <Label className="text-white">Telefone *</Label>
                               <Input
                                 value={employee.phone}
                                 onChange={(e) => updateEmployee(index, 'phone', e.target.value)}
-                                className="aviation-input"
+                                className={`aviation-input ${formErrors[`employee_${index}_phone`] ? 'border-red-500' : ''}`}
                                 placeholder="(11) 99999-9999"
                               />
+                              {formErrors[`employee_${index}_phone`] &&
+                                <p className="text-red-400 text-sm">{formErrors[`employee_${index}_phone`]}</p>
+                              }
                             </div>
 
                             <div className="space-y-2">
