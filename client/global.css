@@ -101,6 +101,25 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-aviation-gradient text-foreground min-h-screen;
+  }
+
+  html, body, #root {
+    height: 100%;
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-xl;
+  }
+
+  .aviation-button {
+    @apply bg-aviation-blue-600 hover:bg-aviation-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+  }
+
+  .aviation-input {
+    @apply bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg px-4 py-3 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-aviation-blue-400 focus:border-transparent;
   }
 }
