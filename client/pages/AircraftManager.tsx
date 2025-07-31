@@ -25,19 +25,18 @@ interface Aircraft {
     cargo?: number; // in kg
   };
   specifications: {
-    maxTakeoffWeight: number; // in kg
     wingspan: number; // in meters
     length: number; // in meters
-    engines: string;
+    height: number; // in meters
+    exteriorArea: number; // in m² for cleaning estimates
   };
-  status: 'active' | 'maintenance' | 'inactive' | 'grounded';
-  lastInspection: string;
-  nextInspection: string;
-  flightHours: number;
+  status: 'active' | 'inactive' | 'out_of_service';
   location: string;
-  maintenanceNotes?: string;
-  certifications: string[];
-  insuranceExpiry: string;
+  hangar: string;
+  lastCleaningDate?: string;
+  lastCleaningType?: string;
+  cleaningNotes?: string;
+  cleaningRequirements: string[]; // Special cleaning requirements
   createdAt: string;
   updatedAt: string;
 }
