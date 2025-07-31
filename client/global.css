@@ -113,10 +113,16 @@
 @layer components {
   .glass-card {
     @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-xl;
+    background: linear-gradient(145deg, rgba(0, 176, 234, 0.1), rgba(0, 157, 223, 0.15));
   }
 
   .aviation-button {
-    @apply bg-aviation-blue-600 hover:bg-aviation-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+    @apply bg-aviation-blue-500 hover:bg-aviation-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+    background: linear-gradient(135deg, #00b0ea 0%, #009ddf 100%);
+  }
+
+  .aviation-button:hover {
+    background: linear-gradient(135deg, #009ddf 0%, #0088c7 100%);
   }
 
   .aviation-input {
