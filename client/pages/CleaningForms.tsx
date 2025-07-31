@@ -470,12 +470,12 @@ export default function CleaningForms() {
   const addEmployeeFromDatabase = (employeeFromDb: any) => {
     const newEmployee = {
       id: crypto.randomUUID(),
-      name: employeeFromDb.name,
+      name: employeeFromDb.name || '',
       task: employeeFromDb.role || '', // Use role as default task
       startTime: '',
       endTime: '',
-      phone: employeeFromDb.phone,
-      idNumber: employeeFromDb.idNumber,
+      phone: employeeFromDb.phone || '',
+      idNumber: employeeFromDb.idNumber || '',
       photo: employeeFromDb.photo || ''
     };
 
