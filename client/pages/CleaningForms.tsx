@@ -75,6 +75,8 @@ import {
   checkSecureContext,
 } from "@/lib/crypto-utils";
 import { secureSyncService } from "@/lib/secure-sync";
+import { intelligentSyncService } from "@/lib/intelligent-sync-service";
+import SyncStatusIndicator from "@/components/SyncStatusIndicator";
 
 interface CleaningForm {
   id: string;
