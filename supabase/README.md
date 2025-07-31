@@ -9,7 +9,11 @@ supabase/
 ├── config.toml              # Configuração local do Supabase
 ├── migrations/              # Migrations SQL
 │   ├── 20240101000001_initial_schema.sql  # Schema inicial
-│   └── 20240101000002_seed_data.sql       # Dados de demonstração
+│   ├── 20240101000002_seed_data.sql       # Dados de demonstração
+│   ├── 20240101000003_auth_system.sql     # Sistema de autenticação
+│   ├── 20240101000004_auth_seeds.sql      # Roles e permissões
+│   ├── 20240101000005_specific_employees.sql # Funcionários específicos
+│   └── 20240101000006_verify_integrity.sql   # Verificação de integridade
 └── README.md               # Este arquivo
 ```
 
@@ -68,7 +72,6 @@ supabase db push --linked
 ### Dados Demo
 
 As migrations incluem dados de demonstração para:
-
 - 4 aeronaves (PT-ABC, PT-XYZ, PT-DEF, PT-GHI)
 - 6 funcionários com diferentes roles
 - Tarefas de manutenção e limpeza
@@ -94,7 +97,7 @@ VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
 
-## Comandos ��teis
+## Comandos Úteis
 
 ```bash
 # Ver status das migrations
