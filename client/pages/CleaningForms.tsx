@@ -683,23 +683,35 @@ export default function CleaningForms() {
                 </div>
 
                 <div className="flex justify-between items-center pt-4">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
+                    onClick={() => setShowQRDialog(form)}
                     className="border-white/30 text-white hover:bg-white/20"
                   >
                     <QrCode className="h-4 w-4 mr-2" />
                     QR Code
                   </Button>
-                  
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="border-white/30 text-white hover:bg-white/20"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    PDF
-                  </Button>
+
+                  <div className="space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handlePreviewPDF(form)}
+                      className="border-white/30 text-white hover:bg-white/20"
+                    >
+                      Visualizar
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDownloadPDF(form)}
+                      className="border-white/30 text-white hover:bg-white/20"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      PDF
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
