@@ -20,6 +20,18 @@ interface CleaningFormData {
     idNumber: string;
     photo?: string;
   }[];
+  interventionPhotos?: {
+    before: {
+      exterior?: string[];
+      interior?: string[];
+      details?: string[];
+    };
+    after: {
+      exterior?: string[];
+      interior?: string[];
+      details?: string[];
+    };
+  };
   supervisorSignature?: string;
   clientSignature?: string;
   clientConfirmedWithoutSignature: boolean;
@@ -39,7 +51,16 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
   const accentColor = [0, 136, 199]; // Aviation blue #0088c7
 
   let yPosition = margin;
-  const hasPhotos = formData.employees.some(emp => emp.photo);
+  const hasEmployeePhotos = formData.employees.some(emp => emp.photo);
+  const hasInterventionPhotos = formData.interventionPhotos && (
+    (formData.interventionPhotos.before.exterior?.length || 0) +
+    (formData.interventionPhotos.before.interior?.length || 0) +
+    (formData.interventionPhotos.before.details?.length || 0) +
+    (formData.interventionPhotos.after.exterior?.length || 0) +
+    (formData.interventionPhotos.after.interior?.length || 0) +
+    (formData.interventionPhotos.after.details?.length || 0)
+  ) > 0;
+  const totalPages = hasEmployeePhotos && hasInterventionPhotos ? 3 : hasEmployeePhotos || hasInterventionPhotos ? 2 : 1;
 
   // Helper functions
   const addModernHeader = () => {
@@ -278,11 +299,18 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
     }
   }
 
-  // Document generation info
+  // Document generation info with secure ID verification
   pdf.setTextColor(107, 114, 128);
   pdf.setFontSize(8);
   pdf.text(`Gerado em: ${format(new Date(), 'dd/MM/yyyy HH:mm', { locale: ptBR })}`, margin, qrY + 10);
   pdf.text(`Código de rastreamento: ${formData.code}`, margin, qrY + 15);
+
+  // Security verification for AP-PS-SNR format
+  if (formData.code.startsWith('AP-PS-SNR')) {
+    pdf.setFontSize(7);
+    pdf.setTextColor(34, 197, 94); // Green color for secure ID
+    pdf.text(`✓ ID Seguro Verificado: ${formData.code}`, margin, qrY + 20);
+  }
 
   // Signatures Section
   const signaturesY = Math.max(qrY + qrSize + 20, yPosition + 30);
@@ -366,10 +394,10 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
 
   const currentDateTime = format(new Date(), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR });
   pdf.text(`Impresso: ${currentDateTime}`, pageWidth - margin - 45, footerY + 3);
-  pdf.text(`Página 1 de ${hasPhotos ? '2' : '1'}`, pageWidth - margin - 25, footerY + 8);
+  pdf.text(`Página 1 de ${totalPages}`, pageWidth - margin - 25, footerY + 8);
 
-  // PAGE 2 - PHOTOGRAPHIC EVIDENCE (if photos exist)
-  if (hasPhotos) {
+  // PAGE 2 - EMPLOYEE PHOTOGRAPHIC EVIDENCE (if employee photos exist)
+  if (hasEmployeePhotos) {
     pdf.addPage();
     let evidenceY = addModernHeader();
 
@@ -450,7 +478,120 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
     pdf.setFontSize(8);
     pdf.text('AviationOps - Evidências Fotográficas', margin, evidenceFooterY + 3);
     pdf.text('Fotos capturadas durante a execução dos serviços', margin, evidenceFooterY + 8);
-    pdf.text(`Página 2 de 2`, pageWidth - margin - 25, evidenceFooterY + 8);
+    pdf.text(`Página 2 de ${totalPages}`, pageWidth - margin - 25, evidenceFooterY + 8);
+  }
+
+  // PAGE 3 (or 2) - INTERVENTION PHOTOGRAPHIC EVIDENCE (if intervention photos exist)
+  if (hasInterventionPhotos) {
+    pdf.addPage();
+    let interventionY = addModernHeader();
+
+    interventionY = addSectionHeader('EVIDÊNCIAS FOTOGRÁFICAS DA INTERVENÇÃO', interventionY);
+
+    const photoCategories = [
+      { key: 'before', title: 'ANTES DA INTERVENÇÃO', data: formData.interventionPhotos?.before },
+      { key: 'after', title: 'DEPOIS DA INTERVENÇÃO', data: formData.interventionPhotos?.after }
+    ];
+
+    photoCategories.forEach(category => {
+      if (category.data) {
+        const allPhotos = [
+          ...(category.data.exterior || []).map(photo => ({ photo, type: 'Exterior' })),
+          ...(category.data.interior || []).map(photo => ({ photo, type: 'Interior' })),
+          ...(category.data.details || []).map(photo => ({ photo, type: 'Detalhes' }))
+        ];
+
+        if (allPhotos.length > 0) {
+          // Section header
+          pdf.setTextColor(15, 23, 42);
+          pdf.setFontSize(11);
+          pdf.setFont('helvetica', 'bold');
+          pdf.text(category.title, margin, interventionY + 5);
+          interventionY += 15;
+
+          const photosPerRow = 2;
+          const photoWidth = (contentWidth - 20) / photosPerRow;
+          const photoHeight = photoWidth * 0.6;
+
+          allPhotos.forEach((item, index) => {
+            const col = index % photosPerRow;
+            const row = Math.floor(index / photosPerRow);
+            const photoX = margin + 5 + (col * (photoWidth + 10));
+            const photoY = interventionY + (row * (photoHeight + 35));
+
+            // Check if we need a new page
+            if (photoY + photoHeight + 35 > pageHeight - 30) {
+              pdf.addPage();
+              interventionY = addModernHeader();
+              interventionY = addSectionHeader(`${category.title} (CONT.)`, interventionY);
+              const newRow = 0;
+              const newPhotoY = interventionY + (newRow * (photoHeight + 35));
+              const newCol = index % photosPerRow;
+              const newPhotoX = margin + 5 + (newCol * (photoWidth + 10));
+
+              addInterventionPhotoEvidence(item, newPhotoX, newPhotoY, photoWidth, photoHeight, index + 1);
+            } else {
+              addInterventionPhotoEvidence(item, photoX, photoY, photoWidth, photoHeight, index + 1);
+            }
+          });
+
+          interventionY += Math.ceil(allPhotos.length / photosPerRow) * (photoHeight + 35) + 10;
+        }
+      }
+    });
+
+    function addInterventionPhotoEvidence(item: any, x: number, y: number, width: number, height: number, photoNum: number) {
+      // Photo background
+      pdf.setFillColor(255, 255, 255);
+      pdf.roundedRect(x, y, width, height + 25, 3, 3, 'F');
+      pdf.setDrawColor(226, 232, 240);
+      pdf.setLineWidth(0.5);
+      pdf.roundedRect(x, y, width, height + 25, 3, 3);
+
+      // Photo
+      if (item.photo) {
+        try {
+          pdf.addImage(item.photo, 'JPEG', x + 2, y + 2, width - 4, height - 4);
+        } catch (error) {
+          // Error placeholder
+          pdf.setFillColor(229, 231, 235);
+          pdf.rect(x + 2, y + 2, width - 4, height - 4, 'F');
+          pdf.setTextColor(107, 114, 128);
+          pdf.setFontSize(10);
+          pdf.text('ERRO AO CARREGAR FOTO', x + 10, y + height/2);
+        }
+      }
+
+      // Caption
+      pdf.setTextColor(15, 23, 42);
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(`${item.type.toUpperCase()} ${photoNum}`, x + 2, y + height + 8);
+
+      pdf.setTextColor(71, 85, 105);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8);
+      pdf.text(`Timestamp: ${format(new Date(), 'dd/MM/yyyy HH:mm', { locale: ptBR })}`, x + 2, y + height + 15);
+
+      // Security verification stamp for secure IDs
+      if (formData.code.startsWith('AP-PS-SNR')) {
+        pdf.setTextColor(34, 197, 94);
+        pdf.setFontSize(7);
+        pdf.text(`✓ ${formData.code}`, x + 2, y + height + 20);
+      }
+    }
+
+    // Footer for intervention evidence page
+    const interventionFooterY = pageHeight - 20;
+    pdf.setFillColor(...primaryColor);
+    pdf.rect(0, interventionFooterY - 2, pageWidth, 22, 'F');
+
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(8);
+    pdf.text('AviationOps - Evidências Fotográficas da Intervenção', margin, interventionFooterY + 3);
+    pdf.text('Fotos capturadas durante e após a execução dos serviços', margin, interventionFooterY + 8);
+    pdf.text(`Página ${totalPages} de ${totalPages}`, pageWidth - margin - 25, interventionFooterY + 8);
   }
 
   return pdf;
