@@ -25,7 +25,7 @@ import { setupIntelligentSync } from "@/lib/intelligent-sync-service";
 // Error Boundary Component
 class ErrorBoundary extends Component<
   { children: ReactNode },
-  { hasError: boolean; error?: Error }
+  { hasError: boolean; error?: Error; errorInfo?: ErrorInfo }
 > {
   constructor(props: { children: ReactNode }) {
     super(props);
@@ -38,7 +38,12 @@ class ErrorBoundary extends Component<
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("Error Boundary caught an error:", error, errorInfo);
+    this.setState({ errorInfo });
   }
+
+  handleReset = () => {
+    this.setState({ hasError: false, error: undefined, errorInfo: undefined });
+  };
 
   render() {
     if (this.state.hasError) {
@@ -49,14 +54,33 @@ class ErrorBoundary extends Component<
               Algo deu errado
             </h2>
             <p className="text-white/80 mb-4">
-              Ocorreu um erro inesperado. Por favor, recarregue a página.
+              Ocorreu um erro inesperado. Você pode tentar novamente ou recarregar a página.
             </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-aviation-blue-600 hover:bg-aviation-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
-            >
-              Recarregar Página
-            </button>
+            <div className="space-y-2">
+              <button
+                onClick={this.handleReset}
+                className="bg-aviation-blue-600 hover:bg-aviation-blue-700 text-white px-6 py-2 rounded-lg transition-colors mr-2"
+              >
+                Tentar Novamente
+              </button>
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition-colors"
+              >
+                Recarregar Página
+              </button>
+            </div>
+            {process.env.NODE_ENV === 'development' && this.state.error && (
+              <details className="mt-4 text-left">
+                <summary className="text-white/70 cursor-pointer text-sm">
+                  Detalhes do erro (desenvolvimento)
+                </summary>
+                <pre className="text-red-300 text-xs mt-2 whitespace-pre-wrap">
+                  {this.state.error.toString()}
+                  {this.state.errorInfo?.componentStack}
+                </pre>
+              </details>
+            )}
           </div>
         </div>
       );
