@@ -25,7 +25,7 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       toast({
         title: "Erro",
@@ -38,8 +38,11 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const { error } = isSignUp 
-        ? await signUp(email, password)
+      const { error } = isSignUp
+        ? await signUp(email, password, {
+            display_name: email.split('@')[0], // Default display name
+            department: 'Operações'
+          })
         : await signIn(email, password);
 
       if (error) {
@@ -51,7 +54,13 @@ export default function Login() {
       } else if (isSignUp) {
         toast({
           title: "Conta criada",
-          description: "Verifique seu email para confirmar a conta.",
+          description: "Conta criada com sucesso. Pode fazer login agora.",
+        });
+        setIsSignUp(false); // Switch to login mode
+      } else {
+        toast({
+          title: "Login realizado",
+          description: "Bem-vindo ao AviationOps!",
         });
       }
     } catch (error) {
