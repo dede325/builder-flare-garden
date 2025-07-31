@@ -133,8 +133,8 @@ export default function Index() {
                   Acesse as principais funcionalidades do sistema
                 </CardDescription>
               </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <Link to="/aircraft">
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <Link to="/aircraft-manager">
                   <Button className="aviation-button justify-start h-16 w-full">
                     <Plane className="h-6 w-6 mr-3" />
                     <div className="text-left">
@@ -144,12 +144,22 @@ export default function Index() {
                   </Button>
                 </Link>
 
-                <Link to="/employees">
+                <Link to="/employee-manager">
                   <Button className="aviation-button justify-start h-16 w-full">
                     <Users className="h-6 w-6 mr-3" />
                     <div className="text-left">
-                      <p className="font-semibold">Funcionários</p>
-                      <p className="text-sm opacity-80">Equipe e atribuições</p>
+                      <p className="font-semibold">Gerenciar Funcionários</p>
+                      <p className="text-sm opacity-80">Equipe e dados pessoais</p>
+                    </div>
+                  </Button>
+                </Link>
+
+                <Link to="/cleaning-forms">
+                  <Button className="aviation-button justify-start h-16 w-full">
+                    <FileText className="h-6 w-6 mr-3" />
+                    <div className="text-left">
+                      <p className="font-semibold">Folhas de Limpeza</p>
+                      <p className="text-sm opacity-80">Requisições e controle</p>
                     </div>
                   </Button>
                 </Link>
@@ -174,12 +184,22 @@ export default function Index() {
                   </Button>
                 </Link>
 
-                <Link to="/cleaning-forms">
+                <Link to="/employees">
                   <Button className="aviation-button justify-start h-16 w-full">
-                    <FileText className="h-6 w-6 mr-3" />
+                    <Users className="h-6 w-6 mr-3" />
                     <div className="text-left">
-                      <p className="font-semibold">Folhas de Limpeza</p>
-                      <p className="text-sm opacity-80">Requisições e controle</p>
+                      <p className="font-semibold">Equipe Simples</p>
+                      <p className="text-sm opacity-80">Visualização básica</p>
+                    </div>
+                  </Button>
+                </Link>
+
+                <Link to="/aircraft">
+                  <Button className="aviation-button justify-start h-16 w-full">
+                    <Plane className="h-6 w-6 mr-3" />
+                    <div className="text-left">
+                      <p className="font-semibold">Aeronaves Simples</p>
+                      <p className="text-sm opacity-80">Visualização básica</p>
                     </div>
                   </Button>
                 </Link>
