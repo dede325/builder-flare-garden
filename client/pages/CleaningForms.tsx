@@ -519,10 +519,34 @@ export default function CleaningForms() {
                           Assinatura do Supervisor
                         </CardTitle>
                       </CardHeader>
-                      <CardContent>
-                        <div className="h-32 border-2 border-dashed border-white/30 rounded-lg flex items-center justify-center">
-                          <p className="text-white/70 text-sm">Clique para assinar</p>
-                        </div>
+                      <CardContent className="space-y-4">
+                        {formData.supervisorSignature ? (
+                          <div className="space-y-2">
+                            <img
+                              src={formData.supervisorSignature}
+                              alt="Assinatura do Supervisor"
+                              className="w-full h-32 object-contain border border-white/30 rounded-lg bg-white"
+                            />
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => clearSignature('supervisor')}
+                              className="w-full border-white/30 text-white hover:bg-white/20"
+                            >
+                              Limpar Assinatura
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            onClick={() => setShowSignatureDialog('supervisor')}
+                            className="w-full h-32 border-2 border-dashed border-white/30 rounded-lg bg-transparent hover:bg-white/10 text-white"
+                          >
+                            <div className="text-center">
+                              <Signature className="h-8 w-8 mx-auto mb-2" />
+                              <p className="text-sm">Clique para assinar</p>
+                            </div>
+                          </Button>
+                        )}
                       </CardContent>
                     </Card>
 
@@ -534,16 +558,46 @@ export default function CleaningForms() {
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <div className="h-32 border-2 border-dashed border-white/30 rounded-lg flex items-center justify-center">
-                          <p className="text-white/70 text-sm">Clique para assinar</p>
-                        </div>
+                        {formData.clientSignature ? (
+                          <div className="space-y-2">
+                            <img
+                              src={formData.clientSignature}
+                              alt="Assinatura do Cliente"
+                              className="w-full h-32 object-contain border border-white/30 rounded-lg bg-white"
+                            />
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => clearSignature('client')}
+                              className="w-full border-white/30 text-white hover:bg-white/20"
+                            >
+                              Limpar Assinatura
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            onClick={() => setShowSignatureDialog('client')}
+                            className="w-full h-32 border-2 border-dashed border-white/30 rounded-lg bg-transparent hover:bg-white/10 text-white"
+                            disabled={formData.clientConfirmedWithoutSignature}
+                          >
+                            <div className="text-center">
+                              <Signature className="h-8 w-8 mx-auto mb-2" />
+                              <p className="text-sm">Clique para assinar</p>
+                            </div>
+                          </Button>
+                        )}
+
                         <div className="flex items-center space-x-2">
                           <Checkbox
                             id="noSignature"
                             checked={formData.clientConfirmedWithoutSignature}
-                            onCheckedChange={(checked) => 
-                              setFormData(prev => ({ ...prev, clientConfirmedWithoutSignature: !!checked }))
-                            }
+                            onCheckedChange={(checked) => {
+                              setFormData(prev => ({
+                                ...prev,
+                                clientConfirmedWithoutSignature: !!checked,
+                                clientSignature: checked ? '' : prev.clientSignature
+                              }));
+                            }}
                             className="border-white/30"
                           />
                           <Label htmlFor="noSignature" className="text-white text-sm">
