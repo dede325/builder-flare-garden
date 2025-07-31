@@ -136,65 +136,8 @@ export default function AircraftManager() {
       const parsed = JSON.parse(savedAircraft);
       setAircraft(parsed);
     } else {
-      // Initialize with demo data
-      const demoAircraft: Aircraft[] = [
-        {
-          id: '1',
-          registration: 'D2-ABC',
-          model: 'Boeing 737-800',
-          manufacturer: 'Boeing',
-          owner: 'TAAG Angola Airlines',
-          type: 'commercial',
-          capacity: {
-            passengers: 189,
-            cargo: 1200
-          },
-          specifications: {
-            wingspan: 35.8,
-            length: 39.5,
-            height: 12.5,
-            exteriorArea: 845
-          },
-          status: 'active',
-          location: 'Rampa A',
-          hangar: 'Hangar 1',
-          lastCleaningDate: '2024-01-15',
-          lastCleaningType: 'Limpeza Exterior',
-          cleaningNotes: 'Limpeza completa realizada. Necessário polimento na próxima intervenção.',
-          cleaningRequirements: ['Limpeza especial de turbinas', 'Polimento da fuselagem'],
-          createdAt: '2023-01-01T08:00:00Z',
-          updatedAt: '2024-01-15T10:30:00Z'
-        },
-        {
-          id: '2',
-          registration: 'D2-XYZ',
-          model: 'Embraer E190',
-          manufacturer: 'Embraer',
-          owner: 'TAAG Angola Airlines',
-          type: 'commercial',
-          capacity: {
-            passengers: 114,
-            cargo: 800
-          },
-          specifications: {
-            wingspan: 28.7,
-            length: 36.2,
-            height: 10.5,
-            exteriorArea: 620
-          },
-          status: 'active',
-          location: 'Hangar 2',
-          hangar: 'Hangar 2',
-          lastCleaningDate: '2024-01-10',
-          lastCleaningType: 'Lavagem Profunda Durante a Manutenção de Base',
-          cleaningNotes: 'Limpeza profunda realizada. Aeronave em excelente estado.',
-          cleaningRequirements: ['Limpeza interior detalhada', 'Desinfecção completa'],
-          createdAt: '2023-02-15T08:00:00Z',
-          updatedAt: '2024-01-20T14:15:00Z'
-        }
-      ];
-      setAircraft(demoAircraft);
-      localStorage.setItem('aviation_aircraft', JSON.stringify(demoAircraft));
+      // No demo data - start with empty array
+      setAircraft([]);
     }
   };
 
