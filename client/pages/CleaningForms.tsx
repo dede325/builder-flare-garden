@@ -585,14 +585,23 @@ export default function CleaningForms() {
                             </div>
 
                             <div className="space-y-2">
-                              <Label className="text-white">Bilhete de Identidade</Label>
+                              <Label className="text-white">Bilhete de Identidade *</Label>
                               <Input
                                 value={employee.idNumber}
                                 onChange={(e) => updateEmployee(index, 'idNumber', e.target.value)}
-                                className="aviation-input"
+                                className={`aviation-input ${formErrors[`employee_${index}_idNumber`] ? 'border-red-500' : ''}`}
                                 placeholder="Número do documento"
                               />
+                              {formErrors[`employee_${index}_idNumber`] &&
+                                <p className="text-red-400 text-sm">{formErrors[`employee_${index}_idNumber`]}</p>
+                              }
                             </div>
+
+                            {formErrors[`employee_${index}_time`] && (
+                              <div className="md:col-span-2 lg:col-span-3">
+                                <p className="text-red-400 text-sm">{formErrors[`employee_${index}_time`]}</p>
+                              </div>
+                            )}
 
                             <div className="md:col-span-2 lg:col-span-3 flex justify-between items-center pt-2">
                               <PhotoUpload
