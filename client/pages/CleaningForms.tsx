@@ -178,25 +178,9 @@ export default function CleaningForms() {
     clientConfirmedWithoutSignature: false,
   });
 
-  // Get intervention types from localStorage or use defaults
-  const getInterventionTypes = () => {
-    const saved = localStorage.getItem("intervention_types");
-    if (saved) {
-      return JSON.parse(saved);
-    }
-    const defaults = [
-      "Limpeza Exterior",
-      "Limpeza Interior",
-      "Polimento",
-      "Lavagem Profunda Durante a Manutenção de Base",
-    ];
-    localStorage.setItem("intervention_types", JSON.stringify(defaults));
-    return defaults;
-  };
-
   const [interventionTypeOptions, setInterventionTypeOptions] = useState<
     string[]
-  >(getInterventionTypes());
+  >([]);
 
   const locationOptions = [
     "Hangar Principal",
