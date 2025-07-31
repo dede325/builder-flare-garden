@@ -21,6 +21,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import QRCode from 'qrcode';
+import { generateSecureFormId, generateSecureQRData, checkSecureContext } from '@/lib/crypto-utils';
+import { secureSyncService } from '@/lib/secure-sync';
 
 interface CleaningForm {
   id: string;
