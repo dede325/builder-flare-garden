@@ -65,6 +65,72 @@ class ErrorBoundary extends Component<
 
 const queryClient = new QueryClient();
 
+const AppContent = () => {
+  useEffect(() => {
+    // Setup photo evidence auto-sync
+    const cleanup = setupPhotoAutoSync();
+    return cleanup;
+  }, []);
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Index />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/cleaning-forms"
+          element={
+            <ProtectedRoute>
+              <CleaningForms />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/employee-manager"
+          element={
+            <ProtectedRoute>
+              <EmployeeManager />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/aircraft-manager"
+          element={
+            <ProtectedRoute>
+              <AircraftManager />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/user-management"
+          element={
+            <ProtectedRoute>
+              <UserManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
+        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
@@ -72,61 +138,7 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Index />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/cleaning-forms"
-                element={
-                  <ProtectedRoute>
-                    <CleaningForms />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/employee-manager"
-                element={
-                  <ProtectedRoute>
-                    <EmployeeManager />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/aircraft-manager"
-                element={
-                  <ProtectedRoute>
-                    <AircraftManager />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/user-management"
-                element={
-                  <ProtectedRoute>
-                    <UserManagement />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/settings"
-                element={
-                  <ProtectedRoute>
-                    <Settings />
-                  </ProtectedRoute>
-                }
-              />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
+          <AppContent />
         </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>
