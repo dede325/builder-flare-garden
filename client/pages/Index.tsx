@@ -133,7 +133,7 @@ export default function Index() {
                   Acesse as principais funcionalidades do sistema
                 </CardDescription>
               </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Link to="/aircraft">
                   <Button className="aviation-button justify-start h-16 w-full">
                     <Plane className="h-6 w-6 mr-3" />
@@ -170,6 +170,16 @@ export default function Index() {
                     <div className="text-left">
                       <p className="font-semibold">Folhas de Voo</p>
                       <p className="text-sm opacity-80">Documentação</p>
+                    </div>
+                  </Button>
+                </Link>
+
+                <Link to="/cleaning-forms">
+                  <Button className="aviation-button justify-start h-16 w-full">
+                    <FileText className="h-6 w-6 mr-3" />
+                    <div className="text-left">
+                      <p className="font-semibold">Folhas de Limpeza</p>
+                      <p className="text-sm opacity-80">Requisições e controle</p>
                     </div>
                   </Button>
                 </Link>
