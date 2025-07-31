@@ -133,45 +133,81 @@ export default function Index() {
                   Acesse as principais funcionalidades do sistema
                 </CardDescription>
               </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Link to="/cleaning-forms">
-                  <Button className="aviation-button justify-start h-20 w-full">
-                    <FileText className="h-8 w-8 mr-4" />
-                    <div className="text-left">
-                      <p className="font-bold text-lg">Folhas de Limpeza</p>
-                      <p className="text-sm opacity-80">Criar e gerenciar requisições</p>
+                  <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/30 border border-blue-400/30 hover:border-blue-400/50 transition-all duration-300 h-32">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="relative p-6 h-full flex items-center space-x-4">
+                      <div className="p-3 rounded-xl bg-blue-500/20 border border-blue-400/30">
+                        <FileText className="h-8 w-8 text-blue-300" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-white mb-1">Folhas de Limpeza</h3>
+                        <p className="text-blue-200/80 text-sm">Criar requisições com IDs seguros</p>
+                        <div className="flex items-center mt-2 text-xs text-blue-300/70">
+                          <Shield className="h-3 w-3 mr-1" />
+                          <span>Sistema criptografado</span>
+                        </div>
+                      </div>
                     </div>
-                  </Button>
+                  </div>
                 </Link>
 
                 <Link to="/aircraft-manager">
-                  <Button className="aviation-button justify-start h-20 w-full">
-                    <Plane className="h-8 w-8 mr-4" />
-                    <div className="text-left">
-                      <p className="font-bold text-lg">Aeronaves</p>
-                      <p className="text-sm opacity-80">Cadastro e informações</p>
+                  <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-cyan-500/20 to-cyan-600/30 border border-cyan-400/30 hover:border-cyan-400/50 transition-all duration-300 h-32">
+                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="relative p-6 h-full flex items-center space-x-4">
+                      <div className="p-3 rounded-xl bg-cyan-500/20 border border-cyan-400/30">
+                        <Plane className="h-8 w-8 text-cyan-300" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-white mb-1">Aeronaves</h3>
+                        <p className="text-cyan-200/80 text-sm">Gestão completa da frota</p>
+                        <div className="flex items-center mt-2 text-xs text-cyan-300/70">
+                          <Activity className="h-3 w-3 mr-1" />
+                          <span>Dados em tempo real</span>
+                        </div>
+                      </div>
                     </div>
-                  </Button>
+                  </div>
                 </Link>
 
                 <Link to="/employee-manager">
-                  <Button className="aviation-button justify-start h-20 w-full">
-                    <Users className="h-8 w-8 mr-4" />
-                    <div className="text-left">
-                      <p className="font-bold text-lg">Funcionários</p>
-                      <p className="text-sm opacity-80">Equipe de limpeza</p>
+                  <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/30 border border-emerald-400/30 hover:border-emerald-400/50 transition-all duration-300 h-32">
+                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="relative p-6 h-full flex items-center space-x-4">
+                      <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-400/30">
+                        <Users className="h-8 w-8 text-emerald-300" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-white mb-1">Funcionários</h3>
+                        <p className="text-emerald-200/80 text-sm">Equipe de limpeza especializada</p>
+                        <div className="flex items-center mt-2 text-xs text-emerald-300/70">
+                          <Users className="h-3 w-3 mr-1" />
+                          <span>Gestão integrada</span>
+                        </div>
+                      </div>
                     </div>
-                  </Button>
+                  </div>
                 </Link>
 
                 <Link to="/settings">
-                  <Button className="aviation-button justify-start h-20 w-full">
-                    <Settings className="h-8 w-8 mr-4" />
-                    <div className="text-left">
-                      <p className="font-bold text-lg">Configurações</p>
-                      <p className="text-sm opacity-80">Sistema e perfil</p>
+                  <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/30 border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300 h-32">
+                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="relative p-6 h-full flex items-center space-x-4">
+                      <div className="p-3 rounded-xl bg-purple-500/20 border border-purple-400/30">
+                        <Settings className="h-8 w-8 text-purple-300" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-white mb-1">Configurações</h3>
+                        <p className="text-purple-200/80 text-sm">Perfis e segurança</p>
+                        <div className="flex items-center mt-2 text-xs text-purple-300/70">
+                          <Shield className="h-3 w-3 mr-1" />
+                          <span>Configuração avançada</span>
+                        </div>
+                      </div>
                     </div>
-                  </Button>
+                  </div>
                 </Link>
               </CardContent>
             </Card>
