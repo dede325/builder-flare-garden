@@ -794,6 +794,25 @@ export default function Settings() {
 
                 <Separator className="bg-white/20" />
 
+                {/* Configuration Management Link */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-white flex items-center">
+                    <Settings className="h-5 w-5 mr-2" />
+                    Configuração do Sistema
+                  </h3>
+                  <p className="text-white/70 text-sm">
+                    Gerencie tipos de intervenção, turnos e locais dinamicamente
+                  </p>
+                  <Link to="/configuration">
+                    <Button className="aviation-button w-full">
+                      <Settings className="h-4 w-4 mr-2" />
+                      Abrir Gerenciador de Configurações
+                    </Button>
+                  </Link>
+                </div>
+
+                <Separator className="bg-white/20" />
+
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-white flex items-center">
                     <Upload className="h-5 w-5 mr-2" />
