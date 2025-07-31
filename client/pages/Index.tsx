@@ -60,17 +60,27 @@ export default function Index() {
                   {isOnline ? 'Online' : 'Offline'}
                 </Badge>
               </div>
-              
+
               <div className="text-right">
                 <p className="text-sm text-white font-medium">{user.name}</p>
                 <p className="text-xs text-white/70">{user.role}</p>
               </div>
-              
+
               <div className="h-10 w-10 bg-aviation-blue-600 rounded-full flex items-center justify-center">
                 <span className="text-white font-semibold">
                   {user.name.split(' ').map(n => n[0]).join('')}
                 </span>
               </div>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleSignOut}
+                className="text-white hover:bg-white/20"
+                title="Sair"
+              >
+                <LogOut className="h-5 w-5" />
+              </Button>
             </div>
           </div>
         </div>
