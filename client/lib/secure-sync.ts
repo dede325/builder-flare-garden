@@ -270,25 +270,40 @@ class SecureSyncService {
         } catch (error) {
           console.error("Failed to sync item:", item.id, error);
 
-          // Increment retry count
-          item.retryCount++;
-          item.lastError =
-            error instanceof Error ? error.message : "Unknown error";
+          // Check if it's a Supabase configuration error
+          const isConfigError = error instanceof Error && (
+            error.message.includes('Supabase client not initialized') ||
+            error.message.includes('Cannot read properties of null') ||
+            error.message.includes('from') ||
+            !import.meta.env.VITE_SUPABASE_URL
+          );
 
-          if (item.retryCount <= 3) {
+          if (isConfigError) {
+            console.warn('Supabase not properly configured, marking as pending');
+            // Don't increment retry count for config issues
+            item.lastError = 'Supabase configuration pending';
             await this.db.put("sync_queue", item);
           } else {
-            // Mark as permanently failed
-            const formPackage = await this.db.get(
-              "secure_forms",
-              item.formPackage.metadata.id,
-            );
-            if (formPackage) {
-              formPackage.syncStatus = "error";
-              formPackage.lastSyncAttempt = new Date().toISOString();
-              await this.db.put("secure_forms", formPackage);
+            // Increment retry count for actual errors
+            item.retryCount++;
+            item.lastError =
+              error instanceof Error ? error.message : "Unknown error";
+
+            if (item.retryCount <= 3) {
+              await this.db.put("sync_queue", item);
+            } else {
+              // Mark as permanently failed
+              const formPackage = await this.db.get(
+                "secure_forms",
+                item.formPackage.metadata.id,
+              );
+              if (formPackage) {
+                formPackage.syncStatus = "error";
+                formPackage.lastSyncAttempt = new Date().toISOString();
+                await this.db.put("secure_forms", formPackage);
+              }
+              await this.db.delete("sync_queue", item.id);
             }
-            await this.db.delete("sync_queue", item.id);
           }
         }
       }
