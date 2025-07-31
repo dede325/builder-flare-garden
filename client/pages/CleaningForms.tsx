@@ -803,7 +803,7 @@ export default function CleaningForms() {
                 <div className="flex items-center space-x-1">
                   <Shield className={`h-4 w-4 ${securityStatus === 'secure' ? 'text-green-400' : 'text-yellow-400'}`} />
                   <span className={`text-xs ${securityStatus === 'secure' ? 'text-green-400' : 'text-yellow-400'}`}>
-                    {securityStatus === 'secure' ? 'Seguro' : 'Básico'}
+                    {securityStatus === 'secure' ? 'Seguro' : 'B��sico'}
                   </span>
                 </div>
 
@@ -1401,6 +1401,78 @@ export default function CleaningForms() {
             </div>
           )}
         </div>
+
+        {/* Security Information Panel */}
+        <Card className="glass-card border-white/20 mt-8">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center space-x-2">
+              <Shield className="h-5 w-5" />
+              <span>Informações de Segurança</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex items-center space-x-3">
+                <div className={`h-3 w-3 rounded-full ${securityStatus === 'secure' ? 'bg-green-400' : 'bg-yellow-400'}`}></div>
+                <div>
+                  <p className="text-white font-medium">Criptografia</p>
+                  <p className="text-white/70 text-sm">
+                    {securityStatus === 'secure' ? 'AES-256-GCM Ativa' : 'Não Disponível (HTTP)'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <div className={`h-3 w-3 rounded-full ${
+                  syncStatus === 'synced' ? 'bg-green-400' :
+                  syncStatus === 'pending' ? 'bg-yellow-400' : 'bg-red-400'
+                }`}></div>
+                <div>
+                  <p className="text-white font-medium">Sincronização</p>
+                  <p className="text-white/70 text-sm">
+                    {syncStatus === 'synced' ? 'Todos os dados sincronizados' :
+                     syncStatus === 'pending' ? 'Sincronização em andamento' :
+                     syncStatus === 'error' ? 'Erro na sincronização' : 'Modo offline'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <div className={`h-3 w-3 rounded-full ${isSecureMode ? 'bg-green-400' : 'bg-gray-400'}`}></div>
+                <div>
+                  <p className="text-white font-medium">ID Único</p>
+                  <p className="text-white/70 text-sm">
+                    {isSecureMode ? 'Formato: AP-PS-SNR##-DDMMAAHHMMSS' : 'Formato básico'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {isSecureMode && (
+              <div className="mt-4 p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                <p className="text-green-400 text-sm font-medium flex items-center">
+                  <Shield className="h-4 w-4 mr-2" />
+                  Sistema Seguro Ativo
+                </p>
+                <p className="text-green-400/80 text-xs mt-1">
+                  Todas as folhas são criptografadas com AES-256-GCM, possuem IDs únicos rastreáveis e são sincronizadas de forma segura com o Supabase.
+                </p>
+              </div>
+            )}
+
+            {!isSecureMode && (
+              <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                <p className="text-yellow-400 text-sm font-medium flex items-center">
+                  <AlertTriangle className="h-4 w-4 mr-2" />
+                  Modo Básico
+                </p>
+                <p className="text-yellow-400/80 text-xs mt-1">
+                  Para ativar criptografia e segurança avançada, acesse via HTTPS. Dados são salvos localmente sem criptografia.
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </main>
 
       {/* Signature Dialog */}
