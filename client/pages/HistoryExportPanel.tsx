@@ -62,6 +62,7 @@ import { intelligentSyncService } from "@/lib/intelligent-sync-service";
 import { cacheService } from "@/lib/cache-service";
 import { previewCleaningFormPDF, downloadCleaningFormPDF } from "@/lib/pdf-utils";
 import { exportService } from "@/lib/export-service";
+import { batchOperationsService } from "@/lib/batch-operations-service";
 
 interface CleaningForm {
   id: string;
