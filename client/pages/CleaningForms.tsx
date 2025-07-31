@@ -678,19 +678,8 @@ export default function CleaningForms() {
         );
         const pdfStorageUrl = await generateAndUploadPDF(newForm, aircraftData);
 
-        const qrCodeUrl =
-          pdfStorageUrl ||
-          `${window.location.origin}/cleaning-forms/${formCode}`;
-        const qrCode = await QRCode.toDataURL(qrCodeUrl, {
-          width: 250,
-          margin: 2,
-          color: {
-            dark: "#1e293b",
-            light: "#ffffff",
-          },
-          errorCorrectionLevel: "M",
-        });
-
+        // Generate QR code using the new service
+        const qrCode = await generateQRCode(formCode, formId);
         newForm.qrCode = qrCode;
 
         // Save using intelligent sync service
