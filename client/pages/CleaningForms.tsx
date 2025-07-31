@@ -794,145 +794,81 @@ export default function CleaningForms() {
                 <TabsContent value="employees" className="space-y-6 mt-6">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <h3 className="text-lg font-semibold text-white">Funcionários do Turno</h3>
-                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                      <Button onClick={addEmployee} variant="outline" className="border-white/30 text-white hover:bg-white/20">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Novo Funcionário
-                      </Button>
-                    </div>
+                    <p className="text-white/70 text-sm">Selecione funcionários cadastrados no sistema</p>
                   </div>
 
-                  {/* Quick Add from Database */}
+                  {/* Employee Selection from Database */}
                   {employees.length > 0 && (
-                    <Card className="glass-card border-white/20 p-4">
-                      <h4 className="text-white font-medium mb-3">Adicionar Funcionário Cadastrado</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                    <Card className="glass-card border-white/20 p-6">
+                      <h4 className="text-white font-medium mb-4">Funcionários Disponíveis</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                         {employees
-                          .filter(emp => !formData.employees.some(formEmp => formEmp.name === emp.name))
-                          .slice(0, 6)
+                          .filter(emp => !formData.employees.some(formEmp => formEmp.id === emp.id))
                           .map(employee => (
                           <Button
                             key={employee.id}
                             variant="outline"
-                            size="sm"
                             onClick={() => addEmployeeFromDatabase(employee)}
-                            className="border-white/30 text-white hover:bg-white/20 justify-start"
+                            className="border-white/30 text-white hover:bg-white/20 h-20 p-3 flex flex-col items-center justify-center space-y-2"
                           >
-                            {employee.photo && (
-                              <img src={employee.photo} alt="" className="w-4 h-4 rounded-full mr-2" />
+                            {employee.photo ? (
+                              <img src={employee.photo} alt="" className="w-8 h-8 rounded-full object-cover" />
+                            ) : (
+                              <div className="w-8 h-8 rounded-full bg-aviation-blue-600 flex items-center justify-center text-xs font-bold">
+                                {employee.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                              </div>
                             )}
-                            <div className="text-left">
-                              <div className="font-medium">{employee.name}</div>
+                            <div className="text-center">
+                              <div className="font-medium text-xs">{employee.name}</div>
                               <div className="text-xs opacity-70">{employee.role}</div>
                             </div>
                           </Button>
                         ))}
                       </div>
-                      {employees.filter(emp => !formData.employees.some(formEmp => formEmp.name === emp.name)).length > 6 && (
-                        <p className="text-white/60 text-sm mt-2">
-                          E mais {employees.filter(emp => !formData.employees.some(formEmp => formEmp.name === emp.name)).length - 6} funcionários disponíveis
+                      {employees.filter(emp => !formData.employees.some(formEmp => formEmp.id === emp.id)).length === 0 && (
+                        <p className="text-white/60 text-center py-4">
+                          Todos os funcionários disponíveis já foram adicionados
                         </p>
                       )}
                     </Card>
                   )}
 
+                  {/* Selected Employees Display */}
                   <div className="space-y-4">
+                    <h4 className="text-white font-medium">Funcionários Selecionados ({formData.employees.length})</h4>
+
                     {formData.employees.map((employee, index) => (
                       <Card key={employee.id} className="glass-card border-white/20">
                         <CardContent className="p-4">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <div className="space-y-2">
-                              <Label className="text-white">Nome *</Label>
-                              <Input
-                                value={employee.name}
-                                onChange={(e) => updateEmployee(index, 'name', e.target.value)}
-                                className={`aviation-input ${formErrors[`employee_${index}_name`] ? 'border-red-500' : ''}`}
-                                placeholder="Nome completo"
-                              />
-                              {formErrors[`employee_${index}_name`] &&
-                                <p className="text-red-400 text-sm">{formErrors[`employee_${index}_name`]}</p>
-                              }
-                            </div>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-4">
+                              {employee.photo ? (
+                                <img src={employee.photo} alt="" className="w-12 h-12 rounded-full object-cover" />
+                              ) : (
+                                <div className="w-12 h-12 rounded-full bg-aviation-blue-600 flex items-center justify-center text-white font-bold">
+                                  {employee.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                                </div>
+                              )}
 
-                            <div className="space-y-2">
-                              <Label className="text-white">Tarefa *</Label>
-                              <Input
-                                value={employee.task}
-                                onChange={(e) => updateEmployee(index, 'task', e.target.value)}
-                                className={`aviation-input ${formErrors[`employee_${index}_task`] ? 'border-red-500' : ''}`}
-                                placeholder="Descrição da tarefa"
-                              />
-                              {formErrors[`employee_${index}_task`] &&
-                                <p className="text-red-400 text-sm">{formErrors[`employee_${index}_task`]}</p>
-                              }
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label className="text-white">Telefone *</Label>
-                              <Input
-                                value={employee.phone}
-                                onChange={(e) => updateEmployee(index, 'phone', e.target.value)}
-                                className={`aviation-input ${formErrors[`employee_${index}_phone`] ? 'border-red-500' : ''}`}
-                                placeholder="(11) 99999-9999"
-                              />
-                              {formErrors[`employee_${index}_phone`] &&
-                                <p className="text-red-400 text-sm">{formErrors[`employee_${index}_phone`]}</p>
-                              }
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label className="text-white">Início</Label>
-                              <Input
-                                type="time"
-                                value={employee.startTime}
-                                onChange={(e) => updateEmployee(index, 'startTime', e.target.value)}
-                                className="aviation-input"
-                              />
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label className="text-white">Fim</Label>
-                              <Input
-                                type="time"
-                                value={employee.endTime}
-                                onChange={(e) => updateEmployee(index, 'endTime', e.target.value)}
-                                className="aviation-input"
-                              />
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label className="text-white">Bilhete de Identidade *</Label>
-                              <Input
-                                value={employee.idNumber}
-                                onChange={(e) => updateEmployee(index, 'idNumber', e.target.value)}
-                                className={`aviation-input ${formErrors[`employee_${index}_idNumber`] ? 'border-red-500' : ''}`}
-                                placeholder="Número do documento"
-                              />
-                              {formErrors[`employee_${index}_idNumber`] &&
-                                <p className="text-red-400 text-sm">{formErrors[`employee_${index}_idNumber`]}</p>
-                              }
-                            </div>
-
-                            {formErrors[`employee_${index}_time`] && (
-                              <div className="md:col-span-2 lg:col-span-3">
-                                <p className="text-red-400 text-sm">{formErrors[`employee_${index}_time`]}</p>
+                              <div className="flex-1">
+                                <h5 className="text-white font-medium">{employee.name}</h5>
+                                <p className="text-white/70 text-sm">{employee.task}</p>
+                                <div className="flex items-center space-x-4 text-white/60 text-xs mt-1">
+                                  <span>📞 {employee.phone}</span>
+                                  <span>🆔 {employee.idNumber}</span>
+                                  <span>⏰ {employee.startTime} - {employee.endTime}</span>
+                                </div>
                               </div>
-                            )}
-
-                            <div className="md:col-span-2 lg:col-span-3 flex justify-between items-center pt-2">
-                              <PhotoUpload
-                                currentPhoto={employee.photo}
-                                onPhotoChange={(photoDataURL) => updateEmployeePhoto(index, photoDataURL)}
-                                employeeName={employee.name || `Funcionário ${index + 1}`}
-                              />
-                              <Button
-                                variant="destructive"
-                                onClick={() => removeEmployee(index)}
-                                className="bg-red-600 hover:bg-red-700"
-                              >
-                                Remover
-                              </Button>
                             </div>
+
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => removeEmployee(index)}
+                              className="border-red-500/30 text-red-400 hover:bg-red-500/20"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -941,11 +877,8 @@ export default function CleaningForms() {
                     {formData.employees.length === 0 && (
                       <div className="text-center py-8">
                         <Users className="h-12 w-12 text-white/30 mx-auto mb-4" />
-                        <p className="text-white/70">Nenhum funcionário adicionado</p>
-                        <Button onClick={addEmployee} className="aviation-button mt-4">
-                          <Plus className="h-4 w-4 mr-2" />
-                          Adicionar Primeiro Funcionário
-                        </Button>
+                        <p className="text-white/70 mb-2">Nenhum funcionário selecionado</p>
+                        <p className="text-white/50 text-sm">Selecione funcionários da lista acima</p>
                       </div>
                     )}
                   </div>
