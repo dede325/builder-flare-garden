@@ -282,27 +282,61 @@ export default function CleaningForms() {
 
   const autoSave = () => {
     try {
+      // Create a lightweight version without photos for auto-save
+      const lightweightFormData = {
+        ...formData,
+        // Store photo counts instead of actual photos to save space
+        interventionPhotos: {
+          before: {
+            exterior: formData.interventionPhotos.before.exterior?.length || 0,
+            interior: formData.interventionPhotos.before.interior?.length || 0,
+            details: formData.interventionPhotos.before.details?.length || 0,
+          },
+          after: {
+            exterior: formData.interventionPhotos.after.exterior?.length || 0,
+            interior: formData.interventionPhotos.after.interior?.length || 0,
+            details: formData.interventionPhotos.after.details?.length || 0,
+          }
+        },
+        // Remove large data like employee photos and signatures for auto-save
+        employees: formData.employees.map(emp => ({
+          ...emp,
+          photo: emp.photo ? '[PHOTO_EXISTS]' : undefined
+        })),
+        supervisorSignature: formData.supervisorSignature ? '[SIGNATURE_EXISTS]' : '',
+        clientSignature: formData.clientSignature ? '[SIGNATURE_EXISTS]' : ''
+      };
+
       const draftKey = `cleaning_form_draft_${Date.now()}`;
       const existingDrafts = JSON.parse(
         localStorage.getItem("cleaning_form_drafts") || "[]",
       );
 
-      // Keep only the latest 5 drafts
+      // Keep only the latest 3 drafts (reduced from 5)
       const updatedDrafts = [
         {
           key: draftKey,
-          data: formData,
+          data: lightweightFormData,
           timestamp: new Date().toISOString(),
           description: `${formData.location || "Sem local"} - ${format(new Date(), "dd/MM HH:mm")}`,
         },
-        ...existingDrafts.slice(0, 4),
+        ...existingDrafts.slice(0, 2),
       ];
+
+      // Clean up old draft keys
+      existingDrafts.slice(2).forEach((draft: any) => {
+        try {
+          localStorage.removeItem(draft.key);
+        } catch (e) {
+          // Ignore cleanup errors
+        }
+      });
 
       localStorage.setItem(
         "cleaning_form_drafts",
         JSON.stringify(updatedDrafts),
       );
-      localStorage.setItem(draftKey, JSON.stringify(formData));
+      localStorage.setItem(draftKey, JSON.stringify(lightweightFormData));
 
       setAutoSaveStatus("saved");
 
@@ -312,6 +346,25 @@ export default function CleaningForms() {
       }, 3000);
     } catch (error) {
       console.error("Auto-save failed:", error);
+      // Try to clear old drafts if quota exceeded
+      if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+        try {
+          const existingDrafts = JSON.parse(
+            localStorage.getItem("cleaning_form_drafts") || "[]",
+          );
+          // Remove all but the most recent draft
+          existingDrafts.slice(1).forEach((draft: any) => {
+            try {
+              localStorage.removeItem(draft.key);
+            } catch (e) {
+              // Ignore cleanup errors
+            }
+          });
+          localStorage.setItem("cleaning_form_drafts", JSON.stringify(existingDrafts.slice(0, 1)));
+        } catch (cleanupError) {
+          console.warn('Failed to cleanup drafts:', cleanupError);
+        }
+      }
       setAutoSaveStatus("error");
       setTimeout(() => {
         setAutoSaveStatus("idle");
