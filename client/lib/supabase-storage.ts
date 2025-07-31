@@ -106,6 +106,66 @@ export const supabaseStorage = {
       console.error('Error saving form metadata:', error);
       return false;
     }
+  },
+
+  async uploadFile(filePath: string, fileBlob: Blob): Promise<{data?: any, error?: any}> {
+    if (!supabase) {
+      console.warn('Supabase not configured, skipping file upload');
+      return { error: { message: 'Supabase not configured' } };
+    }
+
+    try {
+      const { data, error } = await supabase.storage
+        .from('evidence-photos')
+        .upload(filePath, fileBlob, {
+          contentType: fileBlob.type,
+          upsert: true
+        });
+
+      return { data, error };
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      return { error };
+    }
+  },
+
+  getPublicUrl(filePath: string) {
+    if (!supabase) {
+      return { data: { publicUrl: '' } };
+    }
+
+    return supabase.storage
+      .from('evidence-photos')
+      .getPublicUrl(filePath);
+  },
+
+  async deleteFile(filePath: string): Promise<boolean> {
+    if (!supabase) {
+      console.warn('Supabase not configured, skipping file deletion');
+      return false;
+    }
+
+    try {
+      // Extract file path from URL if it's a full URL
+      let cleanPath = filePath;
+      if (filePath.includes('/storage/v1/object/public/')) {
+        cleanPath = filePath.split('/storage/v1/object/public/evidence-photos/')[1];
+      }
+
+      const { error } = await supabase.storage
+        .from('evidence-photos')
+        .remove([cleanPath]);
+
+      if (error) {
+        console.error('Error deleting file:', error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      return false;
+    }
   }
 };
 
