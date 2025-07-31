@@ -328,23 +328,36 @@ class SecureSyncService {
    * Upload form to Supabase with PDF generation
    */
   private async uploadToSupabase(formData: any, metadata: any): Promise<void> {
-    // Insert form data into Supabase
-    const { error: insertError } = await supabase
-      .from("cleaning_forms")
-      .insert({
-        id: metadata.id,
-        code: metadata.id, // Use secure ID as code
-        ...formData,
-        security_hash: metadata.hash,
-        created_at: metadata.createdAt,
-        updated_at: metadata.lastModified,
-      });
+    try {
+      // Check if supabase client is properly initialized
+      if (!supabase) {
+        throw new Error('Supabase client not initialized');
+      }
 
-    if (insertError) throw insertError;
+      // Insert form data into Supabase
+      const { error: insertError } = await supabase
+        .from("cleaning_forms")
+        .insert({
+          id: metadata.id,
+          code: metadata.id, // Use secure ID as code
+          ...formData,
+          security_hash: metadata.hash,
+          created_at: metadata.createdAt,
+          updated_at: metadata.lastModified,
+        });
 
-    // Generate and upload PDF (if data exists)
-    if (formData.aircraftId && formData.employees?.length > 0) {
-      await this.generateAndUploadPDF(formData, metadata.id);
+      if (insertError) {
+        console.error('Supabase insert error:', insertError);
+        throw insertError;
+      }
+
+      // Generate and upload PDF (if data exists)
+      if (formData.aircraftId && formData.employees?.length > 0) {
+        await this.generateAndUploadPDF(formData, metadata.id);
+      }
+    } catch (error) {
+      console.error('Upload to Supabase failed:', error);
+      throw error;
     }
   }
 
