@@ -645,15 +645,47 @@ export default function HistoryExportPanel() {
               {selectedForms.length === filteredForms.length ? "Desmarcar Todos" : "Selecionar Todos"}
             </Button>
 
-            <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
-              <DialogTrigger asChild>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
                 <Button
                   className="aviation-button"
                   disabled={selectedForms.length === 0}
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Exportar ({selectedForms.length})
+                  Ações ({selectedForms.length})
+                  <ChevronDown className="h-4 w-4 ml-1" />
                 </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-aviation-gray-800 border-white/20">
+                <DropdownMenuLabel className="text-white">Operações em Lote</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-white hover:bg-white/20"
+                  onClick={() => setShowExportDialog(true)}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Exportar Dados
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-white hover:bg-white/20"
+                  onClick={handleBatchPrint}
+                >
+                  <Printer className="h-4 w-4 mr-2" />
+                  Imprimir Todas
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-white hover:bg-white/20"
+                  onClick={handleBatchDownload}
+                >
+                  <FileText className="h-4 w-4 mr-2" />
+                  Baixar PDFs
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
+              <DialogTrigger asChild>
+                <div style={{ display: 'none' }} />
               </DialogTrigger>
               <DialogContent className="max-w-lg bg-aviation-gray-800 border-white/20">
                 <DialogHeader>
