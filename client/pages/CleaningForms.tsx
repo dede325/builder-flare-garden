@@ -409,6 +409,24 @@ export default function CleaningForms() {
     }));
   };
 
+  const addEmployeeFromDatabase = (employeeFromDb: any) => {
+    const newEmployee = {
+      id: crypto.randomUUID(),
+      name: employeeFromDb.name,
+      task: employeeFromDb.role || '', // Use role as default task
+      startTime: '',
+      endTime: '',
+      phone: employeeFromDb.phone,
+      idNumber: employeeFromDb.idNumber,
+      photo: employeeFromDb.photo || ''
+    };
+
+    setFormData(prev => ({
+      ...prev,
+      employees: [...prev.employees, newEmployee]
+    }));
+  };
+
   const updateEmployee = (index: number, field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
