@@ -209,14 +209,21 @@ export default function CleaningForms() {
 
   const generateQRCode = async (formCode: string) => {
     try {
-      const url = `${window.location.origin}/cleaning-forms/${formCode}`;
-      const qrCodeDataURL = await QRCode.toDataURL(url, {
-        width: 200,
+      // Create Supabase Storage URL for the form
+      const supabaseStorageUrl = `${window.location.origin}/storage/v1/object/public/cleaning-forms/${formCode}`;
+      const fallbackUrl = `${window.location.origin}/cleaning-forms/${formCode}`;
+
+      // Use Supabase Storage URL if available, otherwise fallback to direct link
+      const finalUrl = import.meta.env.VITE_SUPABASE_URL ? supabaseStorageUrl : fallbackUrl;
+
+      const qrCodeDataURL = await QRCode.toDataURL(finalUrl, {
+        width: 250,
         margin: 2,
         color: {
           dark: '#1e293b',
           light: '#ffffff'
-        }
+        },
+        errorCorrectionLevel: 'M'
       });
       return qrCodeDataURL;
     } catch (error) {
