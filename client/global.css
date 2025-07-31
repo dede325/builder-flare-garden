@@ -101,12 +101,25 @@
   }
 
   body {
-    @apply bg-aviation-gradient text-foreground min-h-screen;
+    @apply text-foreground min-h-screen;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%);
   }
 
   html, body, #root {
     height: 100%;
     overflow-x: hidden;
+  }
+
+  /* Touch optimization for mobile */
+  @media (max-width: 768px) {
+    button, a, [role="button"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    input, textarea, select {
+      font-size: 16px; /* Prevents zoom on iOS */
+    }
   }
 }
 
