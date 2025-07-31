@@ -1,0 +1,639 @@
+import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowLeft, Plus, Search, Download, QrCode, Calendar, Clock, MapPin, Wrench, Users, FileText, Camera, Phone, IdCard, Signature } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { db } from '@/lib/supabase';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import QRCode from 'qrcode';
+
+interface CleaningForm {
+  id: string;
+  code: string;
+  date: string;
+  shift: 'morning' | 'afternoon' | 'night';
+  location: string;
+  interventionTypes: string[];
+  aircraftId: string;
+  employees: {
+    id: string;
+    name: string;
+    task: string;
+    startTime: string;
+    endTime: string;
+    phone: string;
+    idNumber: string;
+    photo?: string;
+  }[];
+  supervisorSignature?: string;
+  clientSignature?: string;
+  clientConfirmedWithoutSignature: boolean;
+  qrCode: string;
+  status: 'draft' | 'pending_signatures' | 'completed';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export default function CleaningForms() {
+  const [forms, setForms] = useState<CleaningForm[]>([]);
+  const [selectedForm, setSelectedForm] = useState<CleaningForm | null>(null);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [aircraft, setAircraft] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Form state
+  const [formData, setFormData] = useState({
+    date: format(new Date(), 'yyyy-MM-dd'),
+    shift: 'morning' as 'morning' | 'afternoon' | 'night',
+    location: '',
+    interventionTypes: [] as string[],
+    aircraftId: '',
+    employees: [] as any[],
+    supervisorSignature: '',
+    clientSignature: '',
+    clientConfirmedWithoutSignature: false
+  });
+
+  const interventionTypeOptions = [
+    'Limpeza Externa',
+    'Limpeza Interna',
+    'Limpeza de Motores',
+    'Limpeza de Cockpit',
+    'Limpeza de Bagageiro',
+    'Inspeção Visual',
+    'Lavagem Completa',
+    'Enceramento',
+    'Limpeza de Vidros',
+    'Aspiração'
+  ];
+
+  const locationOptions = [
+    'Hangar Principal',
+    'Pátio de Aeronaves',
+    'Terminal de Passageiros',
+    'Área de Manutenção',
+    'Rampa Norte',
+    'Rampa Sul',
+    'Hangar de Manutenção',
+    'Estacionamento VIP'
+  ];
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const [aircraftResult, employeesResult] = await Promise.all([
+        db.getAircraft(),
+        db.getEmployees()
+      ]);
+      
+      if (aircraftResult.data) setAircraft(aircraftResult.data);
+      if (employeesResult.data) setEmployees(employeesResult.data);
+      
+      // Load saved forms from localStorage for demo
+      const savedForms = localStorage.getItem('cleaningForms');
+      if (savedForms) {
+        setForms(JSON.parse(savedForms));
+      }
+    } catch (error) {
+      console.error('Error loading data:', error);
+    }
+  };
+
+  const generateFormCode = (date: string, shift: string, location: string) => {
+    const dateFormatted = format(new Date(date), 'ddMMyy');
+    const timeStamp = format(new Date(), 'HHmmss');
+    const locationCode = location.replace(/\s+/g, '').substring(0, 3).toUpperCase();
+    const shiftCode = shift === 'morning' ? 'M' : shift === 'afternoon' ? 'T' : 'N';
+    
+    return `FL-${locationCode}-${shiftCode}${dateFormatted}${timeStamp}`;
+  };
+
+  const generateQRCode = async (formCode: string) => {
+    try {
+      const url = `${window.location.origin}/cleaning-forms/${formCode}`;
+      const qrCodeDataURL = await QRCode.toDataURL(url, {
+        width: 200,
+        margin: 2,
+        color: {
+          dark: '#1e293b',
+          light: '#ffffff'
+        }
+      });
+      return qrCodeDataURL;
+    } catch (error) {
+      console.error('Error generating QR code:', error);
+      return '';
+    }
+  };
+
+  const handleCreateForm = async () => {
+    const formCode = generateFormCode(formData.date, formData.shift, formData.location);
+    const qrCode = await generateQRCode(formCode);
+    
+    const newForm: CleaningForm = {
+      id: crypto.randomUUID(),
+      code: formCode,
+      date: formData.date,
+      shift: formData.shift,
+      location: formData.location,
+      interventionTypes: formData.interventionTypes,
+      aircraftId: formData.aircraftId,
+      employees: formData.employees,
+      supervisorSignature: '',
+      clientSignature: '',
+      clientConfirmedWithoutSignature: false,
+      qrCode,
+      status: 'draft',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    const updatedForms = [...forms, newForm];
+    setForms(updatedForms);
+    localStorage.setItem('cleaningForms', JSON.stringify(updatedForms));
+    
+    setIsCreateDialogOpen(false);
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setFormData({
+      date: format(new Date(), 'yyyy-MM-dd'),
+      shift: 'morning',
+      location: '',
+      interventionTypes: [],
+      aircraftId: '',
+      employees: [],
+      supervisorSignature: '',
+      clientSignature: '',
+      clientConfirmedWithoutSignature: false
+    });
+  };
+
+  const addEmployee = () => {
+    setFormData(prev => ({
+      ...prev,
+      employees: [...prev.employees, {
+        id: crypto.randomUUID(),
+        name: '',
+        task: '',
+        startTime: '',
+        endTime: '',
+        phone: '',
+        idNumber: '',
+        photo: ''
+      }]
+    }));
+  };
+
+  const updateEmployee = (index: number, field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      employees: prev.employees.map((emp, i) => 
+        i === index ? { ...emp, [field]: value } : emp
+      )
+    }));
+  };
+
+  const removeEmployee = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      employees: prev.employees.filter((_, i) => i !== index)
+    }));
+  };
+
+  const filteredForms = forms.filter(form => 
+    form.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    form.location.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'draft': return 'bg-yellow-500';
+      case 'pending_signatures': return 'bg-blue-500';
+      case 'completed': return 'bg-green-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'draft': return 'Rascunho';
+      case 'pending_signatures': return 'Aguardando Assinaturas';
+      case 'completed': return 'Concluído';
+      default: return 'Desconhecido';
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-aviation-gradient">
+      {/* Header */}
+      <header className="bg-white/10 backdrop-blur-md border-b border-white/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center h-16 space-x-4">
+            <Link to="/">
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            </Link>
+            <div className="flex items-center space-x-3">
+              <FileText className="h-6 w-6 text-white" />
+              <h1 className="text-2xl font-bold text-white">Folhas de Limpeza</h1>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Controls */}
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-white/70" />
+              <Input
+                placeholder="Buscar por código ou local..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="aviation-input pl-10 w-80"
+              />
+            </div>
+          </div>
+          
+          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="aviation-button">
+                <Plus className="h-4 w-4 mr-2" />
+                Nova Folha de Limpeza
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-aviation-gray-800 border-white/20">
+              <DialogHeader>
+                <DialogTitle className="text-white">Nova Folha de Limpeza</DialogTitle>
+                <DialogDescription className="text-white/70">
+                  Preencha os dados para criar uma nova folha de requisição de limpeza
+                </DialogDescription>
+              </DialogHeader>
+
+              <Tabs defaultValue="basic" className="w-full">
+                <TabsList className="grid w-full grid-cols-3 bg-aviation-gray-700">
+                  <TabsTrigger value="basic" className="text-white">Dados Básicos</TabsTrigger>
+                  <TabsTrigger value="employees" className="text-white">Funcionários</TabsTrigger>
+                  <TabsTrigger value="signatures" className="text-white">Assinaturas</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="basic" className="space-y-6 mt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Date and Shift */}
+                    <div className="space-y-2">
+                      <Label className="text-white">Data</Label>
+                      <Input
+                        type="date"
+                        value={formData.date}
+                        onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+                        className="aviation-input"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-white">Turno</Label>
+                      <Select value={formData.shift} onValueChange={(value: any) => setFormData(prev => ({ ...prev, shift: value }))}>
+                        <SelectTrigger className="aviation-input">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-aviation-gray-800 border-white/20">
+                          <SelectItem value="morning" className="text-white">Manhã (06:00 - 14:00)</SelectItem>
+                          <SelectItem value="afternoon" className="text-white">Tarde (14:00 - 22:00)</SelectItem>
+                          <SelectItem value="night" className="text-white">Noite (22:00 - 06:00)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Location */}
+                    <div className="space-y-2">
+                      <Label className="text-white">Local da Intervenção</Label>
+                      <Select value={formData.location} onValueChange={(value) => setFormData(prev => ({ ...prev, location: value }))}>
+                        <SelectTrigger className="aviation-input">
+                          <SelectValue placeholder="Selecione o local" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-aviation-gray-800 border-white/20">
+                          {locationOptions.map(location => (
+                            <SelectItem key={location} value={location} className="text-white">{location}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Aircraft Selection */}
+                    <div className="space-y-2">
+                      <Label className="text-white">Aeronave</Label>
+                      <Select value={formData.aircraftId} onValueChange={(value) => setFormData(prev => ({ ...prev, aircraftId: value }))}>
+                        <SelectTrigger className="aviation-input">
+                          <SelectValue placeholder="Selecione a aeronave" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-aviation-gray-800 border-white/20">
+                          {aircraft.map((ac: any) => (
+                            <SelectItem key={ac.id} value={ac.id} className="text-white">
+                              {ac.registration} - {ac.model}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* Intervention Types */}
+                  <div className="space-y-2">
+                    <Label className="text-white">Tipos de Intervenção</Label>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      {interventionTypeOptions.map(type => (
+                        <div key={type} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={type}
+                            checked={formData.interventionTypes.includes(type)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  interventionTypes: [...prev.interventionTypes, type]
+                                }));
+                              } else {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  interventionTypes: prev.interventionTypes.filter(t => t !== type)
+                                }));
+                              }
+                            }}
+                            className="border-white/30"
+                          />
+                          <Label htmlFor={type} className="text-white text-sm">{type}</Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="employees" className="space-y-6 mt-6">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold text-white">Funcionários do Turno</h3>
+                    <Button onClick={addEmployee} className="aviation-button">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Adicionar Funcionário
+                    </Button>
+                  </div>
+
+                  <div className="space-y-4">
+                    {formData.employees.map((employee, index) => (
+                      <Card key={employee.id} className="glass-card border-white/20">
+                        <CardContent className="p-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div className="space-y-2">
+                              <Label className="text-white">Nome</Label>
+                              <Input
+                                value={employee.name}
+                                onChange={(e) => updateEmployee(index, 'name', e.target.value)}
+                                className="aviation-input"
+                                placeholder="Nome completo"
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label className="text-white">Tarefa</Label>
+                              <Input
+                                value={employee.task}
+                                onChange={(e) => updateEmployee(index, 'task', e.target.value)}
+                                className="aviation-input"
+                                placeholder="Descrição da tarefa"
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label className="text-white">Telefone</Label>
+                              <Input
+                                value={employee.phone}
+                                onChange={(e) => updateEmployee(index, 'phone', e.target.value)}
+                                className="aviation-input"
+                                placeholder="(11) 99999-9999"
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label className="text-white">Início</Label>
+                              <Input
+                                type="time"
+                                value={employee.startTime}
+                                onChange={(e) => updateEmployee(index, 'startTime', e.target.value)}
+                                className="aviation-input"
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label className="text-white">Fim</Label>
+                              <Input
+                                type="time"
+                                value={employee.endTime}
+                                onChange={(e) => updateEmployee(index, 'endTime', e.target.value)}
+                                className="aviation-input"
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label className="text-white">Bilhete de Identidade</Label>
+                              <Input
+                                value={employee.idNumber}
+                                onChange={(e) => updateEmployee(index, 'idNumber', e.target.value)}
+                                className="aviation-input"
+                                placeholder="Número do documento"
+                              />
+                            </div>
+
+                            <div className="md:col-span-2 lg:col-span-3 flex justify-between items-center pt-2">
+                              <Button variant="outline" className="border-white/30 text-white hover:bg-white/20">
+                                <Camera className="h-4 w-4 mr-2" />
+                                Adicionar Foto
+                              </Button>
+                              <Button 
+                                variant="destructive" 
+                                onClick={() => removeEmployee(index)}
+                                className="bg-red-600 hover:bg-red-700"
+                              >
+                                Remover
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+
+                    {formData.employees.length === 0 && (
+                      <div className="text-center py-8">
+                        <Users className="h-12 w-12 text-white/30 mx-auto mb-4" />
+                        <p className="text-white/70">Nenhum funcionário adicionado</p>
+                        <Button onClick={addEmployee} className="aviation-button mt-4">
+                          <Plus className="h-4 w-4 mr-2" />
+                          Adicionar Primeiro Funcionário
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="signatures" className="space-y-6 mt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="glass-card border-white/20">
+                      <CardHeader>
+                        <CardTitle className="text-white flex items-center">
+                          <Signature className="h-5 w-5 mr-2" />
+                          Assinatura do Supervisor
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="h-32 border-2 border-dashed border-white/30 rounded-lg flex items-center justify-center">
+                          <p className="text-white/70 text-sm">Clique para assinar</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="glass-card border-white/20">
+                      <CardHeader>
+                        <CardTitle className="text-white flex items-center">
+                          <Signature className="h-5 w-5 mr-2" />
+                          Assinatura do Cliente
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="h-32 border-2 border-dashed border-white/30 rounded-lg flex items-center justify-center">
+                          <p className="text-white/70 text-sm">Clique para assinar</p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="noSignature"
+                            checked={formData.clientConfirmedWithoutSignature}
+                            onCheckedChange={(checked) => 
+                              setFormData(prev => ({ ...prev, clientConfirmedWithoutSignature: !!checked }))
+                            }
+                            className="border-white/30"
+                          />
+                          <Label htmlFor="noSignature" className="text-white text-sm">
+                            Cliente confirmou sem assinar
+                          </Label>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+              </Tabs>
+
+              <div className="flex justify-end space-x-4 pt-6">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsCreateDialogOpen(false)}
+                  className="border-white/30 text-white hover:bg-white/20"
+                >
+                  Cancelar
+                </Button>
+                <Button onClick={handleCreateForm} className="aviation-button">
+                  Criar Folha de Limpeza
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* Forms List */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredForms.map(form => (
+            <Card key={form.id} className="glass-card border-white/20 hover:bg-white/20 transition-all duration-300">
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <CardTitle className="text-white text-lg">{form.code}</CardTitle>
+                    <CardDescription className="text-white/70">
+                      {format(new Date(form.date), 'dd/MM/yyyy', { locale: ptBR })} - {
+                        form.shift === 'morning' ? 'Manhã' : 
+                        form.shift === 'afternoon' ? 'Tarde' : 'Noite'
+                      }
+                    </CardDescription>
+                  </div>
+                  <Badge className={`${getStatusColor(form.status)} text-white`}>
+                    {getStatusText(form.status)}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center text-white/80 text-sm">
+                  <MapPin className="h-4 w-4 mr-2" />
+                  {form.location}
+                </div>
+                
+                <div className="flex items-center text-white/80 text-sm">
+                  <Wrench className="h-4 w-4 mr-2" />
+                  {form.interventionTypes.length} tipo(s) de intervenção
+                </div>
+                
+                <div className="flex items-center text-white/80 text-sm">
+                  <Users className="h-4 w-4 mr-2" />
+                  {form.employees.length} funcionário(s)
+                </div>
+
+                <div className="flex justify-between items-center pt-4">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="border-white/30 text-white hover:bg-white/20"
+                  >
+                    <QrCode className="h-4 w-4 mr-2" />
+                    QR Code
+                  </Button>
+                  
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="border-white/30 text-white hover:bg-white/20"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    PDF
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+
+          {filteredForms.length === 0 && (
+            <div className="col-span-full text-center py-12">
+              <FileText className="h-16 w-16 text-white/30 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-white mb-2">
+                {searchTerm ? 'Nenhuma folha encontrada' : 'Nenhuma folha de limpeza criada'}
+              </h3>
+              <p className="text-white/70 mb-6">
+                {searchTerm 
+                  ? 'Tente usar termos diferentes na busca'
+                  : 'Comece criando sua primeira folha de requisição de limpeza'
+                }
+              </p>
+              {!searchTerm && (
+                <Button onClick={() => setIsCreateDialogOpen(true)} className="aviation-button">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Criar Primeira Folha
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
