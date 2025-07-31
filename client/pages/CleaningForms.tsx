@@ -354,6 +354,9 @@ export default function CleaningForms() {
         setForms(updatedForms);
         localStorage.setItem('cleaningForms', JSON.stringify(updatedForms));
 
+        // Force re-render by updating the forms state
+        setForms([...updatedForms]);
+
         toast({
           title: "Folha atualizada",
           description: "As alterações foram salvas com sucesso.",
@@ -846,7 +849,7 @@ export default function CleaningForms() {
                                 <div className="flex items-center space-x-4 text-white/60 text-xs mt-1">
                                   <span>📞 {employee.phone}</span>
                                   <span>🆔 {employee.idNumber}</span>
-                                  <span>��� {employee.startTime} - {employee.endTime}</span>
+                                  <span>⏰ {employee.startTime} - {employee.endTime}</span>
                                 </div>
                               </div>
                             </div>
