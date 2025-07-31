@@ -41,6 +41,8 @@ import {
 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { migrationService } from "@/lib/migration-service";
+import { populateDemoData, clearOfflineData, getOfflineDataSummary } from "@/lib/demo-data";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Settings() {
   const { user: authUser, signOut } = useAuth();
@@ -590,7 +592,7 @@ export default function Settings() {
                   className="aviation-button"
                 >
                   <Save className="h-4 w-4 mr-2" />
-                  Salvar Configurações
+                  Salvar Configura��ões
                 </Button>
               </CardContent>
             </Card>
