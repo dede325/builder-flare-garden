@@ -761,6 +761,62 @@ export default function CleaningForms() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* QR Code Dialog */}
+      <Dialog open={!!showQRDialog} onOpenChange={() => setShowQRDialog(null)}>
+        <DialogContent className="max-w-md bg-aviation-gray-800 border-white/20">
+          <DialogHeader>
+            <DialogTitle className="text-white">QR Code - {showQRDialog?.code}</DialogTitle>
+            <DialogDescription className="text-white/70">
+              Escaneie para acessar a folha online ou compartilhar
+            </DialogDescription>
+          </DialogHeader>
+
+          {showQRDialog && (
+            <div className="flex flex-col items-center space-y-4">
+              <div className="bg-white p-4 rounded-lg">
+                <img
+                  src={showQRDialog.qrCode}
+                  alt="QR Code"
+                  className="w-48 h-48"
+                />
+              </div>
+
+              <div className="text-center">
+                <p className="text-white/80 text-sm mb-2">
+                  Link direto:
+                </p>
+                <p className="text-aviation-blue-300 text-xs break-all">
+                  {`${window.location.origin}/cleaning-forms/${showQRDialog.code}`}
+                </p>
+              </div>
+
+              <div className="flex space-x-2 w-full">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/cleaning-forms/${showQRDialog.code}`);
+                  }}
+                  className="flex-1 border-white/30 text-white hover:bg-white/20"
+                >
+                  Copiar Link
+                </Button>
+                <Button
+                  onClick={() => {
+                    const link = document.createElement('a');
+                    link.download = `qr-code-${showQRDialog.code}.png`;
+                    link.href = showQRDialog.qrCode;
+                    link.click();
+                  }}
+                  className="flex-1 aviation-button"
+                >
+                  Baixar QR
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
