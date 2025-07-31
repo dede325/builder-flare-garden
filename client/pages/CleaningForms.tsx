@@ -57,7 +57,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { db } from "@/lib/supabase";
 import SignatureCanvas from "@/components/SignatureCanvas";
 import PhotoUpload from "@/components/PhotoUpload";
-import PhotoEvidenceCapture, { PhotoEvidence } from "@/components/PhotoEvidenceCapture";
+import PhotoEvidenceCapture, {
+  PhotoEvidence,
+} from "@/components/PhotoEvidenceCapture";
 import {
   downloadCleaningFormPDF,
   previewCleaningFormPDF,
@@ -410,9 +412,15 @@ export default function CleaningForms() {
           changeHistory: form.changeHistory || [],
         }));
         setForms(normalizedForms);
-        console.log("Loaded forms from intelligent sync:", normalizedForms.length);
+        console.log(
+          "Loaded forms from intelligent sync:",
+          normalizedForms.length,
+        );
       } catch (error) {
-        console.warn("Failed to load from intelligent sync, falling back to localStorage:", error);
+        console.warn(
+          "Failed to load from intelligent sync, falling back to localStorage:",
+          error,
+        );
 
         // Fallback to localStorage
         const savedForms = localStorage.getItem("cleaningForms");
@@ -431,11 +439,18 @@ export default function CleaningForms() {
   };
 
   // Form code generation using the new service
-  const generateFormCode = async (date: string, shift: string, location: string) => {
+  const generateFormCode = async (
+    date: string,
+    shift: string,
+    location: string,
+  ) => {
     try {
-      return await codeGenerationService.generateUniqueFormCode(location, shift);
+      return await codeGenerationService.generateUniqueFormCode(
+        location,
+        shift,
+      );
     } catch (error) {
-      console.error('Failed to generate unique form code:', error);
+      console.error("Failed to generate unique form code:", error);
       // Fallback to basic generation
       return codeGenerationService.generateFormCode(location, shift);
     }
@@ -444,16 +459,24 @@ export default function CleaningForms() {
   const generateQRCode = async (formCode: string, formId: string) => {
     try {
       // Use the new code generation service for QR codes
-      const qrCodeDataURL = await codeGenerationService.generateFormQRCode(formCode, formId, {
-        width: 300,
-        margin: 2,
-        errorCorrectionLevel: 'H',
-        darkColor: '#0f172a',
-        lightColor: '#ffffff'
-      });
+      const qrCodeDataURL = await codeGenerationService.generateFormQRCode(
+        formCode,
+        formId,
+        {
+          width: 300,
+          margin: 2,
+          errorCorrectionLevel: "H",
+          darkColor: "#0f172a",
+          lightColor: "#ffffff",
+        },
+      );
 
       // Store QR code metadata if Supabase is available
-      await codeGenerationService.storeQRCodeMetadata(formCode, formId, qrCodeDataURL);
+      await codeGenerationService.storeQRCodeMetadata(
+        formCode,
+        formId,
+        qrCodeDataURL,
+      );
 
       return qrCodeDataURL;
     } catch (error) {
@@ -618,7 +641,11 @@ export default function CleaningForms() {
         // Create new form with secure ID
         const formCode = isSecureMode
           ? generateSecureFormId()
-          : await generateFormCode(formData.date, formData.shift, formData.location);
+          : await generateFormCode(
+              formData.date,
+              formData.shift,
+              formData.location,
+            );
         const formId = isSecureMode ? formCode : crypto.randomUUID();
 
         const now = new Date().toISOString();
@@ -677,7 +704,7 @@ export default function CleaningForms() {
 
           toast({
             title: "Folha criada",
-            description: `Nova folha criada. ID: ${formCode}. ${navigator.onLine ? 'Sincronizando...' : 'Será sincronizada quando voltar online.'}`,
+            description: `Nova folha criada. ID: ${formCode}. ${navigator.onLine ? "Sincronizando..." : "Será sincronizada quando voltar online."}`,
           });
         } catch (error) {
           console.error("Failed to save form:", error);
@@ -689,7 +716,8 @@ export default function CleaningForms() {
 
           toast({
             title: "Folha salva localmente",
-            description: "Folha salva em modo de emergência. Será sincronizada posteriormente.",
+            description:
+              "Folha salva em modo de emergência. Será sincronizada posteriormente.",
             variant: "default",
           });
         }
@@ -820,8 +848,6 @@ export default function CleaningForms() {
     }
   };
 
-
-
   const handleDownloadPDF = async (form: CleaningForm) => {
     try {
       const aircraftData = aircraft.find(
@@ -858,10 +884,12 @@ export default function CleaningForms() {
     // Load existing photo evidence
     let existingPhotos: PhotoEvidence[] = [];
     try {
-      const { photoEvidenceService } = await import('@/lib/photo-evidence-service');
+      const { photoEvidenceService } = await import(
+        "@/lib/photo-evidence-service"
+      );
       existingPhotos = await photoEvidenceService.getPhotosByForm(form.id);
     } catch (error) {
-      console.warn('Could not load photo evidence:', error);
+      console.warn("Could not load photo evidence:", error);
     }
 
     // Load form data into the form
@@ -1870,7 +1898,10 @@ export default function CleaningForms() {
 
       {/* QR Code Dialog */}
       {showQRDialog && (
-        <Dialog open={!!showQRDialog} onOpenChange={() => setShowQRDialog(null)}>
+        <Dialog
+          open={!!showQRDialog}
+          onOpenChange={() => setShowQRDialog(null)}
+        >
           <DialogContent className="max-w-2xl bg-aviation-gray-800 border-white/20">
             <DialogHeader>
               <DialogTitle className="text-white flex items-center">
@@ -1889,7 +1920,7 @@ export default function CleaningForms() {
                 date: showQRDialog.date,
                 location: showQRDialog.location,
                 shift: showQRDialog.shift,
-                status: showQRDialog.status
+                status: showQRDialog.status,
               }}
               size="large"
               showDetails={true}

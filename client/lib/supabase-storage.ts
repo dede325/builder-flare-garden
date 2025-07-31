@@ -1,177 +1,186 @@
-import { supabase } from './supabase';
+import { supabase } from "./supabase";
 
 export const supabaseStorage = {
-  async uploadCleaningFormPDF(formCode: string, pdfBlob: Blob): Promise<string | null> {
+  async uploadCleaningFormPDF(
+    formCode: string,
+    pdfBlob: Blob,
+  ): Promise<string | null> {
     if (!supabase) {
-      console.warn('Supabase not configured, skipping PDF upload');
+      console.warn("Supabase not configured, skipping PDF upload");
       return null;
     }
 
     try {
       const fileName = `${formCode}.pdf`;
       const filePath = `cleaning-forms/${fileName}`;
-      
+
       const { data, error } = await supabase.storage
-        .from('documents')
+        .from("documents")
         .upload(filePath, pdfBlob, {
-          contentType: 'application/pdf',
-          upsert: true // Overwrite if exists
+          contentType: "application/pdf",
+          upsert: true, // Overwrite if exists
         });
 
       if (error) {
-        console.error('Error uploading PDF to Supabase Storage:', error);
+        console.error("Error uploading PDF to Supabase Storage:", error);
         return null;
       }
 
       // Get public URL
       const { data: urlData } = supabase.storage
-        .from('documents')
+        .from("documents")
         .getPublicUrl(filePath);
 
       return urlData.publicUrl;
     } catch (error) {
-      console.error('Error uploading PDF:', error);
+      console.error("Error uploading PDF:", error);
       return null;
     }
   },
 
-  async uploadEmployeePhoto(formCode: string, employeeId: string, photoBlob: Blob): Promise<string | null> {
+  async uploadEmployeePhoto(
+    formCode: string,
+    employeeId: string,
+    photoBlob: Blob,
+  ): Promise<string | null> {
     if (!supabase) {
-      console.warn('Supabase not configured, skipping photo upload');
+      console.warn("Supabase not configured, skipping photo upload");
       return null;
     }
 
     try {
       const fileName = `${formCode}_${employeeId}_${Date.now()}.jpg`;
       const filePath = `employee-photos/${fileName}`;
-      
+
       const { data, error } = await supabase.storage
-        .from('photos')
+        .from("photos")
         .upload(filePath, photoBlob, {
-          contentType: 'image/jpeg',
-          upsert: true
+          contentType: "image/jpeg",
+          upsert: true,
         });
 
       if (error) {
-        console.error('Error uploading photo to Supabase Storage:', error);
+        console.error("Error uploading photo to Supabase Storage:", error);
         return null;
       }
 
       // Get public URL
       const { data: urlData } = supabase.storage
-        .from('photos')
+        .from("photos")
         .getPublicUrl(filePath);
 
       return urlData.publicUrl;
     } catch (error) {
-      console.error('Error uploading photo:', error);
+      console.error("Error uploading photo:", error);
       return null;
     }
   },
 
   async saveFormMetadata(formData: any): Promise<boolean> {
     if (!supabase) {
-      console.warn('Supabase not configured, skipping metadata save');
+      console.warn("Supabase not configured, skipping metadata save");
       return false;
     }
 
     try {
-      const { error } = await supabase
-        .from('cleaning_forms')
-        .upsert({
-          id: formData.id,
-          code: formData.code,
-          date: formData.date,
-          shift: formData.shift,
-          location: formData.location,
-          intervention_types: formData.interventionTypes,
-          aircraft_id: formData.aircraftId,
-          employees: formData.employees,
-          supervisor_signature: formData.supervisorSignature,
-          client_signature: formData.clientSignature,
-          client_confirmed_without_signature: formData.clientConfirmedWithoutSignature,
-          qr_code: formData.qrCode,
-          status: formData.status,
-          created_at: formData.createdAt,
-          updated_at: formData.updatedAt
-        });
+      const { error } = await supabase.from("cleaning_forms").upsert({
+        id: formData.id,
+        code: formData.code,
+        date: formData.date,
+        shift: formData.shift,
+        location: formData.location,
+        intervention_types: formData.interventionTypes,
+        aircraft_id: formData.aircraftId,
+        employees: formData.employees,
+        supervisor_signature: formData.supervisorSignature,
+        client_signature: formData.clientSignature,
+        client_confirmed_without_signature:
+          formData.clientConfirmedWithoutSignature,
+        qr_code: formData.qrCode,
+        status: formData.status,
+        created_at: formData.createdAt,
+        updated_at: formData.updatedAt,
+      });
 
       if (error) {
-        console.error('Error saving form metadata:', error);
+        console.error("Error saving form metadata:", error);
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error('Error saving form metadata:', error);
+      console.error("Error saving form metadata:", error);
       return false;
     }
   },
 
-  async uploadFile(filePath: string, fileBlob: Blob): Promise<{data?: any, error?: any}> {
+  async uploadFile(
+    filePath: string,
+    fileBlob: Blob,
+  ): Promise<{ data?: any; error?: any }> {
     if (!supabase) {
-      console.warn('Supabase not configured, skipping file upload');
-      return { error: { message: 'Supabase not configured' } };
+      console.warn("Supabase not configured, skipping file upload");
+      return { error: { message: "Supabase not configured" } };
     }
 
     try {
       const { data, error } = await supabase.storage
-        .from('evidence-photos')
+        .from("evidence-photos")
         .upload(filePath, fileBlob, {
           contentType: fileBlob.type,
-          upsert: true
+          upsert: true,
         });
 
       return { data, error };
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error("Error uploading file:", error);
       return { error };
     }
   },
 
   getPublicUrl(filePath: string) {
     if (!supabase) {
-      return { data: { publicUrl: '' } };
+      return { data: { publicUrl: "" } };
     }
 
-    return supabase.storage
-      .from('evidence-photos')
-      .getPublicUrl(filePath);
+    return supabase.storage.from("evidence-photos").getPublicUrl(filePath);
   },
 
   async deleteFile(filePath: string): Promise<boolean> {
     if (!supabase) {
-      console.warn('Supabase not configured, skipping file deletion');
+      console.warn("Supabase not configured, skipping file deletion");
       return false;
     }
 
     try {
       // Extract file path from URL if it's a full URL
       let cleanPath = filePath;
-      if (filePath.includes('/storage/v1/object/public/')) {
-        cleanPath = filePath.split('/storage/v1/object/public/evidence-photos/')[1];
+      if (filePath.includes("/storage/v1/object/public/")) {
+        cleanPath = filePath.split(
+          "/storage/v1/object/public/evidence-photos/",
+        )[1];
       }
 
       const { error } = await supabase.storage
-        .from('evidence-photos')
+        .from("evidence-photos")
         .remove([cleanPath]);
 
       if (error) {
-        console.error('Error deleting file:', error);
+        console.error("Error deleting file:", error);
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error('Error deleting file:', error);
+      console.error("Error deleting file:", error);
       return false;
     }
-  }
+  },
 };
 
 // Helper function to convert data URL to blob
 export const dataURLToBlob = (dataURL: string): Blob => {
-  const arr = dataURL.split(',');
+  const arr = dataURL.split(",");
   const mime = arr[0].match(/:(.*?);/)![1];
   const bstr = atob(arr[1]);
   let n = bstr.length;

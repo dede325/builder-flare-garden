@@ -35,7 +35,7 @@ class BatchOperationsService {
   async batchPrint(
     forms: CleaningForm[],
     aircraft: any[],
-    onProgress?: (current: number, total: number) => void
+    onProgress?: (current: number, total: number) => void,
   ): Promise<BatchOperationResult> {
     const result: BatchOperationResult = {
       successful: 0,
@@ -47,16 +47,16 @@ class BatchOperationsService {
       const form = forms[i];
       try {
         const aircraftData = aircraft.find((ac) => ac.id === form.aircraftId);
-        
+
         // Open each PDF in a new tab for printing
         // Small delay to prevent browser blocking multiple popups
         if (i > 0) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         }
-        
+
         await previewCleaningFormPDF(form, aircraftData);
         result.successful++;
-        
+
         if (onProgress) {
           onProgress(i + 1, forms.length);
         }
@@ -73,7 +73,7 @@ class BatchOperationsService {
   async batchDownload(
     forms: CleaningForm[],
     aircraft: any[],
-    onProgress?: (current: number, total: number) => void
+    onProgress?: (current: number, total: number) => void,
   ): Promise<BatchOperationResult> {
     const result: BatchOperationResult = {
       successful: 0,
@@ -85,15 +85,15 @@ class BatchOperationsService {
       const form = forms[i];
       try {
         const aircraftData = aircraft.find((ac) => ac.id === form.aircraftId);
-        
+
         // Small delay between downloads
         if (i > 0) {
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await new Promise((resolve) => setTimeout(resolve, 500));
         }
-        
+
         await downloadCleaningFormPDF(form, aircraftData);
         result.successful++;
-        
+
         if (onProgress) {
           onProgress(i + 1, forms.length);
         }
@@ -110,10 +110,10 @@ class BatchOperationsService {
   async batchExportToEmailAttachments(
     forms: CleaningForm[],
     aircraft: any[],
-    emailSubject?: string
+    emailSubject?: string,
   ): Promise<string[]> {
     const attachmentUrls: string[] = [];
-    
+
     try {
       // Generate ZIP export with all PDFs
       await exportService.exportToZIP(forms, aircraft, {
@@ -121,21 +121,20 @@ class BatchOperationsService {
         includePhotos: true,
         includeEmployeePhotos: true,
       });
-      
+
       // Note: In a real implementation, you would upload the ZIP to a cloud service
       // and return the download URL for email attachment
-      
     } catch (error) {
       console.error("Error creating email attachments:", error);
       throw new Error("Falha ao preparar anexos para email");
     }
-    
+
     return attachmentUrls;
   }
 
   generateBatchReport(
     forms: CleaningForm[],
-    aircraft: any[]
+    aircraft: any[],
   ): {
     summary: {
       totalForms: number;
@@ -158,10 +157,11 @@ class BatchOperationsService {
     forms.forEach((form) => {
       // Status counts
       summary.byStatus[form.status] = (summary.byStatus[form.status] || 0) + 1;
-      
+
       // Location counts
-      summary.byLocation[form.location] = (summary.byLocation[form.location] || 0) + 1;
-      
+      summary.byLocation[form.location] =
+        (summary.byLocation[form.location] || 0) + 1;
+
       // Shift counts
       summary.byShift[form.shift] = (summary.byShift[form.shift] || 0) + 1;
     });
@@ -178,7 +178,9 @@ class BatchOperationsService {
         code: form.code,
         date: form.date,
         location: form.location,
-        aircraft: aircraftData ? `${aircraftData.registration} - ${aircraftData.model}` : "N/A",
+        aircraft: aircraftData
+          ? `${aircraftData.registration} - ${aircraftData.model}`
+          : "N/A",
         employeeCount: form.employees.length,
         interventionTypes: form.interventionTypes.length,
         status: form.status,

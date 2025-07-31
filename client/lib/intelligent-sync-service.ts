@@ -1,6 +1,6 @@
-import Dexie, { Table } from 'dexie';
-import { supabase } from './supabase';
-import { photoEvidenceService } from './photo-evidence-service';
+import Dexie, { Table } from "dexie";
+import { supabase } from "./supabase";
+import { photoEvidenceService } from "./photo-evidence-service";
 
 // Enhanced offline data interfaces
 interface OfflineForm {
@@ -8,7 +8,7 @@ interface OfflineForm {
   code: string;
   data: any;
   lastModified: string;
-  syncStatus: 'pending' | 'syncing' | 'synced' | 'error';
+  syncStatus: "pending" | "syncing" | "synced" | "error";
   lastSyncAttempt?: string;
   syncError?: string;
   retryCount: number;
@@ -19,7 +19,7 @@ interface OfflineEmployee {
   id: string;
   data: any;
   lastModified: string;
-  syncStatus: 'pending' | 'syncing' | 'synced' | 'error';
+  syncStatus: "pending" | "syncing" | "synced" | "error";
   lastSyncAttempt?: string;
   syncError?: string;
   retryCount: number;
@@ -30,7 +30,7 @@ interface OfflineAircraft {
   id: string;
   data: any;
   lastModified: string;
-  syncStatus: 'pending' | 'syncing' | 'synced' | 'error';
+  syncStatus: "pending" | "syncing" | "synced" | "error";
   lastSyncAttempt?: string;
   syncError?: string;
   retryCount: number;
@@ -39,20 +39,20 @@ interface OfflineAircraft {
 
 interface SyncOperation {
   id?: number;
-  type: 'create' | 'update' | 'delete';
-  entity: 'form' | 'employee' | 'aircraft' | 'photo';
+  type: "create" | "update" | "delete";
+  entity: "form" | "employee" | "aircraft" | "photo";
   entityId: string;
   data: any;
   timestamp: string;
   retryCount: number;
   lastError?: string;
-  priority: 'low' | 'normal' | 'high';
+  priority: "low" | "normal" | "high";
 }
 
 interface SyncLog {
   id?: number;
   timestamp: string;
-  type: 'success' | 'error' | 'info';
+  type: "success" | "error" | "info";
   entity: string;
   entityId: string;
   operation: string;
@@ -84,18 +84,19 @@ class IntelligentSyncDatabase extends Dexie {
   aircraft!: Table<OfflineAircraft>;
   syncOperations!: Table<SyncOperation>;
   syncLogs!: Table<SyncLog>;
-  metadata!: Table<{key: string, value: any, timestamp: string}>;
+  metadata!: Table<{ key: string; value: any; timestamp: string }>;
 
   constructor() {
-    super('IntelligentSyncDB');
-    
+    super("IntelligentSyncDB");
+
     this.version(1).stores({
-      forms: 'id, syncStatus, lastModified, retryCount, createdOffline',
-      employees: 'id, syncStatus, lastModified, retryCount, isCached',
-      aircraft: 'id, syncStatus, lastModified, retryCount, isCached',
-      syncOperations: '++id, type, entity, entityId, timestamp, retryCount, priority',
-      syncLogs: '++id, timestamp, type, entity, entityId',
-      metadata: 'key, timestamp'
+      forms: "id, syncStatus, lastModified, retryCount, createdOffline",
+      employees: "id, syncStatus, lastModified, retryCount, isCached",
+      aircraft: "id, syncStatus, lastModified, retryCount, isCached",
+      syncOperations:
+        "++id, type, entity, entityId, timestamp, retryCount, priority",
+      syncLogs: "++id, timestamp, type, entity, entityId",
+      metadata: "key, timestamp",
     });
   }
 }
@@ -113,9 +114,9 @@ class IntelligentSyncService {
     this.connectionStatus = {
       isOnline: navigator.onLine,
       connectionType: this.getConnectionType(),
-      effectiveType: this.getEffectiveType()
+      effectiveType: this.getEffectiveType(),
     };
-    
+
     this.setupConnectionMonitoring();
     this.setupAutoSync();
     this.initializeMetadata();
@@ -123,12 +124,12 @@ class IntelligentSyncService {
 
   private getConnectionType(): string {
     // @ts-ignore
-    return navigator.connection?.type || 'unknown';
+    return navigator.connection?.type || "unknown";
   }
 
   private getEffectiveType(): string {
     // @ts-ignore
-    return navigator.connection?.effectiveType || 'unknown';
+    return navigator.connection?.effectiveType || "unknown";
   }
 
   private setupConnectionMonitoring() {
@@ -149,20 +150,20 @@ class IntelligentSyncService {
       this.notifyObservers();
     };
 
-    window.addEventListener('online', updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);
+    window.addEventListener("online", updateOnlineStatus);
+    window.addEventListener("offline", updateOnlineStatus);
 
     // Monitor connection quality changes
     // @ts-ignore
     if (navigator.connection) {
       // @ts-ignore
-      navigator.connection.addEventListener('change', updateOnlineStatus);
+      navigator.connection.addEventListener("change", updateOnlineStatus);
     }
   }
 
   private async initializeMetadata() {
-    await this.setMetadata('initialized', true);
-    await this.setMetadata('version', '1.0.0');
+    await this.setMetadata("initialized", true);
+    await this.setMetadata("version", "1.0.0");
   }
 
   private setupAutoSync() {
@@ -178,8 +179,14 @@ class IntelligentSyncService {
   }
 
   private async onComeOnline() {
-    await this.logSync('info', 'connection', 'system', 'came-online', 'Application came online');
-    
+    await this.logSync(
+      "info",
+      "connection",
+      "system",
+      "came-online",
+      "Application came online",
+    );
+
     // Wait a moment for connection to stabilize
     setTimeout(() => {
       this.performSync();
@@ -187,7 +194,13 @@ class IntelligentSyncService {
   }
 
   private async onGoOffline() {
-    await this.logSync('info', 'connection', 'system', 'went-offline', 'Application went offline');
+    await this.logSync(
+      "info",
+      "connection",
+      "system",
+      "went-offline",
+      "Application went offline",
+    );
   }
 
   // Forms Management
@@ -200,15 +213,15 @@ class IntelligentSyncService {
       code: formData.code || `OFFLINE-${Date.now()}`,
       data: formData,
       lastModified: now,
-      syncStatus: 'pending',
+      syncStatus: "pending",
       retryCount: 0,
-      createdOffline: !navigator.onLine
+      createdOffline: !navigator.onLine,
     };
 
     await this.db.forms.put(offlineForm);
-    await this.addSyncOperation('create', 'form', id, formData, 'high');
-    
-    await this.logSync('info', 'form', id, 'saved', 'Form saved locally');
+    await this.addSyncOperation("create", "form", id, formData, "high");
+
+    await this.logSync("info", "form", id, "saved", "Form saved locally");
 
     if (navigator.onLine) {
       setTimeout(() => this.performSync(), 100);
@@ -221,7 +234,7 @@ class IntelligentSyncService {
   async updateForm(id: string, formData: any): Promise<void> {
     const existing = await this.db.forms.get(id);
     if (!existing) {
-      throw new Error('Form not found');
+      throw new Error("Form not found");
     }
 
     const now = new Date().toISOString();
@@ -229,14 +242,14 @@ class IntelligentSyncService {
       ...existing,
       data: { ...existing.data, ...formData },
       lastModified: now,
-      syncStatus: 'pending',
-      retryCount: 0
+      syncStatus: "pending",
+      retryCount: 0,
     };
 
     await this.db.forms.put(updated);
-    await this.addSyncOperation('update', 'form', id, updated.data, 'high');
-    
-    await this.logSync('info', 'form', id, 'updated', 'Form updated locally');
+    await this.addSyncOperation("update", "form", id, updated.data, "high");
+
+    await this.logSync("info", "form", id, "updated", "Form updated locally");
 
     if (navigator.onLine) {
       setTimeout(() => this.performSync(), 100);
@@ -247,9 +260,15 @@ class IntelligentSyncService {
 
   async deleteForm(id: string): Promise<void> {
     await this.db.forms.delete(id);
-    await this.addSyncOperation('delete', 'form', id, null, 'normal');
-    
-    await this.logSync('info', 'form', id, 'deleted', 'Form marked for deletion');
+    await this.addSyncOperation("delete", "form", id, null, "normal");
+
+    await this.logSync(
+      "info",
+      "form",
+      id,
+      "deleted",
+      "Form marked for deletion",
+    );
 
     if (navigator.onLine) {
       setTimeout(() => this.performSync(), 100);
@@ -265,33 +284,39 @@ class IntelligentSyncService {
 
   async getAllForms(): Promise<any[]> {
     const forms = await this.db.forms.toArray();
-    return forms.map(f => ({
+    return forms.map((f) => ({
       ...f.data,
       _syncStatus: f.syncStatus,
       _lastModified: f.lastModified,
-      _createdOffline: f.createdOffline
+      _createdOffline: f.createdOffline,
     }));
   }
 
   // Employees Cache Management
   async cacheEmployees(employees: any[]): Promise<void> {
     const now = new Date().toISOString();
-    
+
     for (const employee of employees) {
       const offlineEmployee: OfflineEmployee = {
         id: employee.id,
         data: employee,
         lastModified: now,
-        syncStatus: 'synced',
+        syncStatus: "synced",
         retryCount: 0,
-        isCached: true
+        isCached: true,
       };
 
       await this.db.employees.put(offlineEmployee);
     }
 
-    await this.setMetadata('employeesLastCached', now);
-    await this.logSync('info', 'employees', 'cache', 'cached', `Cached ${employees.length} employees`);
+    await this.setMetadata("employeesLastCached", now);
+    await this.logSync(
+      "info",
+      "employees",
+      "cache",
+      "cached",
+      `Cached ${employees.length} employees`,
+    );
   }
 
   async saveEmployee(employeeData: any): Promise<string> {
@@ -302,15 +327,27 @@ class IntelligentSyncService {
       id,
       data: employeeData,
       lastModified: now,
-      syncStatus: 'pending',
+      syncStatus: "pending",
       retryCount: 0,
-      isCached: false
+      isCached: false,
     };
 
     await this.db.employees.put(offlineEmployee);
-    await this.addSyncOperation('create', 'employee', id, employeeData, 'normal');
-    
-    await this.logSync('info', 'employee', id, 'saved', 'Employee saved locally');
+    await this.addSyncOperation(
+      "create",
+      "employee",
+      id,
+      employeeData,
+      "normal",
+    );
+
+    await this.logSync(
+      "info",
+      "employee",
+      id,
+      "saved",
+      "Employee saved locally",
+    );
 
     if (navigator.onLine) {
       setTimeout(() => this.performSync(), 100);
@@ -322,32 +359,38 @@ class IntelligentSyncService {
 
   async getAllEmployees(): Promise<any[]> {
     const employees = await this.db.employees.toArray();
-    return employees.map(e => ({
+    return employees.map((e) => ({
       ...e.data,
       _syncStatus: e.syncStatus,
-      _isCached: e.isCached
+      _isCached: e.isCached,
     }));
   }
 
   // Aircraft Cache Management
   async cacheAircraft(aircraft: any[]): Promise<void> {
     const now = new Date().toISOString();
-    
+
     for (const plane of aircraft) {
       const offlineAircraft: OfflineAircraft = {
         id: plane.id,
         data: plane,
         lastModified: now,
-        syncStatus: 'synced',
+        syncStatus: "synced",
         retryCount: 0,
-        isCached: true
+        isCached: true,
       };
 
       await this.db.aircraft.put(offlineAircraft);
     }
 
-    await this.setMetadata('aircraftLastCached', now);
-    await this.logSync('info', 'aircraft', 'cache', 'cached', `Cached ${aircraft.length} aircraft`);
+    await this.setMetadata("aircraftLastCached", now);
+    await this.logSync(
+      "info",
+      "aircraft",
+      "cache",
+      "cached",
+      `Cached ${aircraft.length} aircraft`,
+    );
   }
 
   async saveAircraft(aircraftData: any): Promise<string> {
@@ -358,15 +401,27 @@ class IntelligentSyncService {
       id,
       data: aircraftData,
       lastModified: now,
-      syncStatus: 'pending',
+      syncStatus: "pending",
       retryCount: 0,
-      isCached: false
+      isCached: false,
     };
 
     await this.db.aircraft.put(offlineAircraft);
-    await this.addSyncOperation('create', 'aircraft', id, aircraftData, 'normal');
-    
-    await this.logSync('info', 'aircraft', id, 'saved', 'Aircraft saved locally');
+    await this.addSyncOperation(
+      "create",
+      "aircraft",
+      id,
+      aircraftData,
+      "normal",
+    );
+
+    await this.logSync(
+      "info",
+      "aircraft",
+      id,
+      "saved",
+      "Aircraft saved locally",
+    );
 
     if (navigator.onLine) {
       setTimeout(() => this.performSync(), 100);
@@ -378,20 +433,20 @@ class IntelligentSyncService {
 
   async getAllAircraft(): Promise<any[]> {
     const aircraft = await this.db.aircraft.toArray();
-    return aircraft.map(a => ({
+    return aircraft.map((a) => ({
       ...a.data,
       _syncStatus: a.syncStatus,
-      _isCached: a.isCached
+      _isCached: a.isCached,
     }));
   }
 
   // Sync Operations
   private async addSyncOperation(
-    type: 'create' | 'update' | 'delete',
-    entity: 'form' | 'employee' | 'aircraft' | 'photo',
+    type: "create" | "update" | "delete",
+    entity: "form" | "employee" | "aircraft" | "photo",
     entityId: string,
     data: any,
-    priority: 'low' | 'normal' | 'high' = 'normal'
+    priority: "low" | "normal" | "high" = "normal",
   ): Promise<void> {
     const operation: SyncOperation = {
       type,
@@ -400,14 +455,14 @@ class IntelligentSyncService {
       data,
       timestamp: new Date().toISOString(),
       retryCount: 0,
-      priority
+      priority,
     };
 
     await this.db.syncOperations.add(operation);
   }
 
   private async getPendingOperationsCount(): Promise<number> {
-    return await this.db.syncOperations.where('retryCount').below(3).count();
+    return await this.db.syncOperations.where("retryCount").below(3).count();
   }
 
   async performSync(): Promise<boolean> {
@@ -420,51 +475,74 @@ class IntelligentSyncService {
     let errorCount = 0;
 
     try {
-      await this.logSync('info', 'sync', 'system', 'started', 'Sync operation started');
+      await this.logSync(
+        "info",
+        "sync",
+        "system",
+        "started",
+        "Sync operation started",
+      );
 
       // Get pending operations sorted by priority and timestamp
       const operations = await this.db.syncOperations
-        .where('retryCount')
+        .where("retryCount")
         .below(3)
         .toArray();
 
       // Sort by priority (high first) then by timestamp
       operations.sort((a, b) => {
         const priorityOrder = { high: 0, normal: 1, low: 2 };
-        const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
+        const priorityDiff =
+          priorityOrder[a.priority] - priorityOrder[b.priority];
         if (priorityDiff !== 0) return priorityDiff;
-        return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+        return (
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        );
       });
 
       for (const operation of operations) {
         try {
           await this.syncSingleOperation(operation);
           successCount++;
-          
+
           // Remove successful operation from queue
           await this.db.syncOperations.delete(operation.id!);
-          
         } catch (error) {
           errorCount++;
-          console.error('Sync operation failed:', operation, error);
-          
+          console.error("Sync operation failed:", operation, error);
+
           // Update retry count and error message
           operation.retryCount++;
-          operation.lastError = error instanceof Error ? error.message : 'Unknown error';
-          
+          operation.lastError =
+            error instanceof Error ? error.message : "Unknown error";
+
           if (operation.retryCount >= 3) {
             // Mark entity as error status and remove from queue
-            await this.markEntityAsError(operation.entity, operation.entityId, operation.lastError);
+            await this.markEntityAsError(
+              operation.entity,
+              operation.entityId,
+              operation.lastError,
+            );
             await this.db.syncOperations.delete(operation.id!);
-            
-            await this.logSync('error', operation.entity, operation.entityId, 'sync-failed', 
-              `Failed to sync after 3 attempts: ${operation.lastError}`);
+
+            await this.logSync(
+              "error",
+              operation.entity,
+              operation.entityId,
+              "sync-failed",
+              `Failed to sync after 3 attempts: ${operation.lastError}`,
+            );
           } else {
             // Keep in queue for retry
             await this.db.syncOperations.put(operation);
-            
-            await this.logSync('error', operation.entity, operation.entityId, 'sync-retry', 
-              `Sync attempt ${operation.retryCount} failed: ${operation.lastError}`);
+
+            await this.logSync(
+              "error",
+              operation.entity,
+              operation.entityId,
+              "sync-retry",
+              `Sync attempt ${operation.retryCount} failed: ${operation.lastError}`,
+            );
           }
         }
       }
@@ -473,18 +551,27 @@ class IntelligentSyncService {
       await this.syncPhotos();
 
       // Update last sync timestamp
-      await this.setMetadata('lastSync', new Date().toISOString());
-      
-      await this.logSync('success', 'sync', 'system', 'completed', 
-        `Sync completed: ${successCount} success, ${errorCount} errors`);
+      await this.setMetadata("lastSync", new Date().toISOString());
+
+      await this.logSync(
+        "success",
+        "sync",
+        "system",
+        "completed",
+        `Sync completed: ${successCount} success, ${errorCount} errors`,
+      );
 
       this.notifyObservers();
       return true;
-
     } catch (error) {
-      console.error('Sync operation failed:', error);
-      await this.logSync('error', 'sync', 'system', 'failed', 
-        `Sync operation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("Sync operation failed:", error);
+      await this.logSync(
+        "error",
+        "sync",
+        "system",
+        "failed",
+        `Sync operation failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
       return false;
     } finally {
       this.syncInProgress = false;
@@ -493,19 +580,19 @@ class IntelligentSyncService {
 
   private async syncSingleOperation(operation: SyncOperation): Promise<void> {
     if (!supabase) {
-      throw new Error('Supabase not configured');
+      throw new Error("Supabase not configured");
     }
 
     const { type, entity, entityId, data } = operation;
 
     switch (entity) {
-      case 'form':
+      case "form":
         await this.syncFormOperation(type, entityId, data);
         break;
-      case 'employee':
+      case "employee":
         await this.syncEmployeeOperation(type, entityId, data);
         break;
-      case 'aircraft':
+      case "aircraft":
         await this.syncAircraftOperation(type, entityId, data);
         break;
       default:
@@ -513,28 +600,32 @@ class IntelligentSyncService {
     }
   }
 
-  private async syncFormOperation(type: string, entityId: string, data: any): Promise<void> {
+  private async syncFormOperation(
+    type: string,
+    entityId: string,
+    data: any,
+  ): Promise<void> {
     switch (type) {
-      case 'create':
+      case "create":
         const { error: createError } = await supabase
-          .from('cleaning_forms')
+          .from("cleaning_forms")
           .insert(data);
         if (createError) throw createError;
         break;
-        
-      case 'update':
+
+      case "update":
         const { error: updateError } = await supabase
-          .from('cleaning_forms')
+          .from("cleaning_forms")
           .update(data)
-          .eq('id', entityId);
+          .eq("id", entityId);
         if (updateError) throw updateError;
         break;
-        
-      case 'delete':
+
+      case "delete":
         const { error: deleteError } = await supabase
-          .from('cleaning_forms')
+          .from("cleaning_forms")
           .delete()
-          .eq('id', entityId);
+          .eq("id", entityId);
         if (deleteError) throw deleteError;
         break;
     }
@@ -542,35 +633,39 @@ class IntelligentSyncService {
     // Update local sync status
     const form = await this.db.forms.get(entityId);
     if (form) {
-      form.syncStatus = 'synced';
+      form.syncStatus = "synced";
       form.lastSyncAttempt = new Date().toISOString();
       delete form.syncError;
       await this.db.forms.put(form);
     }
   }
 
-  private async syncEmployeeOperation(type: string, entityId: string, data: any): Promise<void> {
+  private async syncEmployeeOperation(
+    type: string,
+    entityId: string,
+    data: any,
+  ): Promise<void> {
     switch (type) {
-      case 'create':
+      case "create":
         const { error: createError } = await supabase
-          .from('employees')
+          .from("employees")
           .insert(data);
         if (createError) throw createError;
         break;
-        
-      case 'update':
+
+      case "update":
         const { error: updateError } = await supabase
-          .from('employees')
+          .from("employees")
           .update(data)
-          .eq('id', entityId);
+          .eq("id", entityId);
         if (updateError) throw updateError;
         break;
-        
-      case 'delete':
+
+      case "delete":
         const { error: deleteError } = await supabase
-          .from('employees')
+          .from("employees")
           .delete()
-          .eq('id', entityId);
+          .eq("id", entityId);
         if (deleteError) throw deleteError;
         break;
     }
@@ -578,35 +673,39 @@ class IntelligentSyncService {
     // Update local sync status
     const employee = await this.db.employees.get(entityId);
     if (employee) {
-      employee.syncStatus = 'synced';
+      employee.syncStatus = "synced";
       employee.lastSyncAttempt = new Date().toISOString();
       delete employee.syncError;
       await this.db.employees.put(employee);
     }
   }
 
-  private async syncAircraftOperation(type: string, entityId: string, data: any): Promise<void> {
+  private async syncAircraftOperation(
+    type: string,
+    entityId: string,
+    data: any,
+  ): Promise<void> {
     switch (type) {
-      case 'create':
+      case "create":
         const { error: createError } = await supabase
-          .from('aircraft')
+          .from("aircraft")
           .insert(data);
         if (createError) throw createError;
         break;
-        
-      case 'update':
+
+      case "update":
         const { error: updateError } = await supabase
-          .from('aircraft')
+          .from("aircraft")
           .update(data)
-          .eq('id', entityId);
+          .eq("id", entityId);
         if (updateError) throw updateError;
         break;
-        
-      case 'delete':
+
+      case "delete":
         const { error: deleteError } = await supabase
-          .from('aircraft')
+          .from("aircraft")
           .delete()
-          .eq('id', entityId);
+          .eq("id", entityId);
         if (deleteError) throw deleteError;
         break;
     }
@@ -614,7 +713,7 @@ class IntelligentSyncService {
     // Update local sync status
     const aircraft = await this.db.aircraft.get(entityId);
     if (aircraft) {
-      aircraft.syncStatus = 'synced';
+      aircraft.syncStatus = "synced";
       aircraft.lastSyncAttempt = new Date().toISOString();
       delete aircraft.syncError;
       await this.db.aircraft.put(aircraft);
@@ -625,38 +724,42 @@ class IntelligentSyncService {
     try {
       await photoEvidenceService.processUploadQueue();
     } catch (error) {
-      console.warn('Photo sync failed:', error);
+      console.warn("Photo sync failed:", error);
     }
   }
 
-  private async markEntityAsError(entity: string, entityId: string, error: string): Promise<void> {
+  private async markEntityAsError(
+    entity: string,
+    entityId: string,
+    error: string,
+  ): Promise<void> {
     const now = new Date().toISOString();
-    
+
     switch (entity) {
-      case 'form':
+      case "form":
         const form = await this.db.forms.get(entityId);
         if (form) {
-          form.syncStatus = 'error';
+          form.syncStatus = "error";
           form.syncError = error;
           form.lastSyncAttempt = now;
           await this.db.forms.put(form);
         }
         break;
-        
-      case 'employee':
+
+      case "employee":
         const employee = await this.db.employees.get(entityId);
         if (employee) {
-          employee.syncStatus = 'error';
+          employee.syncStatus = "error";
           employee.syncError = error;
           employee.lastSyncAttempt = now;
           await this.db.employees.put(employee);
         }
         break;
-        
-      case 'aircraft':
+
+      case "aircraft":
         const aircraft = await this.db.aircraft.get(entityId);
         if (aircraft) {
-          aircraft.syncStatus = 'error';
+          aircraft.syncStatus = "error";
           aircraft.syncError = error;
           aircraft.lastSyncAttempt = now;
           await this.db.aircraft.put(aircraft);
@@ -671,16 +774,22 @@ class IntelligentSyncService {
       this.db.forms.toArray(),
       this.db.employees.toArray(),
       this.db.aircraft.toArray(),
-      this.db.syncOperations.toArray()
+      this.db.syncOperations.toArray(),
     ]);
 
     const allItems = [...forms, ...employees, ...aircraft];
     const totalItems = allItems.length;
-    const syncedItems = allItems.filter(item => item.syncStatus === 'synced').length;
-    const pendingItems = allItems.filter(item => item.syncStatus === 'pending').length + pendingOps.length;
-    const errorItems = allItems.filter(item => item.syncStatus === 'error').length;
+    const syncedItems = allItems.filter(
+      (item) => item.syncStatus === "synced",
+    ).length;
+    const pendingItems =
+      allItems.filter((item) => item.syncStatus === "pending").length +
+      pendingOps.length;
+    const errorItems = allItems.filter(
+      (item) => item.syncStatus === "error",
+    ).length;
 
-    const lastSync = await this.getMetadata('lastSync');
+    const lastSync = await this.getMetadata("lastSync");
 
     return {
       totalItems,
@@ -689,7 +798,7 @@ class IntelligentSyncService {
       errorItems,
       lastSync: lastSync?.value,
       isOnline: this.connectionStatus.isOnline,
-      syncInProgress: this.syncInProgress
+      syncInProgress: this.syncInProgress,
     };
   }
 
@@ -699,12 +808,12 @@ class IntelligentSyncService {
 
   // Logs Management
   private async logSync(
-    type: 'success' | 'error' | 'info',
+    type: "success" | "error" | "info",
     entity: string,
     entityId: string,
     operation: string,
     message: string,
-    details?: any
+    details?: any,
   ): Promise<void> {
     const log: SyncLog = {
       timestamp: new Date().toISOString(),
@@ -713,7 +822,7 @@ class IntelligentSyncService {
       entityId,
       operation,
       message,
-      details
+      details,
     };
 
     await this.db.syncLogs.add(log);
@@ -721,15 +830,18 @@ class IntelligentSyncService {
     // Keep only last 1000 logs
     const logCount = await this.db.syncLogs.count();
     if (logCount > 1000) {
-      const oldestLogs = await this.db.syncLogs.orderBy('timestamp').limit(logCount - 1000).toArray();
-      const idsToDelete = oldestLogs.map(log => log.id!);
+      const oldestLogs = await this.db.syncLogs
+        .orderBy("timestamp")
+        .limit(logCount - 1000)
+        .toArray();
+      const idsToDelete = oldestLogs.map((log) => log.id!);
       await this.db.syncLogs.bulkDelete(idsToDelete);
     }
   }
 
   async getSyncLogs(limit: number = 100): Promise<SyncLog[]> {
     return await this.db.syncLogs
-      .orderBy('timestamp')
+      .orderBy("timestamp")
       .reverse()
       .limit(limit)
       .toArray();
@@ -744,11 +856,13 @@ class IntelligentSyncService {
     await this.db.metadata.put({
       key,
       value,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
-  private async getMetadata(key: string): Promise<{value: any, timestamp: string} | null> {
+  private async getMetadata(
+    key: string,
+  ): Promise<{ value: any; timestamp: string } | null> {
     const result = await this.db.metadata.get(key);
     return result ? { value: result.value, timestamp: result.timestamp } : null;
   }
@@ -756,10 +870,10 @@ class IntelligentSyncService {
   // Observer Pattern for UI Updates
   subscribe(observer: (stats: SyncStats) => void): () => void {
     this.observers.push(observer);
-    
+
     // Send initial stats
     this.getSyncStats().then(observer);
-    
+
     // Return unsubscribe function
     return () => {
       const index = this.observers.indexOf(observer);
@@ -770,25 +884,28 @@ class IntelligentSyncService {
   }
 
   private notifyObservers(): void {
-    this.getSyncStats().then(stats => {
-      this.observers.forEach(observer => observer(stats));
+    this.getSyncStats().then((stats) => {
+      this.observers.forEach((observer) => observer(stats));
     });
   }
 
   // Manual sync trigger
   async forceSyncNow(): Promise<boolean> {
     if (!this.connectionStatus.isOnline) {
-      throw new Error('Cannot sync while offline');
+      throw new Error("Cannot sync while offline");
     }
-    
+
     return await this.performSync();
   }
 
   // Retry failed operations
   async retryFailedOperations(): Promise<void> {
     // Reset retry count for failed operations
-    const failedOps = await this.db.syncOperations.where('retryCount').aboveOrEqual(3).toArray();
-    
+    const failedOps = await this.db.syncOperations
+      .where("retryCount")
+      .aboveOrEqual(3)
+      .toArray();
+
     for (const op of failedOps) {
       op.retryCount = 0;
       delete op.lastError;
@@ -797,38 +914,44 @@ class IntelligentSyncService {
 
     // Reset error status for entities
     const [errorForms, errorEmployees, errorAircraft] = await Promise.all([
-      this.db.forms.where('syncStatus').equals('error').toArray(),
-      this.db.employees.where('syncStatus').equals('error').toArray(),
-      this.db.aircraft.where('syncStatus').equals('error').toArray()
+      this.db.forms.where("syncStatus").equals("error").toArray(),
+      this.db.employees.where("syncStatus").equals("error").toArray(),
+      this.db.aircraft.where("syncStatus").equals("error").toArray(),
     ]);
 
     for (const form of errorForms) {
-      form.syncStatus = 'pending';
+      form.syncStatus = "pending";
       form.retryCount = 0;
       delete form.syncError;
       await this.db.forms.put(form);
     }
 
     for (const employee of errorEmployees) {
-      employee.syncStatus = 'pending';
+      employee.syncStatus = "pending";
       employee.retryCount = 0;
       delete employee.syncError;
       await this.db.employees.put(employee);
     }
 
     for (const aircraft of errorAircraft) {
-      aircraft.syncStatus = 'pending';
+      aircraft.syncStatus = "pending";
       aircraft.retryCount = 0;
       delete aircraft.syncError;
       await this.db.aircraft.put(aircraft);
     }
 
-    await this.logSync('info', 'sync', 'system', 'retry-reset', 'Reset all failed operations for retry');
-    
+    await this.logSync(
+      "info",
+      "sync",
+      "system",
+      "retry-reset",
+      "Reset all failed operations for retry",
+    );
+
     if (this.connectionStatus.isOnline) {
       setTimeout(() => this.performSync(), 1000);
     }
-    
+
     this.notifyObservers();
   }
 
@@ -840,11 +963,17 @@ class IntelligentSyncService {
       this.db.aircraft.clear(),
       this.db.syncOperations.clear(),
       this.db.syncLogs.clear(),
-      this.db.metadata.clear()
+      this.db.metadata.clear(),
     ]);
 
     await this.initializeMetadata();
-    await this.logSync('info', 'system', 'all', 'cleared', 'All offline data cleared');
+    await this.logSync(
+      "info",
+      "system",
+      "all",
+      "cleared",
+      "All offline data cleared",
+    );
     this.notifyObservers();
   }
 
@@ -853,14 +982,14 @@ class IntelligentSyncService {
     if (this.autoSyncInterval) {
       clearInterval(this.autoSyncInterval);
     }
-    
+
     if (this.retryTimeout) {
       clearTimeout(this.retryTimeout);
     }
 
-    window.removeEventListener('online', this.onComeOnline);
-    window.removeEventListener('offline', this.onGoOffline);
-    
+    window.removeEventListener("online", this.onComeOnline);
+    window.removeEventListener("offline", this.onGoOffline);
+
     this.db.close();
   }
 }

@@ -117,7 +117,10 @@ export default function Login() {
         <CardContent className="space-y-6 pb-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-3">
-              <Label htmlFor="email" className="text-white text-base font-medium">
+              <Label
+                htmlFor="email"
+                className="text-white text-base font-medium"
+              >
                 Email
               </Label>
               <div className="relative">
@@ -135,7 +138,10 @@ export default function Login() {
             </div>
 
             <div className="space-y-3">
-              <Label htmlFor="password" className="text-white text-base font-medium">
+              <Label
+                htmlFor="password"
+                className="text-white text-base font-medium"
+              >
                 Senha
               </Label>
               <div className="relative">

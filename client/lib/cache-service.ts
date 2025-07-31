@@ -1,4 +1,4 @@
-import { intelligentSyncService } from './intelligent-sync-service';
+import { intelligentSyncService } from "./intelligent-sync-service";
 
 class CacheService {
   private cacheValidityHours = 4; // Cache valid for 4 hours
@@ -9,7 +9,7 @@ class CacheService {
       await intelligentSyncService.cacheEmployees(employees);
       console.log(`Cached ${employees.length} employees`);
     } catch (error) {
-      console.error('Failed to cache employees:', error);
+      console.error("Failed to cache employees:", error);
     }
   }
 
@@ -17,7 +17,7 @@ class CacheService {
     try {
       return await intelligentSyncService.getAllEmployees();
     } catch (error) {
-      console.error('Failed to get cached employees:', error);
+      console.error("Failed to get cached employees:", error);
       return [];
     }
   }
@@ -26,7 +26,7 @@ class CacheService {
     try {
       return await intelligentSyncService.saveEmployee(employeeData);
     } catch (error) {
-      console.error('Failed to save employee:', error);
+      console.error("Failed to save employee:", error);
       throw error;
     }
   }
@@ -37,7 +37,7 @@ class CacheService {
       await intelligentSyncService.cacheAircraft(aircraft);
       console.log(`Cached ${aircraft.length} aircraft`);
     } catch (error) {
-      console.error('Failed to cache aircraft:', error);
+      console.error("Failed to cache aircraft:", error);
     }
   }
 
@@ -45,7 +45,7 @@ class CacheService {
     try {
       return await intelligentSyncService.getAllAircraft();
     } catch (error) {
-      console.error('Failed to get cached aircraft:', error);
+      console.error("Failed to get cached aircraft:", error);
       return [];
     }
   }
@@ -54,7 +54,7 @@ class CacheService {
     try {
       return await intelligentSyncService.saveAircraft(aircraftData);
     } catch (error) {
-      console.error('Failed to save aircraft:', error);
+      console.error("Failed to save aircraft:", error);
       throw error;
     }
   }
@@ -67,12 +67,13 @@ class CacheService {
     return diffHours > this.cacheValidityHours;
   }
 
-  async isCacheValid(type: 'employees' | 'aircraft'): Promise<boolean> {
+  async isCacheValid(type: "employees" | "aircraft"): Promise<boolean> {
     try {
-      const metadata = type === 'employees' 
-        ? await intelligentSyncService.getMetadata?.('employeesLastCached')
-        : await intelligentSyncService.getMetadata?.('aircraftLastCached');
-      
+      const metadata =
+        type === "employees"
+          ? await intelligentSyncService.getMetadata?.("employeesLastCached")
+          : await intelligentSyncService.getMetadata?.("aircraftLastCached");
+
       if (!metadata) return false;
       return !this.isExpired(metadata.timestamp);
     } catch (error) {
@@ -85,13 +86,13 @@ class CacheService {
     try {
       // Try to get fresh data if online
       if (navigator.onLine) {
-        const { supabase } = await import('./supabase');
+        const { supabase } = await import("./supabase");
         if (supabase) {
           const { data, error } = await supabase
-            .from('employees')
-            .select('*')
-            .eq('status', 'active');
-          
+            .from("employees")
+            .select("*")
+            .eq("status", "active");
+
           if (!error && data) {
             // Cache the fresh data
             await this.cacheEmployees(data);
@@ -103,15 +104,19 @@ class CacheService {
       // Fall back to cache
       const cachedEmployees = await this.getCachedEmployees();
       if (cachedEmployees.length > 0) {
-        return cachedEmployees.filter(emp => !emp._isCached || emp.status === 'active');
+        return cachedEmployees.filter(
+          (emp) => !emp._isCached || emp.status === "active",
+        );
       }
 
       // Final fallback to localStorage
       const savedEmployees = localStorage.getItem("aviation_employees");
       if (savedEmployees) {
         const employeesData = JSON.parse(savedEmployees);
-        const activeEmployees = employeesData.filter((emp: any) => emp.status === "active");
-        
+        const activeEmployees = employeesData.filter(
+          (emp: any) => emp.status === "active",
+        );
+
         // Cache the localStorage data for future use
         await this.cacheEmployees(activeEmployees);
         return activeEmployees;
@@ -119,7 +124,7 @@ class CacheService {
 
       return [];
     } catch (error) {
-      console.error('Failed to load employees with cache:', error);
+      console.error("Failed to load employees with cache:", error);
       return [];
     }
   }
@@ -128,13 +133,13 @@ class CacheService {
     try {
       // Try to get fresh data if online
       if (navigator.onLine) {
-        const { supabase } = await import('./supabase');
+        const { supabase } = await import("./supabase");
         if (supabase) {
           const { data, error } = await supabase
-            .from('aircraft')
-            .select('*')
-            .eq('status', 'active');
-          
+            .from("aircraft")
+            .select("*")
+            .eq("status", "active");
+
           if (!error && data) {
             // Cache the fresh data
             await this.cacheAircraft(data);
@@ -146,15 +151,19 @@ class CacheService {
       // Fall back to cache
       const cachedAircraft = await this.getCachedAircraft();
       if (cachedAircraft.length > 0) {
-        return cachedAircraft.filter(ac => !ac._isCached || ac.status === 'active');
+        return cachedAircraft.filter(
+          (ac) => !ac._isCached || ac.status === "active",
+        );
       }
 
       // Final fallback to localStorage
       const savedAircraft = localStorage.getItem("aviation_aircraft");
       if (savedAircraft) {
         const aircraftData = JSON.parse(savedAircraft);
-        const activeAircraft = aircraftData.filter((ac: any) => ac.status === "active");
-        
+        const activeAircraft = aircraftData.filter(
+          (ac: any) => ac.status === "active",
+        );
+
         // Cache the localStorage data for future use
         await this.cacheAircraft(activeAircraft);
         return activeAircraft;
@@ -162,39 +171,39 @@ class CacheService {
 
       return [];
     } catch (error) {
-      console.error('Failed to load aircraft with cache:', error);
+      console.error("Failed to load aircraft with cache:", error);
       return [];
     }
   }
 
   // Clear cache
-  async clearCache(type?: 'employees' | 'aircraft'): Promise<void> {
+  async clearCache(type?: "employees" | "aircraft"): Promise<void> {
     try {
-      if (!type || type === 'employees') {
+      if (!type || type === "employees") {
         // Clear employees cache by removing all cached items
         const employees = await intelligentSyncService.getAllEmployees();
-        for (const emp of employees.filter(e => e._isCached)) {
+        for (const emp of employees.filter((e) => e._isCached)) {
           await intelligentSyncService.deleteEmployee?.(emp.id);
         }
       }
-      
-      if (!type || type === 'aircraft') {
+
+      if (!type || type === "aircraft") {
         // Clear aircraft cache by removing all cached items
         const aircraft = await intelligentSyncService.getAllAircraft();
-        for (const ac of aircraft.filter(a => a._isCached)) {
+        for (const ac of aircraft.filter((a) => a._isCached)) {
           await intelligentSyncService.deleteAircraft?.(ac.id);
         }
       }
     } catch (error) {
-      console.error('Failed to clear cache:', error);
+      console.error("Failed to clear cache:", error);
     }
   }
 
   // Force refresh cache
-  async refreshCache(type: 'employees' | 'aircraft'): Promise<void> {
+  async refreshCache(type: "employees" | "aircraft"): Promise<void> {
     await this.clearCache(type);
-    
-    if (type === 'employees') {
+
+    if (type === "employees") {
       await this.loadEmployeesWithCache();
     } else {
       await this.loadAircraftWithCache();
@@ -209,29 +218,32 @@ class CacheService {
     try {
       const [employees, aircraft] = await Promise.all([
         this.getCachedEmployees(),
-        this.getCachedAircraft()
+        this.getCachedAircraft(),
       ]);
 
-      const employeesLastCached = await intelligentSyncService.getMetadata?.('employeesLastCached');
-      const aircraftLastCached = await intelligentSyncService.getMetadata?.('aircraftLastCached');
+      const employeesLastCached = await intelligentSyncService.getMetadata?.(
+        "employeesLastCached",
+      );
+      const aircraftLastCached =
+        await intelligentSyncService.getMetadata?.("aircraftLastCached");
 
       return {
         employees: {
           total: employees.length,
-          cached: employees.filter(e => e._isCached).length,
-          lastUpdate: employeesLastCached?.timestamp
+          cached: employees.filter((e) => e._isCached).length,
+          lastUpdate: employeesLastCached?.timestamp,
         },
         aircraft: {
           total: aircraft.length,
-          cached: aircraft.filter(a => a._isCached).length,
-          lastUpdate: aircraftLastCached?.timestamp
-        }
+          cached: aircraft.filter((a) => a._isCached).length,
+          lastUpdate: aircraftLastCached?.timestamp,
+        },
       };
     } catch (error) {
-      console.error('Failed to get cache stats:', error);
+      console.error("Failed to get cache stats:", error);
       return {
         employees: { total: 0, cached: 0 },
-        aircraft: { total: 0, cached: 0 }
+        aircraft: { total: 0, cached: 0 },
       };
     }
   }

@@ -60,7 +60,10 @@ import { format, parseISO, isWithinInterval } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { intelligentSyncService } from "@/lib/intelligent-sync-service";
 import { cacheService } from "@/lib/cache-service";
-import { previewCleaningFormPDF, downloadCleaningFormPDF } from "@/lib/pdf-utils";
+import {
+  previewCleaningFormPDF,
+  downloadCleaningFormPDF,
+} from "@/lib/pdf-utils";
 import { exportService } from "@/lib/export-service";
 import { batchOperationsService } from "@/lib/batch-operations-service";
 
@@ -110,14 +113,16 @@ export default function HistoryExportPanel() {
   const [filteredForms, setFilteredForms] = useState<CleaningForm[]>([]);
   const [aircraft, setAircraft] = useState<any[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);
-  
+
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [selectedForms, setSelectedForms] = useState<string[]>([]);
   const [isExporting, setIsExporting] = useState(false);
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
-  const [viewingFormPDF, setViewingFormPDF] = useState<CleaningForm | null>(null);
+  const [viewingFormPDF, setViewingFormPDF] = useState<CleaningForm | null>(
+    null,
+  );
 
   const [filters, setFilters] = useState<FilterOptions>({
     dateFrom: "",
@@ -169,7 +174,7 @@ export default function HistoryExportPanel() {
         cacheService.loadAircraftWithCache(),
         cacheService.loadEmployeesWithCache(),
       ]);
-      
+
       setAircraft(aircraftData);
       setEmployees(employeesData);
     } catch (error) {
@@ -194,9 +199,7 @@ export default function HistoryExportPanel() {
         (form) =>
           form.code.toLowerCase().includes(term) ||
           form.location.toLowerCase().includes(term) ||
-          form.employees.some((emp) =>
-            emp.name.toLowerCase().includes(term)
-          )
+          form.employees.some((emp) => emp.name.toLowerCase().includes(term)),
       );
     }
 
@@ -204,7 +207,7 @@ export default function HistoryExportPanel() {
     if (filters.dateFrom || filters.dateTo) {
       filtered = filtered.filter((form) => {
         const formDate = parseISO(form.date);
-        
+
         if (filters.dateFrom && filters.dateTo) {
           return isWithinInterval(formDate, {
             start: parseISO(filters.dateFrom),
@@ -227,13 +230,15 @@ export default function HistoryExportPanel() {
     // Employee filter
     if (filters.employeeId) {
       filtered = filtered.filter((form) =>
-        form.employees.some((emp) => emp.id === filters.employeeId)
+        form.employees.some((emp) => emp.id === filters.employeeId),
       );
     }
 
     // Aircraft filter
     if (filters.aircraftId) {
-      filtered = filtered.filter((form) => form.aircraftId === filters.aircraftId);
+      filtered = filtered.filter(
+        (form) => form.aircraftId === filters.aircraftId,
+      );
     }
 
     // Status filter
@@ -243,7 +248,9 @@ export default function HistoryExportPanel() {
 
     // Sync status filter
     if (filters.syncStatus) {
-      filtered = filtered.filter((form) => form.syncStatus === filters.syncStatus);
+      filtered = filtered.filter(
+        (form) => form.syncStatus === filters.syncStatus,
+      );
     }
 
     setFilteredForms(filtered);
@@ -261,7 +268,7 @@ export default function HistoryExportPanel() {
     setSelectedForms((prev) =>
       prev.includes(formId)
         ? prev.filter((id) => id !== formId)
-        : [...prev, formId]
+        : [...prev, formId],
     );
   };
 
@@ -279,8 +286,10 @@ export default function HistoryExportPanel() {
   };
 
   const getActiveFilterCount = () => {
-    return Object.values(filters).filter((value) => value !== "").length +
-           (searchTerm ? 1 : 0);
+    return (
+      Object.values(filters).filter((value) => value !== "").length +
+      (searchTerm ? 1 : 0)
+    );
   };
 
   const exportToCSV = async (formsToExport: CleaningForm[]) => {
@@ -312,7 +321,7 @@ export default function HistoryExportPanel() {
     setIsExporting(true);
     try {
       const formsToExport = forms.filter((form) =>
-        selectedForms.includes(form.id)
+        selectedForms.includes(form.id),
       );
 
       if (exportOptions.format === "csv") {
@@ -344,7 +353,7 @@ export default function HistoryExportPanel() {
 
     try {
       const formsToExport = forms.filter((form) =>
-        selectedForms.includes(form.id)
+        selectedForms.includes(form.id),
       );
 
       const result = await batchOperationsService.batchPrint(
@@ -352,7 +361,7 @@ export default function HistoryExportPanel() {
         aircraft,
         (current, total) => {
           console.log(`Imprimindo ${current} de ${total}`);
-        }
+        },
       );
 
       if (result.failed > 0) {
@@ -382,7 +391,7 @@ export default function HistoryExportPanel() {
 
     try {
       const formsToExport = forms.filter((form) =>
-        selectedForms.includes(form.id)
+        selectedForms.includes(form.id),
       );
 
       const result = await batchOperationsService.batchDownload(
@@ -390,7 +399,7 @@ export default function HistoryExportPanel() {
         aircraft,
         (current, total) => {
           console.log(`Baixando ${current} de ${total}`);
-        }
+        },
       );
 
       if (result.failed > 0) {
@@ -537,7 +546,9 @@ export default function HistoryExportPanel() {
               </DialogTrigger>
               <DialogContent className="max-w-2xl bg-aviation-gray-800 border-white/20">
                 <DialogHeader>
-                  <DialogTitle className="text-white">Filtros Avançados</DialogTitle>
+                  <DialogTitle className="text-white">
+                    Filtros Avançados
+                  </DialogTitle>
                   <DialogDescription className="text-white/70">
                     Configure os filtros para refinar sua busca
                   </DialogDescription>
@@ -550,7 +561,10 @@ export default function HistoryExportPanel() {
                       type="date"
                       value={filters.dateFrom}
                       onChange={(e) =>
-                        setFilters((prev) => ({ ...prev, dateFrom: e.target.value }))
+                        setFilters((prev) => ({
+                          ...prev,
+                          dateFrom: e.target.value,
+                        }))
                       }
                       className="aviation-input"
                     />
@@ -562,7 +576,10 @@ export default function HistoryExportPanel() {
                       type="date"
                       value={filters.dateTo}
                       onChange={(e) =>
-                        setFilters((prev) => ({ ...prev, dateTo: e.target.value }))
+                        setFilters((prev) => ({
+                          ...prev,
+                          dateTo: e.target.value,
+                        }))
                       }
                       className="aviation-input"
                     />
@@ -670,7 +687,10 @@ export default function HistoryExportPanel() {
                         <SelectItem value="draft" className="text-white">
                           Rascunho
                         </SelectItem>
-                        <SelectItem value="pending_signatures" className="text-white">
+                        <SelectItem
+                          value="pending_signatures"
+                          className="text-white"
+                        >
                           Aguardando Assinaturas
                         </SelectItem>
                         <SelectItem value="completed" className="text-white">
@@ -718,7 +738,9 @@ export default function HistoryExportPanel() {
               className="border-white/30 text-white hover:bg-white/20"
             >
               <CheckSquare className="h-4 w-4 mr-2" />
-              {selectedForms.length === filteredForms.length ? "Desmarcar Todos" : "Selecionar Todos"}
+              {selectedForms.length === filteredForms.length
+                ? "Desmarcar Todos"
+                : "Selecionar Todos"}
             </Button>
 
             <DropdownMenu>
@@ -733,7 +755,9 @@ export default function HistoryExportPanel() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-aviation-gray-800 border-white/20">
-                <DropdownMenuLabel className="text-white">Operações em Lote</DropdownMenuLabel>
+                <DropdownMenuLabel className="text-white">
+                  Operações em Lote
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="text-white hover:bg-white/20"
@@ -761,13 +785,16 @@ export default function HistoryExportPanel() {
 
             <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
               <DialogTrigger asChild>
-                <div style={{ display: 'none' }} />
+                <div style={{ display: "none" }} />
               </DialogTrigger>
               <DialogContent className="max-w-lg bg-aviation-gray-800 border-white/20">
                 <DialogHeader>
-                  <DialogTitle className="text-white">Exportar Dados</DialogTitle>
+                  <DialogTitle className="text-white">
+                    Exportar Dados
+                  </DialogTitle>
                   <DialogDescription className="text-white/70">
-                    Configure as opções de exportação para {selectedForms.length} folha(s) selecionada(s)
+                    Configure as opções de exportação para{" "}
+                    {selectedForms.length} folha(s) selecionada(s)
                   </DialogDescription>
                 </DialogHeader>
 
@@ -796,7 +823,7 @@ export default function HistoryExportPanel() {
 
                   <div className="space-y-3">
                     <Label className="text-white">Incluir</Label>
-                    
+
                     <div className="flex items-center space-x-2">
                       <Checkbox
                         id="includePDFs"
@@ -809,7 +836,10 @@ export default function HistoryExportPanel() {
                         }
                         className="border-white/30"
                       />
-                      <Label htmlFor="includePDFs" className="text-white text-sm">
+                      <Label
+                        htmlFor="includePDFs"
+                        className="text-white text-sm"
+                      >
                         Links para PDFs
                       </Label>
                     </div>
@@ -827,7 +857,10 @@ export default function HistoryExportPanel() {
                         className="border-white/30"
                         disabled={exportOptions.format === "csv"}
                       />
-                      <Label htmlFor="includePhotos" className="text-white text-sm">
+                      <Label
+                        htmlFor="includePhotos"
+                        className="text-white text-sm"
+                      >
                         Evidências fotográficas (apenas ZIP)
                       </Label>
                     </div>
@@ -874,14 +907,18 @@ export default function HistoryExportPanel() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Card className="glass-card border-white/20">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-white">{filteredForms.length}</div>
+              <div className="text-2xl font-bold text-white">
+                {filteredForms.length}
+              </div>
               <div className="text-white/70 text-sm">Folhas Encontradas</div>
             </CardContent>
           </Card>
-          
+
           <Card className="glass-card border-white/20">
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-white">{selectedForms.length}</div>
+              <div className="text-2xl font-bold text-white">
+                {selectedForms.length}
+              </div>
               <div className="text-white/70 text-sm">Selecionadas</div>
             </CardContent>
           </Card>
@@ -908,14 +945,18 @@ export default function HistoryExportPanel() {
         {/* Forms List */}
         <div className="space-y-4">
           {filteredForms.map((form) => {
-            const aircraftData = aircraft.find((ac) => ac.id === form.aircraftId);
+            const aircraftData = aircraft.find(
+              (ac) => ac.id === form.aircraftId,
+            );
             const isSelected = selectedForms.includes(form.id);
 
             return (
               <Card
                 key={form.id}
                 className={`glass-card border-white/20 transition-all duration-200 ${
-                  isSelected ? "ring-2 ring-aviation-blue-500 bg-white/25" : "hover:bg-white/20"
+                  isSelected
+                    ? "ring-2 ring-aviation-blue-500 bg-white/25"
+                    : "hover:bg-white/20"
                 }`}
               >
                 <CardContent className="p-6">
@@ -932,13 +973,20 @@ export default function HistoryExportPanel() {
                           <h3 className="text-lg font-semibold text-white">
                             {form.code}
                           </h3>
-                          <Badge className={`${getStatusColor(form.status)} text-white`}>
+                          <Badge
+                            className={`${getStatusColor(form.status)} text-white`}
+                          >
                             {getStatusText(form.status)}
                           </Badge>
                           {form.syncStatus && (
-                            <div className={`text-xs ${getSyncStatusColor(form.syncStatus)}`}>
-                              {form.syncStatus === "synced" ? "Sincronizado" :
-                               form.syncStatus === "pending" ? "Sincronizando..." : "Erro de sinc."}
+                            <div
+                              className={`text-xs ${getSyncStatusColor(form.syncStatus)}`}
+                            >
+                              {form.syncStatus === "synced"
+                                ? "Sincronizado"
+                                : form.syncStatus === "pending"
+                                  ? "Sincronizando..."
+                                  : "Erro de sinc."}
                             </div>
                           )}
                         </div>
@@ -947,25 +995,28 @@ export default function HistoryExportPanel() {
                           <div className="flex items-center space-x-2">
                             <Calendar className="h-4 w-4" />
                             <span>
-                              {format(parseISO(form.date), "dd/MM/yyyy", { locale: ptBR })} -{" "}
+                              {format(parseISO(form.date), "dd/MM/yyyy", {
+                                locale: ptBR,
+                              })}{" "}
+                              -{" "}
                               {form.shift === "morning"
                                 ? "Manhã"
                                 : form.shift === "afternoon"
-                                ? "Tarde"
-                                : "Noite"}
+                                  ? "Tarde"
+                                  : "Noite"}
                             </span>
                           </div>
-                          
+
                           <div className="flex items-center space-x-2">
                             <MapPin className="h-4 w-4" />
                             <span>{form.location}</span>
                           </div>
-                          
+
                           <div className="flex items-center space-x-2">
                             <Users className="h-4 w-4" />
                             <span>{form.employees.length} funcionário(s)</span>
                           </div>
-                          
+
                           <div className="flex items-center space-x-2">
                             <FileText className="h-4 w-4" />
                             <span>
@@ -977,7 +1028,9 @@ export default function HistoryExportPanel() {
                         </div>
 
                         <div className="mt-3 text-xs text-white/60">
-                          <span>Tipos: {form.interventionTypes.join(", ")}</span>
+                          <span>
+                            Tipos: {form.interventionTypes.join(", ")}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -987,7 +1040,9 @@ export default function HistoryExportPanel() {
                         variant="outline"
                         size="sm"
                         onClick={() => {
-                          const aircraftData = aircraft.find((ac) => ac.id === form.aircraftId);
+                          const aircraftData = aircraft.find(
+                            (ac) => ac.id === form.aircraftId,
+                          );
                           previewCleaningFormPDF(form, aircraftData);
                         }}
                         className="border-white/30 text-white hover:bg-white/20"
@@ -1015,12 +1070,16 @@ export default function HistoryExportPanel() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="bg-aviation-gray-800 border-white/20">
-                          <DropdownMenuLabel className="text-white">Ações</DropdownMenuLabel>
+                          <DropdownMenuLabel className="text-white">
+                            Ações
+                          </DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
                             className="text-white hover:bg-white/20"
                             onClick={() => {
-                              const aircraftData = aircraft.find((ac) => ac.id === form.aircraftId);
+                              const aircraftData = aircraft.find(
+                                (ac) => ac.id === form.aircraftId,
+                              );
                               downloadCleaningFormPDF(form, aircraftData);
                             }}
                           >
@@ -1048,10 +1107,7 @@ export default function HistoryExportPanel() {
                   : "Não há folhas de limpeza no sistema"}
               </p>
               {getActiveFilterCount() > 0 && (
-                <Button
-                  onClick={clearFilters}
-                  className="aviation-button"
-                >
+                <Button onClick={clearFilters} className="aviation-button">
                   Limpar Filtros
                 </Button>
               )}

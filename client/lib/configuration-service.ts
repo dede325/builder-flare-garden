@@ -207,9 +207,13 @@ class ConfigurationService {
   async initializeConfigurations(): Promise<void> {
     try {
       // Check if configurations exist in localStorage
-      const existingInterventionTypes = localStorage.getItem(this.STORAGE_KEYS.INTERVENTION_TYPES);
+      const existingInterventionTypes = localStorage.getItem(
+        this.STORAGE_KEYS.INTERVENTION_TYPES,
+      );
       const existingShifts = localStorage.getItem(this.STORAGE_KEYS.SHIFTS);
-      const existingLocations = localStorage.getItem(this.STORAGE_KEYS.LOCATIONS);
+      const existingLocations = localStorage.getItem(
+        this.STORAGE_KEYS.LOCATIONS,
+      );
 
       // Initialize with defaults if not present
       if (!existingInterventionTypes) {
@@ -242,7 +246,7 @@ class ConfigurationService {
           .order("order");
 
         if (!error && data) {
-          return data.map(item => ({
+          return data.map((item) => ({
             id: item.id,
             name: item.name,
             description: item.description,
@@ -273,7 +277,7 @@ class ConfigurationService {
     try {
       // Save to Supabase if available
       if (supabase) {
-        const supabaseData = types.map(type => ({
+        const supabaseData = types.map((type) => ({
           id: type.id,
           name: type.name,
           description: type.description,
@@ -294,17 +298,22 @@ class ConfigurationService {
     }
 
     // Always save to localStorage as backup
-    localStorage.setItem(this.STORAGE_KEYS.INTERVENTION_TYPES, JSON.stringify(types));
+    localStorage.setItem(
+      this.STORAGE_KEYS.INTERVENTION_TYPES,
+      JSON.stringify(types),
+    );
   }
 
-  async addInterventionType(type: Omit<InterventionType, "id" | "createdAt" | "updatedAt">): Promise<InterventionType> {
+  async addInterventionType(
+    type: Omit<InterventionType, "id" | "createdAt" | "updatedAt">,
+  ): Promise<InterventionType> {
     const existingTypes = await this.getInterventionTypes();
-    
+
     // Validate for duplicates
-    const duplicate = existingTypes.find(t => 
-      t.name.toLowerCase().trim() === type.name.toLowerCase().trim()
+    const duplicate = existingTypes.find(
+      (t) => t.name.toLowerCase().trim() === type.name.toLowerCase().trim(),
     );
-    
+
     if (duplicate) {
       throw new Error(`Tipo de intervenção "${type.name}" já existe`);
     }
@@ -316,26 +325,33 @@ class ConfigurationService {
       updatedAt: new Date().toISOString(),
     };
 
-    const updatedTypes = [...existingTypes, newType].sort((a, b) => a.order - b.order);
+    const updatedTypes = [...existingTypes, newType].sort(
+      (a, b) => a.order - b.order,
+    );
     await this.saveInterventionTypes(updatedTypes);
-    
+
     return newType;
   }
 
-  async updateInterventionType(id: string, updates: Partial<InterventionType>): Promise<InterventionType> {
+  async updateInterventionType(
+    id: string,
+    updates: Partial<InterventionType>,
+  ): Promise<InterventionType> {
     const existingTypes = await this.getInterventionTypes();
-    const typeIndex = existingTypes.findIndex(t => t.id === id);
-    
+    const typeIndex = existingTypes.findIndex((t) => t.id === id);
+
     if (typeIndex === -1) {
       throw new Error("Tipo de intervenção não encontrado");
     }
 
     // Validate for duplicates if name is being updated
     if (updates.name) {
-      const duplicate = existingTypes.find(t => 
-        t.id !== id && t.name.toLowerCase().trim() === updates.name!.toLowerCase().trim()
+      const duplicate = existingTypes.find(
+        (t) =>
+          t.id !== id &&
+          t.name.toLowerCase().trim() === updates.name!.toLowerCase().trim(),
       );
-      
+
       if (duplicate) {
         throw new Error(`Tipo de intervenção "${updates.name}" já existe`);
       }
@@ -348,15 +364,17 @@ class ConfigurationService {
     };
 
     existingTypes[typeIndex] = updatedType;
-    await this.saveInterventionTypes(existingTypes.sort((a, b) => a.order - b.order));
-    
+    await this.saveInterventionTypes(
+      existingTypes.sort((a, b) => a.order - b.order),
+    );
+
     return updatedType;
   }
 
   async deleteInterventionType(id: string): Promise<void> {
     const existingTypes = await this.getInterventionTypes();
-    const filteredTypes = existingTypes.filter(t => t.id !== id);
-    
+    const filteredTypes = existingTypes.filter((t) => t.id !== id);
+
     if (filteredTypes.length === existingTypes.length) {
       throw new Error("Tipo de intervenção não encontrado");
     }
@@ -376,7 +394,7 @@ class ConfigurationService {
           .order("order");
 
         if (!error && data) {
-          return data.map(item => ({
+          return data.map((item) => ({
             id: item.id,
             name: item.name,
             displayName: item.display_name,
@@ -409,7 +427,7 @@ class ConfigurationService {
     try {
       // Save to Supabase if available
       if (supabase) {
-        const supabaseData = shifts.map(shift => ({
+        const supabaseData = shifts.map((shift) => ({
           id: shift.id,
           name: shift.name,
           display_name: shift.displayName,
@@ -447,7 +465,7 @@ class ConfigurationService {
           .order("order");
 
         if (!error && data) {
-          return data.map(item => ({
+          return data.map((item) => ({
             id: item.id,
             name: item.name,
             description: item.description,
@@ -478,7 +496,7 @@ class ConfigurationService {
     try {
       // Save to Supabase if available
       if (supabase) {
-        const supabaseData = locations.map(location => ({
+        const supabaseData = locations.map((location) => ({
           id: location.id,
           name: location.name,
           description: location.description,
@@ -499,17 +517,22 @@ class ConfigurationService {
     }
 
     // Always save to localStorage as backup
-    localStorage.setItem(this.STORAGE_KEYS.LOCATIONS, JSON.stringify(locations));
+    localStorage.setItem(
+      this.STORAGE_KEYS.LOCATIONS,
+      JSON.stringify(locations),
+    );
   }
 
-  async addLocation(location: Omit<LocationConfig, "id" | "createdAt" | "updatedAt">): Promise<LocationConfig> {
+  async addLocation(
+    location: Omit<LocationConfig, "id" | "createdAt" | "updatedAt">,
+  ): Promise<LocationConfig> {
     const existingLocations = await this.getLocations();
-    
+
     // Validate for duplicates
-    const duplicate = existingLocations.find(l => 
-      l.name.toLowerCase().trim() === location.name.toLowerCase().trim()
+    const duplicate = existingLocations.find(
+      (l) => l.name.toLowerCase().trim() === location.name.toLowerCase().trim(),
     );
-    
+
     if (duplicate) {
       throw new Error(`Local "${location.name}" já existe`);
     }
@@ -521,26 +544,33 @@ class ConfigurationService {
       updatedAt: new Date().toISOString(),
     };
 
-    const updatedLocations = [...existingLocations, newLocation].sort((a, b) => a.order - b.order);
+    const updatedLocations = [...existingLocations, newLocation].sort(
+      (a, b) => a.order - b.order,
+    );
     await this.saveLocations(updatedLocations);
-    
+
     return newLocation;
   }
 
-  async updateLocation(id: string, updates: Partial<LocationConfig>): Promise<LocationConfig> {
+  async updateLocation(
+    id: string,
+    updates: Partial<LocationConfig>,
+  ): Promise<LocationConfig> {
     const existingLocations = await this.getLocations();
-    const locationIndex = existingLocations.findIndex(l => l.id === id);
-    
+    const locationIndex = existingLocations.findIndex((l) => l.id === id);
+
     if (locationIndex === -1) {
       throw new Error("Local não encontrado");
     }
 
     // Validate for duplicates if name is being updated
     if (updates.name) {
-      const duplicate = existingLocations.find(l => 
-        l.id !== id && l.name.toLowerCase().trim() === updates.name!.toLowerCase().trim()
+      const duplicate = existingLocations.find(
+        (l) =>
+          l.id !== id &&
+          l.name.toLowerCase().trim() === updates.name!.toLowerCase().trim(),
       );
-      
+
       if (duplicate) {
         throw new Error(`Local "${updates.name}" já existe`);
       }
@@ -553,15 +583,17 @@ class ConfigurationService {
     };
 
     existingLocations[locationIndex] = updatedLocation;
-    await this.saveLocations(existingLocations.sort((a, b) => a.order - b.order));
-    
+    await this.saveLocations(
+      existingLocations.sort((a, b) => a.order - b.order),
+    );
+
     return updatedLocation;
   }
 
   async deleteLocation(id: string): Promise<void> {
     const existingLocations = await this.getLocations();
-    const filteredLocations = existingLocations.filter(l => l.id !== id);
-    
+    const filteredLocations = existingLocations.filter((l) => l.id !== id);
+
     if (filteredLocations.length === existingLocations.length) {
       throw new Error("Local não encontrado");
     }
@@ -586,24 +618,28 @@ class ConfigurationService {
 
   // Utility methods for legacy compatibility
   getInterventionTypeNames(): Promise<string[]> {
-    return this.getInterventionTypes().then(types => 
-      types.filter(t => t.isActive).map(t => t.name)
+    return this.getInterventionTypes().then((types) =>
+      types.filter((t) => t.isActive).map((t) => t.name),
     );
   }
 
   getLocationNames(): Promise<string[]> {
-    return this.getLocations().then(locations => 
-      locations.filter(l => l.isActive).map(l => l.name)
+    return this.getLocations().then((locations) =>
+      locations.filter((l) => l.isActive).map((l) => l.name),
     );
   }
 
-  getShiftOptions(): Promise<Array<{value: string, label: string, times: string}>> {
-    return this.getShifts().then(shifts => 
-      shifts.filter(s => s.isActive).map(s => ({
-        value: s.name,
-        label: s.displayName,
-        times: `${s.startTime} - ${s.endTime}`
-      }))
+  getShiftOptions(): Promise<
+    Array<{ value: string; label: string; times: string }>
+  > {
+    return this.getShifts().then((shifts) =>
+      shifts
+        .filter((s) => s.isActive)
+        .map((s) => ({
+          value: s.name,
+          label: s.displayName,
+          times: `${s.startTime} - ${s.endTime}`,
+        })),
     );
   }
 }

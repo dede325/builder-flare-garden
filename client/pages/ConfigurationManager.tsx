@@ -69,7 +69,9 @@ export default function ConfigurationManager() {
   const [activeTab, setActiveTab] = useState("interventions");
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [addDialogType, setAddDialogType] = useState<"intervention" | "shift" | "location">("intervention");
+  const [addDialogType, setAddDialogType] = useState<
+    "intervention" | "shift" | "location"
+  >("intervention");
 
   // Form states
   const [interventionForm, setInterventionForm] = useState({
@@ -215,13 +217,14 @@ export default function ConfigurationManager() {
         name: interventionForm.name.trim(),
         description: interventionForm.description.trim(),
         isActive: interventionForm.isActive,
-        order: interventionForm.order || configuration.interventionTypes.length + 1,
+        order:
+          interventionForm.order || configuration.interventionTypes.length + 1,
       });
 
       await loadConfiguration();
       setShowAddDialog(false);
       resetForms();
-      
+
       toast({
         title: "Tipo de intervenção adicionado",
         description: `"${interventionForm.name}" foi adicionado com sucesso.`,
@@ -249,7 +252,7 @@ export default function ConfigurationManager() {
       await loadConfiguration();
       setShowAddDialog(false);
       resetForms();
-      
+
       toast({
         title: "Local adicionado",
         description: `"${locationForm.name}" foi adicionado com sucesso.`,
@@ -263,12 +266,15 @@ export default function ConfigurationManager() {
     }
   };
 
-  const handleUpdateInterventionType = async (id: string, updates: Partial<InterventionType>) => {
+  const handleUpdateInterventionType = async (
+    id: string,
+    updates: Partial<InterventionType>,
+  ) => {
     try {
       await configurationService.updateInterventionType(id, updates);
       await loadConfiguration();
       setIsEditing(null);
-      
+
       toast({
         title: "Tipo de intervenção atualizado",
         description: "As alterações foram salvas com sucesso.",
@@ -282,12 +288,15 @@ export default function ConfigurationManager() {
     }
   };
 
-  const handleUpdateLocation = async (id: string, updates: Partial<LocationConfig>) => {
+  const handleUpdateLocation = async (
+    id: string,
+    updates: Partial<LocationConfig>,
+  ) => {
     try {
       await configurationService.updateLocation(id, updates);
       await loadConfiguration();
       setIsEditing(null);
-      
+
       toast({
         title: "Local atualizado",
         description: "As alterações foram salvas com sucesso.",
@@ -305,7 +314,7 @@ export default function ConfigurationManager() {
     try {
       await configurationService.deleteInterventionType(id);
       await loadConfiguration();
-      
+
       toast({
         title: "Tipo de intervenção removido",
         description: "O item foi removido com sucesso.",
@@ -323,7 +332,7 @@ export default function ConfigurationManager() {
     try {
       await configurationService.deleteLocation(id);
       await loadConfiguration();
-      
+
       toast({
         title: "Local removido",
         description: "O item foi removido com sucesso.",
@@ -386,7 +395,8 @@ export default function ConfigurationManager() {
             Configure os tipos de intervenção, turnos e locais do sistema
           </h2>
           <p className="text-white/70 text-sm">
-            Gerencie as opções disponíveis nas folhas de limpeza de forma dinâmica
+            Gerencie as opções disponíveis nas folhas de limpeza de forma
+            dinâmica
           </p>
         </div>
 
@@ -410,9 +420,12 @@ export default function ConfigurationManager() {
           <TabsContent value="interventions" className="space-y-6 mt-6">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-xl font-semibold text-white">Tipos de Intervenção</h3>
+                <h3 className="text-xl font-semibold text-white">
+                  Tipos de Intervenção
+                </h3>
                 <p className="text-white/70 text-sm">
-                  Configure os tipos de serviços disponíveis ({configuration.interventionTypes.length} itens)
+                  Configure os tipos de serviços disponíveis (
+                  {configuration.interventionTypes.length} itens)
                 </p>
               </div>
               <Button
@@ -431,7 +444,9 @@ export default function ConfigurationManager() {
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center space-x-2">
                         <GripVertical className="h-4 w-4 text-white/50" />
-                        <Badge variant={type.isActive ? "default" : "secondary"}>
+                        <Badge
+                          variant={type.isActive ? "default" : "secondary"}
+                        >
                           {type.isActive ? "Ativo" : "Inativo"}
                         </Badge>
                       </div>
@@ -439,10 +454,16 @@ export default function ConfigurationManager() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setIsEditing(isEditing === type.id ? null : type.id)}
+                          onClick={() =>
+                            setIsEditing(isEditing === type.id ? null : type.id)
+                          }
                           className="text-white hover:bg-white/20 h-8 w-8 p-0"
                         >
-                          {isEditing === type.id ? <X className="h-4 w-4" /> : <Edit className="h-4 w-4" />}
+                          {isEditing === type.id ? (
+                            <X className="h-4 w-4" />
+                          ) : (
+                            <Edit className="h-4 w-4" />
+                          )}
                         </Button>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
@@ -456,9 +477,12 @@ export default function ConfigurationManager() {
                           </AlertDialogTrigger>
                           <AlertDialogContent className="bg-aviation-gray-800 border-white/20">
                             <AlertDialogHeader>
-                              <AlertDialogTitle className="text-white">Confirmar Exclusão</AlertDialogTitle>
+                              <AlertDialogTitle className="text-white">
+                                Confirmar Exclusão
+                              </AlertDialogTitle>
                               <AlertDialogDescription className="text-white/70">
-                                Tem certeza que deseja remover "{type.name}"? Esta ação não pode ser desfeita.
+                                Tem certeza que deseja remover "{type.name}"?
+                                Esta ação não pode ser desfeita.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
@@ -466,7 +490,9 @@ export default function ConfigurationManager() {
                                 Cancelar
                               </AlertDialogCancel>
                               <AlertDialogAction
-                                onClick={() => handleDeleteInterventionType(type.id)}
+                                onClick={() =>
+                                  handleDeleteInterventionType(type.id)
+                                }
                                 className="bg-red-600 hover:bg-red-700"
                               >
                                 Remover
@@ -482,10 +508,16 @@ export default function ConfigurationManager() {
                         <Input
                           value={type.name}
                           onChange={(e) => {
-                            const updatedTypes = configuration.interventionTypes.map(t =>
-                              t.id === type.id ? { ...t, name: e.target.value } : t
-                            );
-                            setConfiguration(prev => ({ ...prev, interventionTypes: updatedTypes }));
+                            const updatedTypes =
+                              configuration.interventionTypes.map((t) =>
+                                t.id === type.id
+                                  ? { ...t, name: e.target.value }
+                                  : t,
+                              );
+                            setConfiguration((prev) => ({
+                              ...prev,
+                              interventionTypes: updatedTypes,
+                            }));
                           }}
                           className="aviation-input"
                           placeholder="Nome do tipo"
@@ -493,10 +525,16 @@ export default function ConfigurationManager() {
                         <Textarea
                           value={type.description || ""}
                           onChange={(e) => {
-                            const updatedTypes = configuration.interventionTypes.map(t =>
-                              t.id === type.id ? { ...t, description: e.target.value } : t
-                            );
-                            setConfiguration(prev => ({ ...prev, interventionTypes: updatedTypes }));
+                            const updatedTypes =
+                              configuration.interventionTypes.map((t) =>
+                                t.id === type.id
+                                  ? { ...t, description: e.target.value }
+                                  : t,
+                              );
+                            setConfiguration((prev) => ({
+                              ...prev,
+                              interventionTypes: updatedTypes,
+                            }));
                           }}
                           className="aviation-input"
                           placeholder="Descrição (opcional)"
@@ -507,21 +545,29 @@ export default function ConfigurationManager() {
                             <Switch
                               checked={type.isActive}
                               onCheckedChange={(checked) => {
-                                const updatedTypes = configuration.interventionTypes.map(t =>
-                                  t.id === type.id ? { ...t, isActive: checked } : t
-                                );
-                                setConfiguration(prev => ({ ...prev, interventionTypes: updatedTypes }));
+                                const updatedTypes =
+                                  configuration.interventionTypes.map((t) =>
+                                    t.id === type.id
+                                      ? { ...t, isActive: checked }
+                                      : t,
+                                  );
+                                setConfiguration((prev) => ({
+                                  ...prev,
+                                  interventionTypes: updatedTypes,
+                                }));
                               }}
                             />
                             <span className="text-white text-sm">Ativo</span>
                           </div>
                           <Button
                             size="sm"
-                            onClick={() => handleUpdateInterventionType(type.id, {
-                              name: type.name,
-                              description: type.description,
-                              isActive: type.isActive,
-                            })}
+                            onClick={() =>
+                              handleUpdateInterventionType(type.id, {
+                                name: type.name,
+                                description: type.description,
+                                isActive: type.isActive,
+                              })
+                            }
                             className="aviation-button"
                           >
                             <Save className="h-4 w-4 mr-1" />
@@ -531,9 +577,13 @@ export default function ConfigurationManager() {
                       </div>
                     ) : (
                       <div>
-                        <h4 className="font-medium text-white mb-1">{type.name}</h4>
+                        <h4 className="font-medium text-white mb-1">
+                          {type.name}
+                        </h4>
                         {type.description && (
-                          <p className="text-white/70 text-sm mb-2">{type.description}</p>
+                          <p className="text-white/70 text-sm mb-2">
+                            {type.description}
+                          </p>
                         )}
                         <div className="flex items-center justify-between text-xs text-white/50">
                           <span>Ordem: {type.order}</span>
@@ -570,9 +620,12 @@ export default function ConfigurationManager() {
           <TabsContent value="shifts" className="space-y-6 mt-6">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-xl font-semibold text-white">Turnos de Trabalho</h3>
+                <h3 className="text-xl font-semibold text-white">
+                  Turnos de Trabalho
+                </h3>
                 <p className="text-white/70 text-sm">
-                  Configure os turnos disponíveis ({configuration.shifts.length} itens)
+                  Configure os turnos disponíveis ({configuration.shifts.length}{" "}
+                  itens)
                 </p>
               </div>
               <Button
@@ -598,21 +651,33 @@ export default function ConfigurationManager() {
                           variant="ghost"
                           size="sm"
                           onClick={() => {
-                            const updatedShifts = configuration.shifts.map(s =>
-                              s.id === shift.id ? { ...s, isActive: !s.isActive } : s
+                            const updatedShifts = configuration.shifts.map(
+                              (s) =>
+                                s.id === shift.id
+                                  ? { ...s, isActive: !s.isActive }
+                                  : s,
                             );
-                            setConfiguration(prev => ({ ...prev, shifts: updatedShifts }));
+                            setConfiguration((prev) => ({
+                              ...prev,
+                              shifts: updatedShifts,
+                            }));
                             configurationService.saveShifts(updatedShifts);
                           }}
                           className="text-white hover:bg-white/20 h-8 w-8 p-0"
                         >
-                          {shift.isActive ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          {shift.isActive ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
                         </Button>
                       </div>
                     </div>
 
                     <div>
-                      <h4 className="font-medium text-white mb-1">{shift.displayName}</h4>
+                      <h4 className="font-medium text-white mb-1">
+                        {shift.displayName}
+                      </h4>
                       <p className="text-white/70 text-sm mb-2">
                         {shift.startTime} às {shift.endTime}
                       </p>
@@ -631,10 +696,13 @@ export default function ConfigurationManager() {
                 <div className="flex items-start space-x-3">
                   <AlertCircle className="h-5 w-5 text-blue-400 mt-0.5" />
                   <div>
-                    <h4 className="font-medium text-white mb-1">Informação sobre Turnos</h4>
+                    <h4 className="font-medium text-white mb-1">
+                      Informação sobre Turnos
+                    </h4>
                     <p className="text-white/70 text-sm">
-                      Os turnos são configurações centrais do sistema e não podem ser removidos. 
-                      Você pode ativá-los ou desativá-los conforme necessário.
+                      Os turnos são configurações centrais do sistema e não
+                      podem ser removidos. Você pode ativá-los ou desativá-los
+                      conforme necessário.
                     </p>
                   </div>
                 </div>
@@ -646,9 +714,12 @@ export default function ConfigurationManager() {
           <TabsContent value="locations" className="space-y-6 mt-6">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-xl font-semibold text-white">Locais de Intervenção</h3>
+                <h3 className="text-xl font-semibold text-white">
+                  Locais de Intervenção
+                </h3>
                 <p className="text-white/70 text-sm">
-                  Configure os locais disponíveis ({configuration.locations.length} itens)
+                  Configure os locais disponíveis (
+                  {configuration.locations.length} itens)
                 </p>
               </div>
               <Button
@@ -667,7 +738,9 @@ export default function ConfigurationManager() {
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center space-x-2">
                         <GripVertical className="h-4 w-4 text-white/50" />
-                        <Badge variant={location.isActive ? "default" : "secondary"}>
+                        <Badge
+                          variant={location.isActive ? "default" : "secondary"}
+                        >
                           {location.isActive ? "Ativo" : "Inativo"}
                         </Badge>
                       </div>
@@ -675,10 +748,18 @@ export default function ConfigurationManager() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setIsEditing(isEditing === location.id ? null : location.id)}
+                          onClick={() =>
+                            setIsEditing(
+                              isEditing === location.id ? null : location.id,
+                            )
+                          }
                           className="text-white hover:bg-white/20 h-8 w-8 p-0"
                         >
-                          {isEditing === location.id ? <X className="h-4 w-4" /> : <Edit className="h-4 w-4" />}
+                          {isEditing === location.id ? (
+                            <X className="h-4 w-4" />
+                          ) : (
+                            <Edit className="h-4 w-4" />
+                          )}
                         </Button>
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
@@ -692,9 +773,12 @@ export default function ConfigurationManager() {
                           </AlertDialogTrigger>
                           <AlertDialogContent className="bg-aviation-gray-800 border-white/20">
                             <AlertDialogHeader>
-                              <AlertDialogTitle className="text-white">Confirmar Exclusão</AlertDialogTitle>
+                              <AlertDialogTitle className="text-white">
+                                Confirmar Exclusão
+                              </AlertDialogTitle>
                               <AlertDialogDescription className="text-white/70">
-                                Tem certeza que deseja remover "{location.name}"? Esta ação não pode ser desfeita.
+                                Tem certeza que deseja remover "{location.name}
+                                "? Esta ação não pode ser desfeita.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
@@ -702,7 +786,9 @@ export default function ConfigurationManager() {
                                 Cancelar
                               </AlertDialogCancel>
                               <AlertDialogAction
-                                onClick={() => handleDeleteLocation(location.id)}
+                                onClick={() =>
+                                  handleDeleteLocation(location.id)
+                                }
                                 className="bg-red-600 hover:bg-red-700"
                               >
                                 Remover
@@ -718,10 +804,16 @@ export default function ConfigurationManager() {
                         <Input
                           value={location.name}
                           onChange={(e) => {
-                            const updatedLocations = configuration.locations.map(l =>
-                              l.id === location.id ? { ...l, name: e.target.value } : l
-                            );
-                            setConfiguration(prev => ({ ...prev, locations: updatedLocations }));
+                            const updatedLocations =
+                              configuration.locations.map((l) =>
+                                l.id === location.id
+                                  ? { ...l, name: e.target.value }
+                                  : l,
+                              );
+                            setConfiguration((prev) => ({
+                              ...prev,
+                              locations: updatedLocations,
+                            }));
                           }}
                           className="aviation-input"
                           placeholder="Nome do local"
@@ -729,10 +821,16 @@ export default function ConfigurationManager() {
                         <Textarea
                           value={location.description || ""}
                           onChange={(e) => {
-                            const updatedLocations = configuration.locations.map(l =>
-                              l.id === location.id ? { ...l, description: e.target.value } : l
-                            );
-                            setConfiguration(prev => ({ ...prev, locations: updatedLocations }));
+                            const updatedLocations =
+                              configuration.locations.map((l) =>
+                                l.id === location.id
+                                  ? { ...l, description: e.target.value }
+                                  : l,
+                              );
+                            setConfiguration((prev) => ({
+                              ...prev,
+                              locations: updatedLocations,
+                            }));
                           }}
                           className="aviation-input"
                           placeholder="Descrição (opcional)"
@@ -743,21 +841,29 @@ export default function ConfigurationManager() {
                             <Switch
                               checked={location.isActive}
                               onCheckedChange={(checked) => {
-                                const updatedLocations = configuration.locations.map(l =>
-                                  l.id === location.id ? { ...l, isActive: checked } : l
-                                );
-                                setConfiguration(prev => ({ ...prev, locations: updatedLocations }));
+                                const updatedLocations =
+                                  configuration.locations.map((l) =>
+                                    l.id === location.id
+                                      ? { ...l, isActive: checked }
+                                      : l,
+                                  );
+                                setConfiguration((prev) => ({
+                                  ...prev,
+                                  locations: updatedLocations,
+                                }));
                               }}
                             />
                             <span className="text-white text-sm">Ativo</span>
                           </div>
                           <Button
                             size="sm"
-                            onClick={() => handleUpdateLocation(location.id, {
-                              name: location.name,
-                              description: location.description,
-                              isActive: location.isActive,
-                            })}
+                            onClick={() =>
+                              handleUpdateLocation(location.id, {
+                                name: location.name,
+                                description: location.description,
+                                isActive: location.isActive,
+                              })
+                            }
                             className="aviation-button"
                           >
                             <Save className="h-4 w-4 mr-1" />
@@ -767,9 +873,13 @@ export default function ConfigurationManager() {
                       </div>
                     ) : (
                       <div>
-                        <h4 className="font-medium text-white mb-1">{location.name}</h4>
+                        <h4 className="font-medium text-white mb-1">
+                          {location.name}
+                        </h4>
                         {location.description && (
-                          <p className="text-white/70 text-sm mb-2">{location.description}</p>
+                          <p className="text-white/70 text-sm mb-2">
+                            {location.description}
+                          </p>
                         )}
                         <div className="flex items-center justify-between text-xs text-white/50">
                           <span>Ordem: {location.order}</span>
@@ -808,14 +918,18 @@ export default function ConfigurationManager() {
           <DialogContent className="max-w-md bg-aviation-gray-800 border-white/20">
             <DialogHeader>
               <DialogTitle className="text-white">
-                {addDialogType === "intervention" && "Adicionar Tipo de Intervenção"}
+                {addDialogType === "intervention" &&
+                  "Adicionar Tipo de Intervenção"}
                 {addDialogType === "shift" && "Adicionar Turno"}
                 {addDialogType === "location" && "Adicionar Local"}
               </DialogTitle>
               <DialogDescription className="text-white/70">
-                {addDialogType === "intervention" && "Configure um novo tipo de serviço disponível"}
-                {addDialogType === "shift" && "Configure um novo turno de trabalho"}
-                {addDialogType === "location" && "Configure um novo local de intervenção"}
+                {addDialogType === "intervention" &&
+                  "Configure um novo tipo de serviço disponível"}
+                {addDialogType === "shift" &&
+                  "Configure um novo turno de trabalho"}
+                {addDialogType === "location" &&
+                  "Configure um novo local de intervenção"}
               </DialogDescription>
             </DialogHeader>
 
@@ -826,18 +940,30 @@ export default function ConfigurationManager() {
                     <Label className="text-white">Nome *</Label>
                     <Input
                       value={interventionForm.name}
-                      onChange={(e) => setInterventionForm(prev => ({ ...prev, name: e.target.value }))}
+                      onChange={(e) =>
+                        setInterventionForm((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                      }
                       className="aviation-input"
                       placeholder="Ex: Limpeza Exterior"
                     />
-                    {errors.name && <p className="text-red-400 text-sm">{errors.name}</p>}
+                    {errors.name && (
+                      <p className="text-red-400 text-sm">{errors.name}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
                     <Label className="text-white">Descrição</Label>
                     <Textarea
                       value={interventionForm.description}
-                      onChange={(e) => setInterventionForm(prev => ({ ...prev, description: e.target.value }))}
+                      onChange={(e) =>
+                        setInterventionForm((prev) => ({
+                          ...prev,
+                          description: e.target.value,
+                        }))
+                      }
                       className="aviation-input"
                       placeholder="Descrição detalhada do tipo de intervenção"
                       rows={3}
@@ -847,7 +973,12 @@ export default function ConfigurationManager() {
                   <div className="flex items-center space-x-2">
                     <Switch
                       checked={interventionForm.isActive}
-                      onCheckedChange={(checked) => setInterventionForm(prev => ({ ...prev, isActive: checked }))}
+                      onCheckedChange={(checked) =>
+                        setInterventionForm((prev) => ({
+                          ...prev,
+                          isActive: checked,
+                        }))
+                      }
                     />
                     <Label className="text-white">Ativo</Label>
                   </div>
@@ -860,18 +991,30 @@ export default function ConfigurationManager() {
                     <Label className="text-white">Nome *</Label>
                     <Input
                       value={locationForm.name}
-                      onChange={(e) => setLocationForm(prev => ({ ...prev, name: e.target.value }))}
+                      onChange={(e) =>
+                        setLocationForm((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                      }
                       className="aviation-input"
                       placeholder="Ex: Hangar A"
                     />
-                    {errors.name && <p className="text-red-400 text-sm">{errors.name}</p>}
+                    {errors.name && (
+                      <p className="text-red-400 text-sm">{errors.name}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
                     <Label className="text-white">Descrição</Label>
                     <Textarea
                       value={locationForm.description}
-                      onChange={(e) => setLocationForm(prev => ({ ...prev, description: e.target.value }))}
+                      onChange={(e) =>
+                        setLocationForm((prev) => ({
+                          ...prev,
+                          description: e.target.value,
+                        }))
+                      }
                       className="aviation-input"
                       placeholder="Descrição detalhada do local"
                       rows={3}
@@ -881,7 +1024,12 @@ export default function ConfigurationManager() {
                   <div className="flex items-center space-x-2">
                     <Switch
                       checked={locationForm.isActive}
-                      onCheckedChange={(checked) => setLocationForm(prev => ({ ...prev, isActive: checked }))}
+                      onCheckedChange={(checked) =>
+                        setLocationForm((prev) => ({
+                          ...prev,
+                          isActive: checked,
+                        }))
+                      }
                     />
                     <Label className="text-white">Ativo</Label>
                   </div>

@@ -105,19 +105,25 @@
     background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%);
   }
 
-  html, body, #root {
+  html,
+  body,
+  #root {
     height: 100%;
     overflow-x: hidden;
   }
 
   /* Touch optimization for mobile */
   @media (max-width: 768px) {
-    button, a, [role="button"] {
+    button,
+    a,
+    [role="button"] {
       min-height: 44px;
       min-width: 44px;
     }
 
-    input, textarea, select {
+    input,
+    textarea,
+    select {
       font-size: 16px; /* Prevents zoom on iOS */
     }
   }
@@ -126,7 +132,11 @@
 @layer components {
   .glass-card {
     @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-xl;
-    background: linear-gradient(145deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.15));
+    background: linear-gradient(
+      145deg,
+      rgba(59, 130, 246, 0.1),
+      rgba(37, 99, 235, 0.15)
+    );
   }
 
   .saas-card {
@@ -136,7 +146,11 @@
 
   .saas-card:hover {
     @apply transform scale-105 shadow-2xl;
-    background: linear-gradient(145deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.2));
+    background: linear-gradient(
+      145deg,
+      rgba(59, 130, 246, 0.15),
+      rgba(37, 99, 235, 0.2)
+    );
   }
 
   .mobile-button {
@@ -165,11 +179,23 @@
 
   /* Mobile-first gradients */
   .mobile-gradient-bg {
-    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 25%, #3730a3 50%, #1e3a8a 75%, #0f172a 100%);
+    background: linear-gradient(
+      135deg,
+      #0f172a 0%,
+      #1e3a8a 25%,
+      #3730a3 50%,
+      #1e3a8a 75%,
+      #0f172a 100%
+    );
   }
 
   .saas-gradient-header {
-    background: linear-gradient(90deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 58, 138, 0.95) 50%, rgba(15, 23, 42, 0.95) 100%);
+    background: linear-gradient(
+      90deg,
+      rgba(15, 23, 42, 0.95) 0%,
+      rgba(30, 58, 138, 0.95) 50%,
+      rgba(15, 23, 42, 0.95) 100%
+    );
   }
 
   /* Touch-optimized animations */

@@ -1,13 +1,29 @@
-import { useState, useEffect } from 'react';
-import { QrCode, Download, Eye, Copy, Check, Calendar, MapPin, Clock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { codeGenerationService } from '@/lib/code-generation-service';
-import { useToast } from '@/hooks/use-toast';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { useState, useEffect } from "react";
+import {
+  QrCode,
+  Download,
+  Eye,
+  Copy,
+  Check,
+  Calendar,
+  MapPin,
+  Clock,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { codeGenerationService } from "@/lib/code-generation-service";
+import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface QRCodeDisplayProps {
   formCode: string;
@@ -18,24 +34,24 @@ interface QRCodeDisplayProps {
     shift?: string;
     status?: string;
   };
-  size?: 'small' | 'medium' | 'large';
+  size?: "small" | "medium" | "large";
   showDetails?: boolean;
   showActions?: boolean;
 }
 
-export default function QRCodeDisplay({ 
-  formCode, 
-  formId, 
-  formData, 
-  size = 'medium',
+export default function QRCodeDisplay({
+  formCode,
+  formId,
+  formData,
+  size = "medium",
   showDetails = true,
-  showActions = true 
+  showActions = true,
 }: QRCodeDisplayProps) {
-  const [qrCode, setQrCode] = useState<string>('');
+  const [qrCode, setQrCode] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
-  
+
   const { toast } = useToast();
 
   useEffect(() => {
@@ -47,17 +63,17 @@ export default function QRCodeDisplay({
     try {
       const sizeMap = { small: 150, medium: 300, large: 600 };
       const qrCodeDataURL = await codeGenerationService.generateFormQRCode(
-        formCode, 
-        formId, 
-        { width: sizeMap[size] }
+        formCode,
+        formId,
+        { width: sizeMap[size] },
       );
       setQrCode(qrCodeDataURL);
     } catch (error) {
-      console.error('Error generating QR code:', error);
+      console.error("Error generating QR code:", error);
       toast({
         title: "Erro ao gerar QR Code",
         description: "Não foi possível gerar o código QR.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -66,14 +82,14 @@ export default function QRCodeDisplay({
 
   const downloadQRCode = () => {
     if (!qrCode) return;
-    
-    const link = document.createElement('a');
+
+    const link = document.createElement("a");
     link.download = `qr-code-${formCode}.png`;
     link.href = qrCode;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     toast({
       title: "QR Code baixado",
       description: "O código QR foi salvo como imagem.",
@@ -85,23 +101,24 @@ export default function QRCodeDisplay({
       await navigator.clipboard.writeText(formCode);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-      
+
       toast({
         title: "Código copiado",
-        description: "O código da folha foi copiado para a área de transferência.",
+        description:
+          "O código da folha foi copiado para a área de transferência.",
       });
     } catch (error) {
       toast({
         title: "Erro ao copiar",
         description: "Não foi possível copiar o código.",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
 
   const openQRCodeInNewTab = () => {
     if (!qrCode) return;
-    
+
     const newWindow = window.open();
     if (newWindow) {
       newWindow.document.write(`
@@ -157,15 +174,19 @@ export default function QRCodeDisplay({
               <h2>QR Code da Folha de Limpeza</h2>
               <img src="${qrCode}" alt="QR Code ${formCode}" />
               <div class="code">${formCode}</div>
-              ${formData ? `
+              ${
+                formData
+                  ? `
                 <div class="details">
                   <h3>Detalhes da Folha</h3>
-                  ${formData.date ? `<p><strong>Data:</strong> ${format(new Date(formData.date), 'dd/MM/yyyy', { locale: ptBR })}</p>` : ''}
-                  ${formData.location ? `<p><strong>Local:</strong> ${formData.location}</p>` : ''}
-                  ${formData.shift ? `<p><strong>Turno:</strong> ${formData.shift === 'morning' ? 'Manhã' : formData.shift === 'afternoon' ? 'Tarde' : 'Noite'}</p>` : ''}
-                  ${formData.status ? `<p><strong>Status:</strong> ${formData.status === 'completed' ? 'Concluída' : formData.status === 'pending_signatures' ? 'Aguardando Assinaturas' : 'Rascunho'}</p>` : ''}
+                  ${formData.date ? `<p><strong>Data:</strong> ${format(new Date(formData.date), "dd/MM/yyyy", { locale: ptBR })}</p>` : ""}
+                  ${formData.location ? `<p><strong>Local:</strong> ${formData.location}</p>` : ""}
+                  ${formData.shift ? `<p><strong>Turno:</strong> ${formData.shift === "morning" ? "Manhã" : formData.shift === "afternoon" ? "Tarde" : "Noite"}</p>` : ""}
+                  ${formData.status ? `<p><strong>Status:</strong> ${formData.status === "completed" ? "Concluída" : formData.status === "pending_signatures" ? "Aguardando Assinaturas" : "Rascunho"}</p>` : ""}
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
               <p style="margin-top: 30px; color: #666; font-size: 14px;">
                 Escaneie este código para acessar a folha de limpeza digital
               </p>
@@ -190,20 +211,22 @@ export default function QRCodeDisplay({
   };
 
   const sizeClasses = {
-    small: 'w-20 h-20',
-    medium: 'w-32 h-32',
-    large: 'w-48 h-48'
+    small: "w-20 h-20",
+    medium: "w-32 h-32",
+    large: "w-48 h-48",
   };
 
   if (loading) {
     return (
-      <div className={`${sizeClasses[size]} bg-white/10 rounded-lg border border-white/20 flex items-center justify-center`}>
+      <div
+        className={`${sizeClasses[size]} bg-white/10 rounded-lg border border-white/20 flex items-center justify-center`}
+      >
         <QrCode className="h-8 w-8 text-white/50 animate-pulse" />
       </div>
     );
   }
 
-  if (size === 'small') {
+  if (size === "small") {
     return (
       <div className="flex items-center space-x-2">
         <div className="relative group">
@@ -217,20 +240,25 @@ export default function QRCodeDisplay({
             <Eye className="h-4 w-4 text-white" />
           </div>
         </div>
-        
+
         {showDetails && (
           <div className="flex-1 min-w-0">
-            <div className="font-mono text-xs text-white truncate">{formCode}</div>
+            <div className="font-mono text-xs text-white truncate">
+              {formCode}
+            </div>
             {formData?.status && (
               <Badge variant="outline" className="text-xs mt-1">
-                {formData.status === 'completed' ? 'Concluída' : 
-                 formData.status === 'pending_signatures' ? 'Pendente' : 'Rascunho'}
+                {formData.status === "completed"
+                  ? "Concluída"
+                  : formData.status === "pending_signatures"
+                    ? "Pendente"
+                    : "Rascunho"}
               </Badge>
             )}
           </div>
         )}
-        
-        <QRCodeDetailDialog 
+
+        <QRCodeDetailDialog
           isOpen={isDetailDialogOpen}
           onOpenChange={setIsDetailDialogOpen}
           qrCode={qrCode}
@@ -254,17 +282,25 @@ export default function QRCodeDisplay({
             <span>QR Code da Folha</span>
           </div>
           {formData?.status && (
-            <Badge className={`text-xs ${
-              formData.status === 'completed' ? 'bg-green-500' :
-              formData.status === 'pending_signatures' ? 'bg-yellow-500' : 'bg-gray-500'
-            } text-white`}>
-              {formData.status === 'completed' ? 'Concluída' : 
-               formData.status === 'pending_signatures' ? 'Pendente' : 'Rascunho'}
+            <Badge
+              className={`text-xs ${
+                formData.status === "completed"
+                  ? "bg-green-500"
+                  : formData.status === "pending_signatures"
+                    ? "bg-yellow-500"
+                    : "bg-gray-500"
+              } text-white`}
+            >
+              {formData.status === "completed"
+                ? "Concluída"
+                : formData.status === "pending_signatures"
+                  ? "Pendente"
+                  : "Rascunho"}
             </Badge>
           )}
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         {/* QR Code Image */}
         <div className="flex justify-center">
@@ -289,7 +325,9 @@ export default function QRCodeDisplay({
 
         {/* Form Code */}
         <div className="text-center">
-          <div className="font-mono text-white font-medium mb-1">{formCode}</div>
+          <div className="font-mono text-white font-medium mb-1">
+            {formCode}
+          </div>
           <div className="text-white/70 text-xs">
             Escaneie para acessar a folha digital
           </div>
@@ -301,7 +339,11 @@ export default function QRCodeDisplay({
             {formData.date && (
               <div className="flex items-center space-x-2 text-white/70">
                 <Calendar className="h-3 w-3" />
-                <span>{format(new Date(formData.date), 'dd/MM/yyyy', { locale: ptBR })}</span>
+                <span>
+                  {format(new Date(formData.date), "dd/MM/yyyy", {
+                    locale: ptBR,
+                  })}
+                </span>
               </div>
             )}
             {formData.location && (
@@ -314,8 +356,11 @@ export default function QRCodeDisplay({
               <div className="flex items-center space-x-2 text-white/70">
                 <Clock className="h-3 w-3" />
                 <span>
-                  {formData.shift === 'morning' ? 'Manhã (06:00-14:00)' :
-                   formData.shift === 'afternoon' ? 'Tarde (14:00-22:00)' : 'Noite (22:00-06:00)'}
+                  {formData.shift === "morning"
+                    ? "Manhã (06:00-14:00)"
+                    : formData.shift === "afternoon"
+                      ? "Tarde (14:00-22:00)"
+                      : "Noite (22:00-06:00)"}
                 </span>
               </div>
             )}
@@ -331,10 +376,14 @@ export default function QRCodeDisplay({
               onClick={copyFormCode}
               className="flex-1 border-white/30 text-white hover:bg-white/20"
             >
-              {copied ? <Check className="h-4 w-4 mr-2" /> : <Copy className="h-4 w-4 mr-2" />}
-              {copied ? 'Copiado!' : 'Copiar Código'}
+              {copied ? (
+                <Check className="h-4 w-4 mr-2" />
+              ) : (
+                <Copy className="h-4 w-4 mr-2" />
+              )}
+              {copied ? "Copiado!" : "Copiar Código"}
             </Button>
-            
+
             <Button
               variant="outline"
               size="sm"
@@ -343,7 +392,7 @@ export default function QRCodeDisplay({
             >
               <Download className="h-4 w-4" />
             </Button>
-            
+
             <Button
               variant="outline"
               size="sm"
@@ -355,8 +404,8 @@ export default function QRCodeDisplay({
           </div>
         )}
       </CardContent>
-      
-      <QRCodeDetailDialog 
+
+      <QRCodeDetailDialog
         isOpen={isDetailDialogOpen}
         onOpenChange={setIsDetailDialogOpen}
         qrCode={qrCode}
@@ -381,7 +430,7 @@ function QRCodeDetailDialog({
   onDownload,
   onCopy,
   onOpen,
-  copied
+  copied,
 }: {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
@@ -424,23 +473,37 @@ function QRCodeDetailDialog({
           {/* Form Code Details */}
           <div className="space-y-4">
             <div className="text-center">
-              <div className="font-mono text-lg font-bold text-white mb-2">{formCode}</div>
-              <div className="text-white/70 text-sm">Código único da folha de limpeza</div>
+              <div className="font-mono text-lg font-bold text-white mb-2">
+                {formCode}
+              </div>
+              <div className="text-white/70 text-sm">
+                Código único da folha de limpeza
+              </div>
             </div>
 
             {/* Code Components */}
             {parsedCode && (
               <div className="bg-white/5 rounded-lg p-4 space-y-2">
-                <h4 className="text-white font-medium text-sm">Componentes do Código:</h4>
+                <h4 className="text-white font-medium text-sm">
+                  Componentes do Código:
+                </h4>
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="text-white/70">Prefixo:</div>
-                  <div className="text-white font-mono">{parsedCode.prefix}</div>
+                  <div className="text-white font-mono">
+                    {parsedCode.prefix}
+                  </div>
                   <div className="text-white/70">Série:</div>
-                  <div className="text-white font-mono">{parsedCode.series}</div>
+                  <div className="text-white font-mono">
+                    {parsedCode.series}
+                  </div>
                   <div className="text-white/70">Sequência:</div>
-                  <div className="text-white font-mono">{parsedCode.sequence}</div>
+                  <div className="text-white font-mono">
+                    {parsedCode.sequence}
+                  </div>
                   <div className="text-white/70">Timestamp:</div>
-                  <div className="text-white font-mono">{parsedCode.timestamp}</div>
+                  <div className="text-white font-mono">
+                    {parsedCode.timestamp}
+                  </div>
                 </div>
               </div>
             )}
@@ -448,12 +511,18 @@ function QRCodeDetailDialog({
             {/* Form Information */}
             {formData && (
               <div className="bg-white/5 rounded-lg p-4 space-y-2">
-                <h4 className="text-white font-medium text-sm">Informações da Folha:</h4>
+                <h4 className="text-white font-medium text-sm">
+                  Informações da Folha:
+                </h4>
                 <div className="space-y-1 text-xs">
                   {formData.date && (
                     <div className="flex justify-between">
                       <span className="text-white/70">Data:</span>
-                      <span className="text-white">{format(new Date(formData.date), 'dd/MM/yyyy', { locale: ptBR })}</span>
+                      <span className="text-white">
+                        {format(new Date(formData.date), "dd/MM/yyyy", {
+                          locale: ptBR,
+                        })}
+                      </span>
                     </div>
                   )}
                   {formData.location && (
@@ -466,8 +535,11 @@ function QRCodeDetailDialog({
                     <div className="flex justify-between">
                       <span className="text-white/70">Turno:</span>
                       <span className="text-white">
-                        {formData.shift === 'morning' ? 'Manhã' :
-                         formData.shift === 'afternoon' ? 'Tarde' : 'Noite'}
+                        {formData.shift === "morning"
+                          ? "Manhã"
+                          : formData.shift === "afternoon"
+                            ? "Tarde"
+                            : "Noite"}
                       </span>
                     </div>
                   )}
@@ -478,7 +550,8 @@ function QRCodeDetailDialog({
             {/* Generated Date */}
             {formDate && (
               <div className="text-center text-xs text-white/50">
-                Gerado em: {format(formDate, 'dd/MM/yyyy HH:mm:ss', { locale: ptBR })}
+                Gerado em:{" "}
+                {format(formDate, "dd/MM/yyyy HH:mm:ss", { locale: ptBR })}
               </div>
             )}
           </div>
@@ -490,10 +563,14 @@ function QRCodeDetailDialog({
               variant="outline"
               className="flex-1 border-white/30 text-white hover:bg-white/20"
             >
-              {copied ? <Check className="h-4 w-4 mr-2" /> : <Copy className="h-4 w-4 mr-2" />}
-              {copied ? 'Copiado!' : 'Copiar Código'}
+              {copied ? (
+                <Check className="h-4 w-4 mr-2" />
+              ) : (
+                <Copy className="h-4 w-4 mr-2" />
+              )}
+              {copied ? "Copiado!" : "Copiar Código"}
             </Button>
-            
+
             <Button
               onClick={onDownload}
               variant="outline"
@@ -502,7 +579,7 @@ function QRCodeDetailDialog({
               <Download className="h-4 w-4 mr-2" />
               Baixar
             </Button>
-            
+
             <Button
               onClick={onOpen}
               variant="outline"

@@ -1,7 +1,10 @@
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import JSZip from "jszip";
-import { downloadCleaningFormPDF, generateCleaningFormPDFBlob } from "./pdf-utils";
+import {
+  downloadCleaningFormPDF,
+  generateCleaningFormPDFBlob,
+} from "./pdf-utils";
 import { photoEvidenceService } from "./photo-evidence-service";
 
 interface CleaningForm {
@@ -77,7 +80,11 @@ class ExportService {
   async exportToCSV(
     forms: CleaningForm[],
     aircraft: any[],
-    options: ExportOptions = { includePDFs: true, includePhotos: false, includeEmployeePhotos: false }
+    options: ExportOptions = {
+      includePDFs: true,
+      includePhotos: false,
+      includeEmployeePhotos: false,
+    },
   ): Promise<void> {
     // CSV Header
     const csvHeader = [
@@ -108,7 +115,10 @@ class ExportService {
         const aircraftData = aircraft.find((ac) => ac.id === form.aircraftId);
         const employeeNames = form.employees.map((emp) => emp.name).join("; ");
         const employeeDetails = form.employees
-          .map((emp) => `${emp.name} (${emp.task}, ${emp.startTime}-${emp.endTime}, Tel: ${emp.phone})`)
+          .map(
+            (emp) =>
+              `${emp.name} (${emp.task}, ${emp.startTime}-${emp.endTime}, Tel: ${emp.phone})`,
+          )
           .join(" | ");
         const interventionTypes = form.interventionTypes.join("; ");
 
@@ -125,8 +135,12 @@ class ExportService {
           interventionTypes,
           this.getStatusText(form.status),
           this.getSyncStatusText(form.syncStatus),
-          format(parseISO(form.createdAt), "dd/MM/yyyy HH:mm", { locale: ptBR }),
-          format(parseISO(form.updatedAt), "dd/MM/yyyy HH:mm", { locale: ptBR }),
+          format(parseISO(form.createdAt), "dd/MM/yyyy HH:mm", {
+            locale: ptBR,
+          }),
+          format(parseISO(form.updatedAt), "dd/MM/yyyy HH:mm", {
+            locale: ptBR,
+          }),
           employeeDetails,
         ];
 
@@ -136,18 +150,22 @@ class ExportService {
         }
 
         return row;
-      })
+      }),
     );
 
     // Create CSV content
     const csvContent = [csvHeader, ...csvRows]
-      .map((row) => row.map((cell) => `"${cell?.toString().replace(/"/g, '""') || ''}"`).join(","))
+      .map((row) =>
+        row
+          .map((cell) => `"${cell?.toString().replace(/"/g, '""') || ""}"`)
+          .join(","),
+      )
       .join("\n");
 
     // Add BOM for Excel compatibility
     const bom = "\uFEFF";
-    const blob = new Blob([bom + csvContent], { 
-      type: "text/csv;charset=utf-8;" 
+    const blob = new Blob([bom + csvContent], {
+      type: "text/csv;charset=utf-8;",
     });
 
     // Download file
@@ -156,7 +174,7 @@ class ExportService {
     link.setAttribute("href", url);
     link.setAttribute(
       "download",
-      `historico_limpeza_${format(new Date(), "yyyyMMdd_HHmm", { locale: ptBR })}.csv`
+      `historico_limpeza_${format(new Date(), "yyyyMMdd_HHmm", { locale: ptBR })}.csv`,
     );
     link.style.visibility = "hidden";
     document.body.appendChild(link);
@@ -168,7 +186,11 @@ class ExportService {
   async exportToZIP(
     forms: CleaningForm[],
     aircraft: any[],
-    options: ExportOptions = { includePDFs: true, includePhotos: true, includeEmployeePhotos: true }
+    options: ExportOptions = {
+      includePDFs: true,
+      includePhotos: true,
+      includeEmployeePhotos: true,
+    },
   ): Promise<void> {
     const zip = new JSZip();
     const timestamp = format(new Date(), "yyyyMMdd_HHmm", { locale: ptBR });
@@ -176,8 +198,12 @@ class ExportService {
     // Create folders
     const dataFolder = zip.folder("dados");
     const pdfFolder = options.includePDFs ? zip.folder("pdfs") : null;
-    const photosFolder = options.includePhotos ? zip.folder("evidencias_fotograficas") : null;
-    const employeePhotosFolder = options.includeEmployeePhotos ? zip.folder("fotos_funcionarios") : null;
+    const photosFolder = options.includePhotos
+      ? zip.folder("evidencias_fotograficas")
+      : null;
+    const employeePhotosFolder = options.includeEmployeePhotos
+      ? zip.folder("fotos_funcionarios")
+      : null;
 
     // Generate and add CSV
     if (dataFolder) {
@@ -201,7 +227,7 @@ class ExportService {
 
       dataFolder.file(
         "dados_detalhados.json",
-        JSON.stringify(detailedData, null, 2)
+        JSON.stringify(detailedData, null, 2),
       );
     }
 
@@ -226,10 +252,10 @@ class ExportService {
 
     // Generate and download ZIP
     try {
-      const content = await zip.generateAsync({ 
+      const content = await zip.generateAsync({
         type: "blob",
         compression: "DEFLATE",
-        compressionOptions: { level: 6 }
+        compressionOptions: { level: 6 },
       });
 
       const link = document.createElement("a");
@@ -251,7 +277,7 @@ class ExportService {
     folder: JSZip,
     forms: CleaningForm[],
     aircraft: any[],
-    options: ExportOptions
+    options: ExportOptions,
   ): Promise<void> {
     // Generate CSV header
     const csvHeader = [
@@ -293,7 +319,11 @@ class ExportService {
 
     // Create CSV content
     const csvContent = [csvHeader, ...csvRows]
-      .map((row) => row.map((cell) => `"${cell?.toString().replace(/"/g, '""') || ''}"`).join(","))
+      .map((row) =>
+        row
+          .map((cell) => `"${cell?.toString().replace(/"/g, '""') || ""}"`)
+          .join(","),
+      )
       .join("\n");
 
     // Add BOM for Excel compatibility
@@ -304,7 +334,7 @@ class ExportService {
   private async addPDFsToZip(
     folder: JSZip,
     forms: CleaningForm[],
-    aircraft: any[]
+    aircraft: any[],
   ): Promise<void> {
     for (const form of forms) {
       try {
@@ -316,7 +346,7 @@ class ExportService {
         // Add error file instead
         folder.file(
           `PDF_${form.code}_ERRO.txt`,
-          `Erro ao gerar PDF para a folha ${form.code}\nDetalhes: ${error}`
+          `Erro ao gerar PDF para a folha ${form.code}\nDetalhes: ${error}`,
         );
       }
     }
@@ -324,7 +354,7 @@ class ExportService {
 
   private async addPhotosToZip(
     folder: JSZip,
-    forms: CleaningForm[]
+    forms: CleaningForm[],
   ): Promise<void> {
     for (const form of forms) {
       try {
@@ -350,7 +380,7 @@ class ExportService {
 
   private async addEmployeePhotosToZip(
     folder: JSZip,
-    forms: CleaningForm[]
+    forms: CleaningForm[],
   ): Promise<void> {
     const addedPhotos = new Set<string>();
 
@@ -361,19 +391,30 @@ class ExportService {
             // Convert base64 to blob
             const response = await fetch(employee.photo);
             const blob = await response.blob();
-            folder.file(`funcionario_${employee.id}_${employee.name.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`, blob);
+            folder.file(
+              `funcionario_${employee.id}_${employee.name.replace(/[^a-zA-Z0-9]/g, "_")}.jpg`,
+              blob,
+            );
             addedPhotos.add(employee.id);
           } catch (error) {
-            console.warn(`Failed to add photo for employee ${employee.name}:`, error);
+            console.warn(
+              `Failed to add photo for employee ${employee.name}:`,
+              error,
+            );
           }
         }
       }
     }
   }
 
-  private generateReadmeContent(formsCount: number, options: ExportOptions): string {
-    const timestamp = format(new Date(), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
-    
+  private generateReadmeContent(
+    formsCount: number,
+    options: ExportOptions,
+  ): string {
+    const timestamp = format(new Date(), "dd/MM/yyyy 'às' HH:mm", {
+      locale: ptBR,
+    });
+
     return `HISTÓRICO DE LIMPEZA DE AERONAVES
 ========================================
 
@@ -387,22 +428,34 @@ CONTEÚDO DO ARQUIVO:
   - dados_limpeza.csv: Dados principais em formato planilha
   - dados_detalhados.json: Dados completos em formato JSON
 
-${options.includePDFs ? `📁 pdfs/
-  - PDFs individuais de cada folha de limpeza` : ''}
+${
+  options.includePDFs
+    ? `📁 pdfs/
+  - PDFs individuais de cada folha de limpeza`
+    : ""
+}
 
-${options.includePhotos ? `📁 evidencias_fotograficas/
-  - Fotos de evidência organizadas por folha` : ''}
+${
+  options.includePhotos
+    ? `📁 evidencias_fotograficas/
+  - Fotos de evidência organizadas por folha`
+    : ""
+}
 
-${options.includeEmployeePhotos ? `📁 fotos_funcionarios/
-  - Fotos dos funcionários envolvidos` : ''}
+${
+  options.includeEmployeePhotos
+    ? `📁 fotos_funcionarios/
+  - Fotos dos funcionários envolvidos`
+    : ""
+}
 
 FORMATOS INCLUÍDOS:
 ------------------
 - CSV: ✅ Dados principais
 - JSON: ✅ Dados detalhados
-${options.includePDFs ? '- PDF: ✅ Documentos completos' : '- PDF: ❌ Não incluído'}
-${options.includePhotos ? '- Fotos de evidência: ✅ Incluídas' : '- Fotos de evidência: ❌ Não incluídas'}
-${options.includeEmployeePhotos ? '- Fotos de funcionários: ✅ Incluídas' : '- Fotos de funcionários: ❌ Não incluídas'}
+${options.includePDFs ? "- PDF: ✅ Documentos completos" : "- PDF: ❌ Não incluído"}
+${options.includePhotos ? "- Fotos de evidência: ✅ Incluídas" : "- Fotos de evidência: ❌ Não incluídas"}
+${options.includeEmployeePhotos ? "- Fotos de funcionários: ✅ Incluídas" : "- Fotos de funcionários: ❌ Não incluídas"}
 
 INSTRUÇÕES:
 ----------
@@ -423,10 +476,10 @@ Gerado automaticamente pelo sistema de gestão de limpeza de aeronaves.
     try {
       // Import the PDF utilities
       const { previewCleaningFormPDF } = await import("./pdf-utils");
-      
+
       // Open PDF in new window for printing
       await previewCleaningFormPDF(form, aircraftData);
-      
+
       // Note: The actual printing will be handled by the browser's print dialog
       // when the user opens the PDF preview
     } catch (error) {

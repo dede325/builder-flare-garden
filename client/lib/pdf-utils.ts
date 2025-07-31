@@ -683,118 +683,134 @@ export const generateCleaningFormPDF = async (
     // Try to load photos from the new photo evidence service
     let photoEvidenceData = null;
     try {
-      const { photoEvidenceService } = await import('./photo-evidence-service');
-      photoEvidenceData = await photoEvidenceService.getPhotosForPDF(formData.id);
+      const { photoEvidenceService } = await import("./photo-evidence-service");
+      photoEvidenceData = await photoEvidenceService.getPhotosForPDF(
+        formData.id,
+      );
     } catch (error) {
-      console.log('Photo evidence service not available, using legacy format');
+      console.log("Photo evidence service not available, using legacy format");
     }
 
     // Use new photo evidence format if available, otherwise fall back to legacy
-    const photoCategories = photoEvidenceData ? [
-      {
-        key: "before",
-        title: "ANTES DA INTERVENÇÃO",
-        photos: [
-          ...photoEvidenceData.before.exterior.map(p => ({
-            photo: p.photoDataURL,
-            type: "Exterior",
-            description: p.description,
-            capturedBy: p.capturedBy,
-            timestamp: p.timestamp,
-            tags: p.tags,
-            gpsCoordinates: p.gpsCoordinates
-          })),
-          ...photoEvidenceData.before.interior.map(p => ({
-            photo: p.photoDataURL,
-            type: "Interior",
-            description: p.description,
-            capturedBy: p.capturedBy,
-            timestamp: p.timestamp,
-            tags: p.tags,
-            gpsCoordinates: p.gpsCoordinates
-          })),
-          ...photoEvidenceData.before.details.map(p => ({
-            photo: p.photoDataURL,
-            type: "Detalhes",
-            description: p.description,
-            capturedBy: p.capturedBy,
-            timestamp: p.timestamp,
-            tags: p.tags,
-            gpsCoordinates: p.gpsCoordinates
-          }))
+    const photoCategories = photoEvidenceData
+      ? [
+          {
+            key: "before",
+            title: "ANTES DA INTERVENÇÃO",
+            photos: [
+              ...photoEvidenceData.before.exterior.map((p) => ({
+                photo: p.photoDataURL,
+                type: "Exterior",
+                description: p.description,
+                capturedBy: p.capturedBy,
+                timestamp: p.timestamp,
+                tags: p.tags,
+                gpsCoordinates: p.gpsCoordinates,
+              })),
+              ...photoEvidenceData.before.interior.map((p) => ({
+                photo: p.photoDataURL,
+                type: "Interior",
+                description: p.description,
+                capturedBy: p.capturedBy,
+                timestamp: p.timestamp,
+                tags: p.tags,
+                gpsCoordinates: p.gpsCoordinates,
+              })),
+              ...photoEvidenceData.before.details.map((p) => ({
+                photo: p.photoDataURL,
+                type: "Detalhes",
+                description: p.description,
+                capturedBy: p.capturedBy,
+                timestamp: p.timestamp,
+                tags: p.tags,
+                gpsCoordinates: p.gpsCoordinates,
+              })),
+            ],
+          },
+          {
+            key: "after",
+            title: "DEPOIS DA INTERVENÇÃO",
+            photos: [
+              ...photoEvidenceData.after.exterior.map((p) => ({
+                photo: p.photoDataURL,
+                type: "Exterior",
+                description: p.description,
+                capturedBy: p.capturedBy,
+                timestamp: p.timestamp,
+                tags: p.tags,
+                gpsCoordinates: p.gpsCoordinates,
+              })),
+              ...photoEvidenceData.after.interior.map((p) => ({
+                photo: p.photoDataURL,
+                type: "Interior",
+                description: p.description,
+                capturedBy: p.capturedBy,
+                timestamp: p.timestamp,
+                tags: p.tags,
+                gpsCoordinates: p.gpsCoordinates,
+              })),
+              ...photoEvidenceData.after.details.map((p) => ({
+                photo: p.photoDataURL,
+                type: "Detalhes",
+                description: p.description,
+                capturedBy: p.capturedBy,
+                timestamp: p.timestamp,
+                tags: p.tags,
+                gpsCoordinates: p.gpsCoordinates,
+              })),
+            ],
+          },
         ]
-      },
-      {
-        key: "after",
-        title: "DEPOIS DA INTERVENÇÃO",
-        photos: [
-          ...photoEvidenceData.after.exterior.map(p => ({
-            photo: p.photoDataURL,
-            type: "Exterior",
-            description: p.description,
-            capturedBy: p.capturedBy,
-            timestamp: p.timestamp,
-            tags: p.tags,
-            gpsCoordinates: p.gpsCoordinates
-          })),
-          ...photoEvidenceData.after.interior.map(p => ({
-            photo: p.photoDataURL,
-            type: "Interior",
-            description: p.description,
-            capturedBy: p.capturedBy,
-            timestamp: p.timestamp,
-            tags: p.tags,
-            gpsCoordinates: p.gpsCoordinates
-          })),
-          ...photoEvidenceData.after.details.map(p => ({
-            photo: p.photoDataURL,
-            type: "Detalhes",
-            description: p.description,
-            capturedBy: p.capturedBy,
-            timestamp: p.timestamp,
-            tags: p.tags,
-            gpsCoordinates: p.gpsCoordinates
-          }))
-        ]
-      }
-    ] : [
-      {
-        key: "before",
-        title: "ANTES DA INTERVENÇÃO",
-        photos: [
-          ...(formData.interventionPhotos?.before.exterior || []).map((photo) => ({
-            photo,
-            type: "Exterior",
-          })),
-          ...(formData.interventionPhotos?.before.interior || []).map((photo) => ({
-            photo,
-            type: "Interior",
-          })),
-          ...(formData.interventionPhotos?.before.details || []).map((photo) => ({
-            photo,
-            type: "Detalhes",
-          })),
-        ]
-      },
-      {
-        key: "after",
-        title: "DEPOIS DA INTERVENÇÃO",
-        photos: [
-          ...(formData.interventionPhotos?.after.exterior || []).map((photo) => ({
-            photo,
-            type: "Exterior",
-          })),
-          ...(formData.interventionPhotos?.after.interior || []).map((photo) => ({
-            photo,
-            type: "Interior",
-          })),
-          ...(formData.interventionPhotos?.after.details || []).map((photo) => ({
-            photo,
-            type: "Detalhes",
-          })),
-        ]
-      }
-    ];
+      : [
+          {
+            key: "before",
+            title: "ANTES DA INTERVENÇÃO",
+            photos: [
+              ...(formData.interventionPhotos?.before.exterior || []).map(
+                (photo) => ({
+                  photo,
+                  type: "Exterior",
+                }),
+              ),
+              ...(formData.interventionPhotos?.before.interior || []).map(
+                (photo) => ({
+                  photo,
+                  type: "Interior",
+                }),
+              ),
+              ...(formData.interventionPhotos?.before.details || []).map(
+                (photo) => ({
+                  photo,
+                  type: "Detalhes",
+                }),
+              ),
+            ],
+          },
+          {
+            key: "after",
+            title: "DEPOIS DA INTERVENÇÃO",
+            photos: [
+              ...(formData.interventionPhotos?.after.exterior || []).map(
+                (photo) => ({
+                  photo,
+                  type: "Exterior",
+                }),
+              ),
+              ...(formData.interventionPhotos?.after.interior || []).map(
+                (photo) => ({
+                  photo,
+                  type: "Interior",
+                }),
+              ),
+              ...(formData.interventionPhotos?.after.details || []).map(
+                (photo) => ({
+                  photo,
+                  type: "Detalhes",
+                }),
+              ),
+            ],
+          },
+        ];
 
     photoCategories.forEach((category) => {
       if (category.photos && category.photos.length > 0) {
@@ -849,7 +865,8 @@ export const generateCleaningFormPDF = async (
         });
 
         interventionY +=
-          Math.ceil(category.photos.length / photosPerRow) * (photoHeight + 45) +
+          Math.ceil(category.photos.length / photosPerRow) *
+            (photoHeight + 45) +
           10;
       }
     });
@@ -894,9 +911,10 @@ export const generateCleaningFormPDF = async (
         pdf.setTextColor(71, 85, 105);
         pdf.setFont("helvetica", "normal");
         pdf.setFontSize(7);
-        const descText = item.description.length > 40 ?
-          item.description.substring(0, 37) + "..." :
-          item.description;
+        const descText =
+          item.description.length > 40
+            ? item.description.substring(0, 37) + "..."
+            : item.description;
         pdf.text(descText, x + 2, y + height + 12);
       }
 
@@ -904,9 +922,9 @@ export const generateCleaningFormPDF = async (
       pdf.setTextColor(71, 85, 105);
       pdf.setFont("helvetica", "normal");
       pdf.setFontSize(8);
-      const timestamp = item.timestamp ?
-        format(new Date(item.timestamp), "dd/MM/yyyy HH:mm", { locale: ptBR }) :
-        format(new Date(), "dd/MM/yyyy HH:mm", { locale: ptBR });
+      const timestamp = item.timestamp
+        ? format(new Date(item.timestamp), "dd/MM/yyyy HH:mm", { locale: ptBR })
+        : format(new Date(), "dd/MM/yyyy HH:mm", { locale: ptBR });
       pdf.text(`${timestamp}`, x + 2, y + height + 18);
 
       if (item.capturedBy) {
@@ -918,7 +936,11 @@ export const generateCleaningFormPDF = async (
       if (item.gpsCoordinates) {
         pdf.setTextColor(34, 197, 94);
         pdf.setFontSize(6);
-        pdf.text(`GPS: ${item.gpsCoordinates.lat.toFixed(6)}, ${item.gpsCoordinates.lng.toFixed(6)}`, x + 2, y + height + 26);
+        pdf.text(
+          `GPS: ${item.gpsCoordinates.lat.toFixed(6)}, ${item.gpsCoordinates.lng.toFixed(6)}`,
+          x + 2,
+          y + height + 26,
+        );
       }
 
       // Security verification stamp for secure IDs
