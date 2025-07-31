@@ -32,10 +32,10 @@ export default function Index() {
   ];
 
   const recentActivities = [
-    { id: 1, action: 'Aeronave PT-ABC inspecionada', time: '2 min atrás', type: 'aircraft' },
-    { id: 2, action: 'Nova tarefa atribuída a Maria Santos', time: '15 min atrás', type: 'task' },
-    { id: 3, action: 'Folha de voo #2024-001 finalizada', time: '1h atrás', type: 'sheet' },
-    { id: 4, action: 'Funcionário Carlos Lima adicionado', time: '2h atrás', type: 'employee' },
+    { id: 1, action: 'Aeronave PT-ABC - Limpeza exterior concluída', time: '2 min atrás', type: 'cleaning' },
+    { id: 2, action: 'Folha de limpeza #2024-015 criada por Maria Santos', time: '15 min atrás', type: 'form' },
+    { id: 3, action: 'Polimento da aeronave CS-DXB finalizado', time: '1h atrás', type: 'cleaning' },
+    { id: 4, action: 'Funcionário Carlos Lima adicionado ao sistema', time: '2h atrás', type: 'employee' },
   ];
 
   return (
