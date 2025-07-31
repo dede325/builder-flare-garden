@@ -18,6 +18,7 @@ import UserManagement from "./pages/UserManagement";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import { setupPhotoAutoSync } from "@/lib/photo-evidence-service";
+import { setupIntelligentSync } from "@/lib/intelligent-sync-service";
 
 // Error Boundary Component
 class ErrorBoundary extends Component<
