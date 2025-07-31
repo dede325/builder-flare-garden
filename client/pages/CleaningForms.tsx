@@ -688,13 +688,49 @@ export default function CleaningForms() {
                 </TabsContent>
 
                 <TabsContent value="employees" className="space-y-6 mt-6">
-                  <div className="flex justify-between items-center">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <h3 className="text-lg font-semibold text-white">Funcionários do Turno</h3>
-                    <Button onClick={addEmployee} className="aviation-button">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Adicionar Funcionário
-                    </Button>
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                      <Button onClick={addEmployee} variant="outline" className="border-white/30 text-white hover:bg-white/20">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Novo Funcionário
+                      </Button>
+                    </div>
                   </div>
+
+                  {/* Quick Add from Database */}
+                  {employees.length > 0 && (
+                    <Card className="glass-card border-white/20 p-4">
+                      <h4 className="text-white font-medium mb-3">Adicionar Funcionário Cadastrado</h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                        {employees
+                          .filter(emp => !formData.employees.some(formEmp => formEmp.name === emp.name))
+                          .slice(0, 6)
+                          .map(employee => (
+                          <Button
+                            key={employee.id}
+                            variant="outline"
+                            size="sm"
+                            onClick={() => addEmployeeFromDatabase(employee)}
+                            className="border-white/30 text-white hover:bg-white/20 justify-start"
+                          >
+                            {employee.photo && (
+                              <img src={employee.photo} alt="" className="w-4 h-4 rounded-full mr-2" />
+                            )}
+                            <div className="text-left">
+                              <div className="font-medium">{employee.name}</div>
+                              <div className="text-xs opacity-70">{employee.role}</div>
+                            </div>
+                          </Button>
+                        ))}
+                      </div>
+                      {employees.filter(emp => !formData.employees.some(formEmp => formEmp.name === emp.name)).length > 6 && (
+                        <p className="text-white/60 text-sm mt-2">
+                          E mais {employees.filter(emp => !formData.employees.some(formEmp => formEmp.name === emp.name)).length - 6} funcionários disponíveis
+                        </p>
+                      )}
+                    </Card>
+                  )}
 
                   <div className="space-y-4">
                     {formData.employees.map((employee, index) => (
