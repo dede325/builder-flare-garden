@@ -22,6 +22,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { MigrationDialog } from "@/components/MigrationDialog";
 import {
   Settings,
   User,
@@ -36,8 +37,10 @@ import {
   Plane,
   LogOut,
   ArrowLeft,
+  RefreshCw,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { migrationService } from "@/lib/migration-service";
 
 export default function Settings() {
   const { user: authUser, signOut } = useAuth();
