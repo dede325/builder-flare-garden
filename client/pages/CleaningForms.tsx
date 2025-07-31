@@ -461,15 +461,15 @@ export default function CleaningForms() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Controls */}
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center space-x-4">
-            <div className="relative">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+          <div className="flex items-center space-x-4 w-full sm:w-auto">
+            <div className="relative w-full sm:w-80">
               <Search className="absolute left-3 top-3 h-4 w-4 text-white/70" />
               <Input
                 placeholder="Buscar por código ou local..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="aviation-input pl-10 w-80"
+                className="aviation-input pl-10 w-full"
               />
             </div>
           </div>
