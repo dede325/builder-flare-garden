@@ -75,6 +75,7 @@ export default function CleaningForms() {
   const [editingForm, setEditingForm] = useState<CleaningForm | null>(null);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   // Form state
   const [formData, setFormData] = useState({
