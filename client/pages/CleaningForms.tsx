@@ -207,8 +207,17 @@ export default function CleaningForms() {
   const updateEmployee = (index: number, field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      employees: prev.employees.map((emp, i) => 
+      employees: prev.employees.map((emp, i) =>
         i === index ? { ...emp, [field]: value } : emp
+      )
+    }));
+  };
+
+  const updateEmployeePhoto = (index: number, photoDataURL: string | null) => {
+    setFormData(prev => ({
+      ...prev,
+      employees: prev.employees.map((emp, i) =>
+        i === index ? { ...emp, photo: photoDataURL || undefined } : emp
       )
     }));
   };
