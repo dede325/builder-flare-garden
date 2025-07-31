@@ -8,7 +8,20 @@ import { Badge } from '@/components/ui/badge';
 
 export default function Index() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [user] = useState({ name: 'João Silva', role: 'Gestor de Operações' });
+  const { user: authUser, signOut } = useAuth();
+
+  // Fallback user data for demo mode
+  const user = authUser
+    ? {
+        name: authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'Usuário',
+        role: authUser.user_metadata?.role || 'Gestor de Operações',
+        email: authUser.email
+      }
+    : { name: 'João Silva', role: 'Gestor de Operações', email: 'demo@aviation.com' };
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   // Mock data for demonstration
   const stats = [
