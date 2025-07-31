@@ -125,8 +125,56 @@ export default function CleaningForms() {
   ];
 
   useEffect(() => {
-    loadData();
+    initializeSecureSystem();
   }, []);
+
+  const initializeSecureSystem = async () => {
+    // Check secure context
+    checkSecureContext();
+    setSecurityStatus(window.isSecureContext ? 'secure' : 'insecure');
+
+    // Enable secure mode if available
+    setIsSecureMode(window.isSecureContext);
+
+    // Load data (secure if available, fallback to regular)
+    await loadData();
+
+    // Update sync status
+    updateSyncStatus();
+
+    // Listen for online/offline changes
+    const handleOnlineStatus = () => {
+      updateSyncStatus();
+    };
+
+    window.addEventListener('online', handleOnlineStatus);
+    window.addEventListener('offline', handleOnlineStatus);
+
+    return () => {
+      window.removeEventListener('online', handleOnlineStatus);
+      window.removeEventListener('offline', handleOnlineStatus);
+    };
+  };
+
+  const updateSyncStatus = async () => {
+    if (!navigator.onLine) {
+      setSyncStatus('offline');
+      return;
+    }
+
+    try {
+      const stats = await secureSyncService.getSyncStats();
+      if (stats.errors > 0) {
+        setSyncStatus('error');
+      } else if (stats.pendingSync > 0) {
+        setSyncStatus('pending');
+      } else {
+        setSyncStatus('synced');
+      }
+    } catch {
+      setSyncStatus('error');
+    }
+  };
 
   // Auto-save effect
   useEffect(() => {
