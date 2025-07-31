@@ -135,7 +135,7 @@
   }
 
   .saas-card:hover {
-    @apply transform scale-105 shadow-3xl;
+    @apply transform scale-105 shadow-2xl;
     background: linear-gradient(145deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.2));
   }
 
