@@ -84,7 +84,7 @@ export default function CleaningForms() {
     'Lavagem Completa',
     'Enceramento',
     'Limpeza de Vidros',
-    'Aspiração'
+    'Aspiraç��o'
   ];
 
   const locationOptions = [
@@ -1023,15 +1023,29 @@ export default function CleaningForms() {
                 </div>
 
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pt-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowQRDialog(form)}
-                    className="border-white/30 text-white hover:bg-white/20 w-full sm:w-auto"
-                  >
-                    <QrCode className="h-4 w-4 mr-2" />
-                    QR Code
-                  </Button>
+                  <div className="flex gap-2 w-full sm:w-auto">
+                    {form.status === 'draft' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditForm(form)}
+                        className="border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/20 flex-1 sm:flex-none"
+                      >
+                        <Edit className="h-4 w-4 mr-2" />
+                        Editar
+                      </Button>
+                    )}
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowQRDialog(form)}
+                      className="border-white/30 text-white hover:bg-white/20 flex-1 sm:w-auto"
+                    >
+                      <QrCode className="h-4 w-4 mr-2" />
+                      QR Code
+                    </Button>
+                  </div>
 
                   <div className="flex gap-2 w-full sm:w-auto">
                     <Button
