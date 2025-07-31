@@ -868,7 +868,7 @@ export default function CleaningForms() {
                 className="border-white/30 text-white hover:bg-white/20"
                 disabled={syncStatus === 'pending'}
               >
-                <Sync className={`h-4 w-4 mr-2 ${syncStatus === 'pending' ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`h-4 w-4 mr-2 ${syncStatus === 'pending' ? 'animate-spin' : ''}`} />
                 Sincronizar
               </Button>
             )}
