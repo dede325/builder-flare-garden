@@ -77,18 +77,23 @@ export default function CleaningForms() {
     clientConfirmedWithoutSignature: false
   });
 
-  const interventionTypeOptions = [
-    'Limpeza Externa',
-    'Limpeza Interna',
-    'Limpeza de Motores',
-    'Limpeza de Cockpit',
-    'Limpeza de Bagageiro',
-    'Inspeção Visual',
-    'Lavagem Completa',
-    'Enceramento',
-    'Limpeza de Vidros',
-    'Aspiração'
-  ];
+  // Get intervention types from localStorage or use defaults
+  const getInterventionTypes = () => {
+    const saved = localStorage.getItem('intervention_types');
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    const defaults = [
+      'Limpeza Exterior',
+      'Limpeza Interior',
+      'Polimento',
+      'Lavagem Profunda Durante a Manutenção de Base'
+    ];
+    localStorage.setItem('intervention_types', JSON.stringify(defaults));
+    return defaults;
+  };
+
+  const [interventionTypeOptions, setInterventionTypeOptions] = useState<string[]>(getInterventionTypes());
 
   const locationOptions = [
     'Hangar Principal',
