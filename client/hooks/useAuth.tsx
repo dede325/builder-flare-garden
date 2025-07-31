@@ -29,10 +29,9 @@ interface AuthContextType extends AuthState {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [authState, setAuthState] = useState<AuthState>({
-    user: null,
-    loading: true,
-    initialized: false,
+  const [authState, setAuthState] = useState<AuthState>(() => {
+    // Get initial state from auth service
+    return authService.getState();
   });
 
   useEffect(() => {
