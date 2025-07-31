@@ -861,7 +861,7 @@ export default function AircraftManager() {
         {/* Aircraft List */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredAircraft.map(aircraftItem => {
-            const inspectionStatus = getInspectionStatus(aircraftItem.nextInspection);
+            const cleaningStatus = getCleaningStatus(aircraftItem.lastCleaningDate || '');
             
             return (
               <Card key={aircraftItem.id} className="glass-card border-white/20 hover:bg-white/20 transition-all duration-300">
