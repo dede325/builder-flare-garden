@@ -126,19 +126,58 @@
 @layer components {
   .glass-card {
     @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-xl;
-    background: linear-gradient(145deg, rgba(0, 176, 234, 0.1), rgba(0, 157, 223, 0.15));
+    background: linear-gradient(145deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.15));
+  }
+
+  .saas-card {
+    @apply bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl;
+    transition: all 0.3s ease;
+  }
+
+  .saas-card:hover {
+    @apply transform scale-105 shadow-3xl;
+    background: linear-gradient(145deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.2));
+  }
+
+  .mobile-button {
+    @apply bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform active:scale-95;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  .mobile-input {
+    @apply bg-white/20 backdrop-blur-sm border border-white/30 rounded-2xl px-6 py-4 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent text-base;
+    min-height: 44px;
   }
 
   .aviation-button {
     @apply bg-aviation-blue-500 hover:bg-aviation-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
-    background: linear-gradient(135deg, #00b0ea 0%, #009ddf 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   }
 
   .aviation-button:hover {
-    background: linear-gradient(135deg, #009ddf 0%, #0088c7 100%);
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   }
 
   .aviation-input {
-    @apply bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg px-4 py-3 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-aviation-blue-400 focus:border-transparent;
+    @apply bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg px-4 py-3 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent;
+  }
+
+  /* Mobile-first gradients */
+  .mobile-gradient-bg {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 25%, #3730a3 50%, #1e3a8a 75%, #0f172a 100%);
+  }
+
+  .saas-gradient-header {
+    background: linear-gradient(90deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 58, 138, 0.95) 50%, rgba(15, 23, 42, 0.95) 100%);
+  }
+
+  /* Touch-optimized animations */
+  .touch-scale {
+    transition: transform 0.2s ease;
+  }
+
+  .touch-scale:active {
+    transform: scale(0.95);
   }
 }
