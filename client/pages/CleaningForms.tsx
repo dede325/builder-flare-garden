@@ -1052,34 +1052,61 @@ export default function CleaningForms() {
 
               <div className="text-center">
                 <p className="text-white/80 text-sm mb-2">
-                  Link direto:
+                  Link para acesso:
                 </p>
-                <p className="text-aviation-blue-300 text-xs break-all">
+                <p className="text-aviation-blue-300 text-xs break-all mb-4">
                   {`${window.location.origin}/cleaning-forms/${showQRDialog.code}`}
                 </p>
+
+                {import.meta.env.VITE_SUPABASE_URL && (
+                  <>
+                    <p className="text-white/80 text-sm mb-2">
+                      Link do PDF (Supabase Storage):
+                    </p>
+                    <p className="text-aviation-blue-300 text-xs break-all">
+                      {`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/documents/cleaning-forms/${showQRDialog.code}.pdf`}
+                    </p>
+                  </>
+                )}
               </div>
 
-              <div className="flex space-x-2 w-full">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    navigator.clipboard.writeText(`${window.location.origin}/cleaning-forms/${showQRDialog.code}`);
-                  }}
-                  className="flex-1 border-white/30 text-white hover:bg-white/20"
-                >
-                  Copiar Link
-                </Button>
-                <Button
-                  onClick={() => {
-                    const link = document.createElement('a');
-                    link.download = `qr-code-${showQRDialog.code}.png`;
-                    link.href = showQRDialog.qrCode;
-                    link.click();
-                  }}
-                  className="flex-1 aviation-button"
-                >
-                  Baixar QR
-                </Button>
+              <div className="flex flex-col space-y-2 w-full">
+                <div className="flex space-x-2 w-full">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      const formUrl = `${window.location.origin}/cleaning-forms/${showQRDialog.code}`;
+                      navigator.clipboard.writeText(formUrl);
+                    }}
+                    className="flex-1 border-white/30 text-white hover:bg-white/20"
+                  >
+                    Copiar Link
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      const link = document.createElement('a');
+                      link.download = `qr-code-${showQRDialog.code}.png`;
+                      link.href = showQRDialog.qrCode;
+                      link.click();
+                    }}
+                    className="flex-1 aviation-button"
+                  >
+                    Baixar QR
+                  </Button>
+                </div>
+
+                {import.meta.env.VITE_SUPABASE_URL && (
+                  <Button
+                    onClick={() => {
+                      const pdfUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/documents/cleaning-forms/${showQRDialog.code}.pdf`;
+                      window.open(pdfUrl, '_blank');
+                    }}
+                    className="w-full aviation-button"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Abrir PDF do Storage
+                  </Button>
+                )}
               </div>
             </div>
           )}
