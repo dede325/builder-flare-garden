@@ -1,17 +1,48 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Search, Edit, Trash2, Plane, Calendar, Clock, Wrench, Save, AlertTriangle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import {
+  ArrowLeft,
+  Plus,
+  Search,
+  Edit,
+  Trash2,
+  Plane,
+  Calendar,
+  Clock,
+  Wrench,
+  Save,
+  AlertTriangle,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface Aircraft {
   id: string;
@@ -30,7 +61,7 @@ interface Aircraft {
     height: number; // in meters
     exteriorArea: number; // in m² for cleaning estimates
   };
-  status: 'active' | 'inactive' | 'out_of_service';
+  status: "active" | "inactive" | "out_of_service";
   location: string;
   hangar: string;
   lastCleaningDate?: string;
@@ -41,83 +72,83 @@ interface Aircraft {
   updatedAt: string;
 }
 
-const defaultAircraft: Omit<Aircraft, 'id' | 'createdAt' | 'updatedAt'> = {
-  registration: '',
-  model: '',
-  manufacturer: '',
-  owner: '',
-  type: 'commercial',
+const defaultAircraft: Omit<Aircraft, "id" | "createdAt" | "updatedAt"> = {
+  registration: "",
+  model: "",
+  manufacturer: "",
+  owner: "",
+  type: "commercial",
   capacity: {
     passengers: 0,
-    cargo: 0
+    cargo: 0,
   },
   specifications: {
     wingspan: 0,
     length: 0,
     height: 0,
-    exteriorArea: 0
+    exteriorArea: 0,
   },
-  status: 'active',
-  location: '',
-  hangar: '',
-  lastCleaningDate: '',
-  lastCleaningType: '',
-  cleaningNotes: '',
-  cleaningRequirements: []
+  status: "active",
+  location: "",
+  hangar: "",
+  lastCleaningDate: "",
+  lastCleaningType: "",
+  cleaningNotes: "",
+  cleaningRequirements: [],
 };
 
 export default function AircraftManager() {
   const [aircraft, setAircraft] = useState<Aircraft[]>([]);
   const [filteredAircraft, setFilteredAircraft] = useState<Aircraft[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [filterType, setFilterType] = useState<string>('all');
-  const [filterManufacturer, setFilterManufacturer] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [filterType, setFilterType] = useState<string>("all");
+  const [filterManufacturer, setFilterManufacturer] = useState<string>("all");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingAircraft, setEditingAircraft] = useState<Aircraft | null>(null);
   const [formData, setFormData] = useState(defaultAircraft);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const { toast } = useToast();
 
   const aircraftTypes = [
-    'commercial',
-    'private',
-    'cargo',
-    'military',
-    'training',
-    'charter'
+    "commercial",
+    "private",
+    "cargo",
+    "military",
+    "training",
+    "charter",
   ];
 
   const manufacturers = [
-    'Boeing',
-    'Airbus',
-    'Embraer',
-    'Bombardier',
-    'Cessna',
-    'Gulfstream',
-    'Dassault',
-    'Beechcraft'
+    "Boeing",
+    "Airbus",
+    "Embraer",
+    "Bombardier",
+    "Cessna",
+    "Gulfstream",
+    "Dassault",
+    "Beechcraft",
   ];
 
   const certificationOptions = [
-    'Certificado de Aeronavegabilidade',
-    'Certificado de Matrícula',
-    'Seguro de Responsabilidade Civil',
-    'Certificado de Ruído',
-    'ETOPS (Extended Twin Operations)',
-    'Certificado de Operador Aéreo'
+    "Certificado de Aeronavegabilidade",
+    "Certificado de Matrícula",
+    "Seguro de Responsabilidade Civil",
+    "Certificado de Ruído",
+    "ETOPS (Extended Twin Operations)",
+    "Certificado de Operador Aéreo",
   ];
 
   const getTypeText = (type: string) => {
     const types: Record<string, string> = {
-      commercial: 'Comercial',
-      private: 'Privada',
-      cargo: 'Carga',
-      military: 'Militar',
-      training: 'Treinamento',
-      charter: 'Charter'
+      commercial: "Comercial",
+      private: "Privada",
+      cargo: "Carga",
+      military: "Militar",
+      training: "Treinamento",
+      charter: "Charter",
     };
     return types[type] || type;
   };
@@ -131,7 +162,7 @@ export default function AircraftManager() {
   }, [aircraft, searchTerm, filterStatus, filterType, filterManufacturer]);
 
   const loadAircraft = () => {
-    const savedAircraft = localStorage.getItem('aviation_aircraft');
+    const savedAircraft = localStorage.getItem("aviation_aircraft");
     if (savedAircraft) {
       const parsed = JSON.parse(savedAircraft);
       setAircraft(parsed);
@@ -145,24 +176,27 @@ export default function AircraftManager() {
     let filtered = aircraft;
 
     if (searchTerm) {
-      filtered = filtered.filter(ac => 
-        ac.registration.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        ac.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        ac.manufacturer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        ac.owner.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (ac) =>
+          ac.registration.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          ac.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          ac.manufacturer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          ac.owner.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
-    if (filterStatus !== 'all') {
-      filtered = filtered.filter(ac => ac.status === filterStatus);
+    if (filterStatus !== "all") {
+      filtered = filtered.filter((ac) => ac.status === filterStatus);
     }
 
-    if (filterType !== 'all') {
-      filtered = filtered.filter(ac => ac.type === filterType);
+    if (filterType !== "all") {
+      filtered = filtered.filter((ac) => ac.type === filterType);
     }
 
-    if (filterManufacturer !== 'all') {
-      filtered = filtered.filter(ac => ac.manufacturer === filterManufacturer);
+    if (filterManufacturer !== "all") {
+      filtered = filtered.filter(
+        (ac) => ac.manufacturer === filterManufacturer,
+      );
     }
 
     setFilteredAircraft(filtered);
@@ -172,33 +206,37 @@ export default function AircraftManager() {
     const errors: Record<string, string> = {};
 
     if (!formData.registration.trim()) {
-      errors.registration = 'Matrícula é obrigat��ria';
-    } else if (!/^[A-Z]{1,2}-[A-Z]{3}$/.test(formData.registration.toUpperCase())) {
-      errors.registration = 'Formato inválido. Use: D2-ABC';
+      errors.registration = "Matrícula é obrigat��ria";
+    } else if (
+      !/^[A-Z]{1,2}-[A-Z]{3}$/.test(formData.registration.toUpperCase())
+    ) {
+      errors.registration = "Formato inválido. Use: D2-ABC";
     }
 
     if (!formData.model.trim()) {
-      errors.model = 'Modelo é obrigatório';
+      errors.model = "Modelo é obrigatório";
     }
 
     if (!formData.manufacturer.trim()) {
-      errors.manufacturer = 'Fabricante é obrigatório';
+      errors.manufacturer = "Fabricante é obrigatório";
     }
 
     if (!formData.owner.trim()) {
-      errors.owner = 'Proprietário é obrigatório';
+      errors.owner = "Proprietário é obrigatório";
     }
 
     if (!formData.location.trim()) {
-      errors.location = 'Localização é obrigatória';
+      errors.location = "Localização é obrigatória";
     }
 
     // Check for duplicate registration (excluding current aircraft when editing)
-    const existingAircraft = aircraft.find(ac => 
-      ac.registration.toUpperCase() === formData.registration.toUpperCase() && ac.id !== editingAircraft?.id
+    const existingAircraft = aircraft.find(
+      (ac) =>
+        ac.registration.toUpperCase() === formData.registration.toUpperCase() &&
+        ac.id !== editingAircraft?.id,
     );
     if (existingAircraft) {
-      errors.registration = 'Matrícula já está em uso';
+      errors.registration = "Matrícula já está em uso";
     }
 
     setFormErrors(errors);
@@ -214,22 +252,25 @@ export default function AircraftManager() {
 
     try {
       const now = new Date().toISOString();
-      
+
       if (editingAircraft) {
         // Update existing aircraft
         const updatedAircraft: Aircraft = {
           ...editingAircraft,
           ...formData,
           registration: formData.registration.toUpperCase(),
-          updatedAt: now
+          updatedAt: now,
         };
 
-        const updatedAircraftList = aircraft.map(ac => 
-          ac.id === editingAircraft.id ? updatedAircraft : ac
+        const updatedAircraftList = aircraft.map((ac) =>
+          ac.id === editingAircraft.id ? updatedAircraft : ac,
         );
 
         setAircraft(updatedAircraftList);
-        localStorage.setItem('aviation_aircraft', JSON.stringify(updatedAircraftList));
+        localStorage.setItem(
+          "aviation_aircraft",
+          JSON.stringify(updatedAircraftList),
+        );
 
         toast({
           title: "Aeronave atualizada",
@@ -242,12 +283,15 @@ export default function AircraftManager() {
           id: crypto.randomUUID(),
           registration: formData.registration.toUpperCase(),
           createdAt: now,
-          updatedAt: now
+          updatedAt: now,
         };
 
         const updatedAircraftList = [...aircraft, newAircraft];
         setAircraft(updatedAircraftList);
-        localStorage.setItem('aviation_aircraft', JSON.stringify(updatedAircraftList));
+        localStorage.setItem(
+          "aviation_aircraft",
+          JSON.stringify(updatedAircraftList),
+        );
 
         toast({
           title: "Aeronave cadastrada",
@@ -262,7 +306,7 @@ export default function AircraftManager() {
       toast({
         title: "Erro",
         description: "Ocorreu um erro ao salvar os dados.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
@@ -272,29 +316,43 @@ export default function AircraftManager() {
   const handleEdit = (aircraftItem: Aircraft) => {
     setEditingAircraft(aircraftItem);
     setFormData({
-      registration: aircraftItem.registration || '',
-      model: aircraftItem.model || '',
-      manufacturer: aircraftItem.manufacturer || '',
-      owner: aircraftItem.owner || '',
-      type: aircraftItem.type || 'commercial',
+      registration: aircraftItem.registration || "",
+      model: aircraftItem.model || "",
+      manufacturer: aircraftItem.manufacturer || "",
+      owner: aircraftItem.owner || "",
+      type: aircraftItem.type || "commercial",
       capacity: aircraftItem.capacity || { passengers: 0, cargo: 0 },
-      specifications: aircraftItem.specifications || { wingspan: 0, length: 0, height: 0, exteriorArea: 0 },
-      status: aircraftItem.status || 'active',
-      location: aircraftItem.location || '',
-      hangar: aircraftItem.hangar || '',
-      lastCleaningDate: aircraftItem.lastCleaningDate || '',
-      lastCleaningType: aircraftItem.lastCleaningType || '',
-      cleaningNotes: aircraftItem.cleaningNotes || '',
-      cleaningRequirements: aircraftItem.cleaningRequirements || []
+      specifications: aircraftItem.specifications || {
+        wingspan: 0,
+        length: 0,
+        height: 0,
+        exteriorArea: 0,
+      },
+      status: aircraftItem.status || "active",
+      location: aircraftItem.location || "",
+      hangar: aircraftItem.hangar || "",
+      lastCleaningDate: aircraftItem.lastCleaningDate || "",
+      lastCleaningType: aircraftItem.lastCleaningType || "",
+      cleaningNotes: aircraftItem.cleaningNotes || "",
+      cleaningRequirements: aircraftItem.cleaningRequirements || [],
     });
     setIsCreateDialogOpen(true);
   };
 
   const handleDelete = (aircraftItem: Aircraft) => {
-    if (confirm(`Tem certeza que deseja excluir a aeronave ${aircraftItem.registration}?`)) {
-      const updatedAircraftList = aircraft.filter(ac => ac.id !== aircraftItem.id);
+    if (
+      confirm(
+        `Tem certeza que deseja excluir a aeronave ${aircraftItem.registration}?`,
+      )
+    ) {
+      const updatedAircraftList = aircraft.filter(
+        (ac) => ac.id !== aircraftItem.id,
+      );
       setAircraft(updatedAircraftList);
-      localStorage.setItem('aviation_aircraft', JSON.stringify(updatedAircraftList));
+      localStorage.setItem(
+        "aviation_aircraft",
+        JSON.stringify(updatedAircraftList),
+      );
 
       toast({
         title: "Aeronave excluída",
@@ -310,35 +368,54 @@ export default function AircraftManager() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-500';
-      case 'inactive': return 'bg-gray-500';
-      case 'out_of_service': return 'bg-red-500';
-      default: return 'bg-gray-500';
+      case "active":
+        return "bg-green-500";
+      case "inactive":
+        return "bg-gray-500";
+      case "out_of_service":
+        return "bg-red-500";
+      default:
+        return "bg-gray-500";
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'active': return 'Operacional';
-      case 'inactive': return 'Inativa';
-      case 'out_of_service': return 'Fora de Serviço';
-      default: return 'Desconhecido';
+      case "active":
+        return "Operacional";
+      case "inactive":
+        return "Inativa";
+      case "out_of_service":
+        return "Fora de Serviço";
+      default:
+        return "Desconhecido";
     }
   };
 
   const getCleaningStatus = (lastCleaningDate: string) => {
-    if (!lastCleaningDate) return { text: 'Nunca', color: 'bg-gray-500', urgent: false };
+    if (!lastCleaningDate)
+      return { text: "Nunca", color: "bg-gray-500", urgent: false };
 
     const lastDate = new Date(lastCleaningDate);
     const now = new Date();
-    const diffDays = Math.ceil((now.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+    const diffDays = Math.ceil(
+      (now.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24),
+    );
 
     if (diffDays > 30) {
-      return { text: `${diffDays}d atrás`, color: 'bg-red-500', urgent: true };
+      return { text: `${diffDays}d atrás`, color: "bg-red-500", urgent: true };
     } else if (diffDays > 14) {
-      return { text: `${diffDays}d atrás`, color: 'bg-yellow-500', urgent: false };
+      return {
+        text: `${diffDays}d atrás`,
+        color: "bg-yellow-500",
+        urgent: false,
+      };
     } else {
-      return { text: `${diffDays}d atrás`, color: 'bg-green-500', urgent: false };
+      return {
+        text: `${diffDays}d atrás`,
+        color: "bg-green-500",
+        urgent: false,
+      };
     }
   };
 
@@ -349,13 +426,19 @@ export default function AircraftManager() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-16 space-x-4">
             <Link to="/">
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-white/20"
+              >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
             <div className="flex items-center space-x-3">
               <Plane className="h-6 w-6 text-white" />
-              <h1 className="text-2xl font-bold text-white">Gerenciamento de Aeronaves</h1>
+              <h1 className="text-2xl font-bold text-white">
+                Gerenciamento de Aeronaves
+              </h1>
             </div>
           </div>
         </div>
@@ -375,17 +458,25 @@ export default function AircraftManager() {
                 className="aviation-input pl-10"
               />
             </div>
-            
+
             <div className="flex flex-wrap gap-2">
               <Select value={filterStatus} onValueChange={setFilterStatus}>
                 <SelectTrigger className="aviation-input w-36">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent className="bg-aviation-gray-800 border-white/20">
-                  <SelectItem value="all" className="text-white">Todos</SelectItem>
-                  <SelectItem value="active" className="text-white">Operacional</SelectItem>
-                  <SelectItem value="inactive" className="text-white">Inativa</SelectItem>
-                  <SelectItem value="out_of_service" className="text-white">Fora de Serviço</SelectItem>
+                  <SelectItem value="all" className="text-white">
+                    Todos
+                  </SelectItem>
+                  <SelectItem value="active" className="text-white">
+                    Operacional
+                  </SelectItem>
+                  <SelectItem value="inactive" className="text-white">
+                    Inativa
+                  </SelectItem>
+                  <SelectItem value="out_of_service" className="text-white">
+                    Fora de Serviço
+                  </SelectItem>
                 </SelectContent>
               </Select>
 
@@ -394,8 +485,10 @@ export default function AircraftManager() {
                   <SelectValue placeholder="Tipo" />
                 </SelectTrigger>
                 <SelectContent className="bg-aviation-gray-800 border-white/20">
-                  <SelectItem value="all" className="text-white">Todos</SelectItem>
-                  {aircraftTypes.map(type => (
+                  <SelectItem value="all" className="text-white">
+                    Todos
+                  </SelectItem>
+                  {aircraftTypes.map((type) => (
                     <SelectItem key={type} value={type} className="text-white">
                       {getTypeText(type)}
                     </SelectItem>
@@ -403,14 +496,23 @@ export default function AircraftManager() {
                 </SelectContent>
               </Select>
 
-              <Select value={filterManufacturer} onValueChange={setFilterManufacturer}>
+              <Select
+                value={filterManufacturer}
+                onValueChange={setFilterManufacturer}
+              >
                 <SelectTrigger className="aviation-input w-36">
                   <SelectValue placeholder="Fabricante" />
                 </SelectTrigger>
                 <SelectContent className="bg-aviation-gray-800 border-white/20">
-                  <SelectItem value="all" className="text-white">Todos</SelectItem>
-                  {manufacturers.map(manufacturer => (
-                    <SelectItem key={manufacturer} value={manufacturer} className="text-white">
+                  <SelectItem value="all" className="text-white">
+                    Todos
+                  </SelectItem>
+                  {manufacturers.map((manufacturer) => (
+                    <SelectItem
+                      key={manufacturer}
+                      value={manufacturer}
+                      className="text-white"
+                    >
                       {manufacturer}
                     </SelectItem>
                   ))}
@@ -418,14 +520,17 @@ export default function AircraftManager() {
               </Select>
             </div>
           </div>
-          
-          <Dialog open={isCreateDialogOpen} onOpenChange={(open) => {
-            setIsCreateDialogOpen(open);
-            if (!open) {
-              setEditingAircraft(null);
-              resetForm();
-            }
-          }}>
+
+          <Dialog
+            open={isCreateDialogOpen}
+            onOpenChange={(open) => {
+              setIsCreateDialogOpen(open);
+              if (!open) {
+                setEditingAircraft(null);
+                resetForm();
+              }
+            }}
+          >
             <DialogTrigger asChild>
               <Button className="aviation-button">
                 <Plus className="h-4 w-4 mr-2" />
@@ -435,77 +540,131 @@ export default function AircraftManager() {
             <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-aviation-gray-800 border-white/20 mx-4">
               <DialogHeader>
                 <DialogTitle className="text-white">
-                  {editingAircraft ? 'Editar Aeronave' : 'Nova Aeronave'}
+                  {editingAircraft ? "Editar Aeronave" : "Nova Aeronave"}
                 </DialogTitle>
                 <DialogDescription className="text-white/70">
-                  {editingAircraft ? 'Atualize os dados da aeronave' : 'Cadastre uma nova aeronave no sistema'}
+                  {editingAircraft
+                    ? "Atualize os dados da aeronave"
+                    : "Cadastre uma nova aeronave no sistema"}
                 </DialogDescription>
               </DialogHeader>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Basic Information */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-white">Informações Básicas</h3>
-                  
+                  <h3 className="text-lg font-semibold text-white">
+                    Informações Básicas
+                  </h3>
+
                   <div className="space-y-2">
                     <Label className="text-white">Matrícula *</Label>
                     <Input
                       value={formData.registration}
-                      onChange={(e) => setFormData(prev => ({ ...prev, registration: e.target.value.toUpperCase() }))}
-                      className={`aviation-input ${formErrors.registration ? 'border-red-500' : ''}`}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          registration: e.target.value.toUpperCase(),
+                        }))
+                      }
+                      className={`aviation-input ${formErrors.registration ? "border-red-500" : ""}`}
                       placeholder="D2-ABC"
                     />
-                    {formErrors.registration && <p className="text-red-400 text-sm">{formErrors.registration}</p>}
+                    {formErrors.registration && (
+                      <p className="text-red-400 text-sm">
+                        {formErrors.registration}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
                     <Label className="text-white">Modelo *</Label>
                     <Input
                       value={formData.model}
-                      onChange={(e) => setFormData(prev => ({ ...prev, model: e.target.value }))}
-                      className={`aviation-input ${formErrors.model ? 'border-red-500' : ''}`}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          model: e.target.value,
+                        }))
+                      }
+                      className={`aviation-input ${formErrors.model ? "border-red-500" : ""}`}
                       placeholder="Boeing 737-800"
                     />
-                    {formErrors.model && <p className="text-red-400 text-sm">{formErrors.model}</p>}
+                    {formErrors.model && (
+                      <p className="text-red-400 text-sm">{formErrors.model}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
                     <Label className="text-white">Fabricante *</Label>
-                    <Select value={formData.manufacturer} onValueChange={(value) => setFormData(prev => ({ ...prev, manufacturer: value }))}>
-                      <SelectTrigger className={`aviation-input ${formErrors.manufacturer ? 'border-red-500' : ''}`}>
+                    <Select
+                      value={formData.manufacturer}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          manufacturer: value,
+                        }))
+                      }
+                    >
+                      <SelectTrigger
+                        className={`aviation-input ${formErrors.manufacturer ? "border-red-500" : ""}`}
+                      >
                         <SelectValue placeholder="Selecione o fabricante" />
                       </SelectTrigger>
                       <SelectContent className="bg-aviation-gray-800 border-white/20">
-                        {manufacturers.map(manufacturer => (
-                          <SelectItem key={manufacturer} value={manufacturer} className="text-white">
+                        {manufacturers.map((manufacturer) => (
+                          <SelectItem
+                            key={manufacturer}
+                            value={manufacturer}
+                            className="text-white"
+                          >
                             {manufacturer}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    {formErrors.manufacturer && <p className="text-red-400 text-sm">{formErrors.manufacturer}</p>}
+                    {formErrors.manufacturer && (
+                      <p className="text-red-400 text-sm">
+                        {formErrors.manufacturer}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
                     <Label className="text-white">Proprietário *</Label>
                     <Input
                       value={formData.owner}
-                      onChange={(e) => setFormData(prev => ({ ...prev, owner: e.target.value }))}
-                      className={`aviation-input ${formErrors.owner ? 'border-red-500' : ''}`}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          owner: e.target.value,
+                        }))
+                      }
+                      className={`aviation-input ${formErrors.owner ? "border-red-500" : ""}`}
                       placeholder="TAAG Angola Airlines"
                     />
-                    {formErrors.owner && <p className="text-red-400 text-sm">{formErrors.owner}</p>}
+                    {formErrors.owner && (
+                      <p className="text-red-400 text-sm">{formErrors.owner}</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
                     <Label className="text-white">Tipo</Label>
-                    <Select value={formData.type} onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}>
+                    <Select
+                      value={formData.type}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, type: value }))
+                      }
+                    >
                       <SelectTrigger className="aviation-input">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="bg-aviation-gray-800 border-white/20">
-                        {aircraftTypes.map(type => (
-                          <SelectItem key={type} value={type} className="text-white">
+                        {aircraftTypes.map((type) => (
+                          <SelectItem
+                            key={type}
+                            value={type}
+                            className="text-white"
+                          >
                             {getTypeText(type)}
                           </SelectItem>
                         ))}
@@ -515,14 +674,28 @@ export default function AircraftManager() {
 
                   <div className="space-y-2">
                     <Label className="text-white">Status</Label>
-                    <Select value={formData.status} onValueChange={(value: any) => setFormData(prev => ({ ...prev, status: value }))}>
+                    <Select
+                      value={formData.status}
+                      onValueChange={(value: any) =>
+                        setFormData((prev) => ({ ...prev, status: value }))
+                      }
+                    >
                       <SelectTrigger className="aviation-input">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="bg-aviation-gray-800 border-white/20">
-                        <SelectItem value="active" className="text-white">Operacional</SelectItem>
-                        <SelectItem value="inactive" className="text-white">Inativa</SelectItem>
-                        <SelectItem value="out_of_service" className="text-white">Fora de Serviço</SelectItem>
+                        <SelectItem value="active" className="text-white">
+                          Operacional
+                        </SelectItem>
+                        <SelectItem value="inactive" className="text-white">
+                          Inativa
+                        </SelectItem>
+                        <SelectItem
+                          value="out_of_service"
+                          className="text-white"
+                        >
+                          Fora de Serviço
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -531,42 +704,67 @@ export default function AircraftManager() {
                     <Label className="text-white">Localização Atual *</Label>
                     <Input
                       value={formData.location}
-                      onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                      className={`aviation-input ${formErrors.location ? 'border-red-500' : ''}`}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          location: e.target.value,
+                        }))
+                      }
+                      className={`aviation-input ${formErrors.location ? "border-red-500" : ""}`}
                       placeholder="Hangar Principal"
                     />
-                    {formErrors.location && <p className="text-red-400 text-sm">{formErrors.location}</p>}
+                    {formErrors.location && (
+                      <p className="text-red-400 text-sm">
+                        {formErrors.location}
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 {/* Technical Information */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-white">Informações Técnicas</h3>
-                  
+                  <h3 className="text-lg font-semibold text-white">
+                    Informações Técnicas
+                  </h3>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="text-white">Capacidade Passageiros</Label>
+                      <Label className="text-white">
+                        Capacidade Passageiros
+                      </Label>
                       <Input
                         type="number"
-                        value={formData.capacity.passengers || ''}
-                        onChange={(e) => setFormData(prev => ({ 
-                          ...prev, 
-                          capacity: { ...prev.capacity, passengers: parseInt(e.target.value) || 0 }
-                        }))}
+                        value={formData.capacity.passengers || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            capacity: {
+                              ...prev.capacity,
+                              passengers: parseInt(e.target.value) || 0,
+                            },
+                          }))
+                        }
                         className="aviation-input"
                         placeholder="189"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-white">Capacidade Carga (kg)</Label>
+                      <Label className="text-white">
+                        Capacidade Carga (kg)
+                      </Label>
                       <Input
                         type="number"
-                        value={formData.capacity.cargo || ''}
-                        onChange={(e) => setFormData(prev => ({ 
-                          ...prev, 
-                          capacity: { ...prev.capacity, cargo: parseInt(e.target.value) || 0 }
-                        }))}
+                        value={formData.capacity.cargo || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            capacity: {
+                              ...prev.capacity,
+                              cargo: parseInt(e.target.value) || 0,
+                            },
+                          }))
+                        }
                         className="aviation-input"
                         placeholder="1200"
                       />
@@ -579,11 +777,16 @@ export default function AircraftManager() {
                       <Input
                         type="number"
                         step="0.1"
-                        value={formData.specifications.height || ''}
-                        onChange={(e) => setFormData(prev => ({
-                          ...prev,
-                          specifications: { ...prev.specifications, height: parseFloat(e.target.value) || 0 }
-                        }))}
+                        value={formData.specifications.height || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            specifications: {
+                              ...prev.specifications,
+                              height: parseFloat(e.target.value) || 0,
+                            },
+                          }))
+                        }
                         className="aviation-input"
                         placeholder="12.5"
                       />
@@ -593,11 +796,16 @@ export default function AircraftManager() {
                       <Label className="text-white">Área Exterior (m²)</Label>
                       <Input
                         type="number"
-                        value={formData.specifications.exteriorArea || ''}
-                        onChange={(e) => setFormData(prev => ({
-                          ...prev,
-                          specifications: { ...prev.specifications, exteriorArea: parseInt(e.target.value) || 0 }
-                        }))}
+                        value={formData.specifications.exteriorArea || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            specifications: {
+                              ...prev.specifications,
+                              exteriorArea: parseInt(e.target.value) || 0,
+                            },
+                          }))
+                        }
                         className="aviation-input"
                         placeholder="845"
                       />
@@ -610,11 +818,16 @@ export default function AircraftManager() {
                       <Input
                         type="number"
                         step="0.1"
-                        value={formData.specifications.wingspan || ''}
-                        onChange={(e) => setFormData(prev => ({ 
-                          ...prev, 
-                          specifications: { ...prev.specifications, wingspan: parseFloat(e.target.value) || 0 }
-                        }))}
+                        value={formData.specifications.wingspan || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            specifications: {
+                              ...prev.specifications,
+                              wingspan: parseFloat(e.target.value) || 0,
+                            },
+                          }))
+                        }
                         className="aviation-input"
                         placeholder="35.8"
                       />
@@ -625,11 +838,16 @@ export default function AircraftManager() {
                       <Input
                         type="number"
                         step="0.1"
-                        value={formData.specifications.length || ''}
-                        onChange={(e) => setFormData(prev => ({ 
-                          ...prev, 
-                          specifications: { ...prev.specifications, length: parseFloat(e.target.value) || 0 }
-                        }))}
+                        value={formData.specifications.length || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            specifications: {
+                              ...prev.specifications,
+                              length: parseFloat(e.target.value) || 0,
+                            },
+                          }))
+                        }
                         className="aviation-input"
                         placeholder="39.5"
                       />
@@ -639,8 +857,13 @@ export default function AircraftManager() {
                   <div className="space-y-2">
                     <Label className="text-white">Hangar</Label>
                     <Input
-                      value={formData.hangar || ''}
-                      onChange={(e) => setFormData(prev => ({ ...prev, hangar: e.target.value }))}
+                      value={formData.hangar || ""}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          hangar: e.target.value,
+                        }))
+                      }
                       className="aviation-input"
                       placeholder="Hangar 1"
                     />
@@ -651,8 +874,13 @@ export default function AircraftManager() {
                       <Label className="text-white">Última Limpeza</Label>
                       <Input
                         type="date"
-                        value={formData.lastCleaningDate || ''}
-                        onChange={(e) => setFormData(prev => ({ ...prev, lastCleaningDate: e.target.value }))}
+                        value={formData.lastCleaningDate || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            lastCleaningDate: e.target.value,
+                          }))
+                        }
                         className="aviation-input"
                       />
                     </div>
@@ -660,17 +888,39 @@ export default function AircraftManager() {
                     <div className="space-y-2">
                       <Label className="text-white">Tipo de Limpeza</Label>
                       <Select
-                        value={formData.lastCleaningType || ''}
-                        onValueChange={(value) => setFormData(prev => ({ ...prev, lastCleaningType: value }))}
+                        value={formData.lastCleaningType || ""}
+                        onValueChange={(value) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            lastCleaningType: value,
+                          }))
+                        }
                       >
                         <SelectTrigger className="aviation-input">
                           <SelectValue placeholder="Selecione o tipo" />
                         </SelectTrigger>
                         <SelectContent className="bg-aviation-gray-800 border-white/20">
-                          <SelectItem value="Limpeza Exterior" className="text-white">Limpeza Exterior</SelectItem>
-                          <SelectItem value="Limpeza Interior" className="text-white">Limpeza Interior</SelectItem>
-                          <SelectItem value="Polimento" className="text-white">Polimento</SelectItem>
-                          <SelectItem value="Lavagem Profunda Durante a Manutenção de Base" className="text-white">Lavagem Profunda</SelectItem>
+                          <SelectItem
+                            value="Limpeza Exterior"
+                            className="text-white"
+                          >
+                            Limpeza Exterior
+                          </SelectItem>
+                          <SelectItem
+                            value="Limpeza Interior"
+                            className="text-white"
+                          >
+                            Limpeza Interior
+                          </SelectItem>
+                          <SelectItem value="Polimento" className="text-white">
+                            Polimento
+                          </SelectItem>
+                          <SelectItem
+                            value="Lavagem Profunda Durante a Manutenção de Base"
+                            className="text-white"
+                          >
+                            Lavagem Profunda
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -682,24 +932,29 @@ export default function AircraftManager() {
               <div className="mt-6">
                 <Label className="text-white">Observações de Limpeza</Label>
                 <Textarea
-                  value={formData.cleaningNotes || ''}
-                  onChange={(e) => setFormData(prev => ({ ...prev, cleaningNotes: e.target.value }))}
+                  value={formData.cleaningNotes || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      cleaningNotes: e.target.value,
+                    }))
+                  }
                   className="aviation-input min-h-20 mt-2"
                   placeholder="Observações sobre limpeza, requisitos especiais, etc..."
                 />
               </div>
 
               <div className="flex justify-end space-x-4 pt-6">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setIsCreateDialogOpen(false)}
                   className="border-white/30 text-white hover:bg-white/20"
                   disabled={isSubmitting}
                 >
                   Cancelar
                 </Button>
-                <Button 
-                  onClick={handleSubmit} 
+                <Button
+                  onClick={handleSubmit}
                   className="aviation-button"
                   disabled={isSubmitting}
                 >
@@ -711,7 +966,7 @@ export default function AircraftManager() {
                   ) : (
                     <>
                       <Save className="h-4 w-4 mr-2" />
-                      {editingAircraft ? 'Atualizar' : 'Cadastrar'}
+                      {editingAircraft ? "Atualizar" : "Cadastrar"}
                     </>
                   )}
                 </Button>
@@ -726,8 +981,12 @@ export default function AircraftManager() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-white/70 text-sm font-medium">Total de Aeronaves</p>
-                  <p className="text-3xl font-bold text-white">{aircraft.length}</p>
+                  <p className="text-white/70 text-sm font-medium">
+                    Total de Aeronaves
+                  </p>
+                  <p className="text-3xl font-bold text-white">
+                    {aircraft.length}
+                  </p>
                 </div>
                 <Plane className="h-8 w-8 text-aviation-blue-300" />
               </div>
@@ -738,9 +997,11 @@ export default function AircraftManager() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-white/70 text-sm font-medium">Operacionais</p>
+                  <p className="text-white/70 text-sm font-medium">
+                    Operacionais
+                  </p>
                   <p className="text-3xl font-bold text-white">
-                    {aircraft.filter(ac => ac.status === 'active').length}
+                    {aircraft.filter((ac) => ac.status === "active").length}
                   </p>
                 </div>
                 <div className="h-3 w-3 bg-green-400 rounded-full"></div>
@@ -752,9 +1013,14 @@ export default function AircraftManager() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-white/70 text-sm font-medium">Fora de Serviço</p>
+                  <p className="text-white/70 text-sm font-medium">
+                    Fora de Serviço
+                  </p>
                   <p className="text-3xl font-bold text-white">
-                    {aircraft.filter(ac => ac.status === 'out_of_service').length}
+                    {
+                      aircraft.filter((ac) => ac.status === "out_of_service")
+                        .length
+                    }
                   </p>
                 </div>
                 <AlertTriangle className="h-8 w-8 text-red-400" />
@@ -766,11 +1032,21 @@ export default function AircraftManager() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-white/70 text-sm font-medium">Limpas (7 dias)</p>
+                  <p className="text-white/70 text-sm font-medium">
+                    Limpas (7 dias)
+                  </p>
                   <p className="text-3xl font-bold text-white">
-                    {aircraft.filter(ac => ac.lastCleaningDate &&
-                      Math.ceil((new Date().getTime() - new Date(ac.lastCleaningDate).getTime()) / (1000 * 60 * 60 * 24)) <= 7
-                    ).length}
+                    {
+                      aircraft.filter(
+                        (ac) =>
+                          ac.lastCleaningDate &&
+                          Math.ceil(
+                            (new Date().getTime() -
+                              new Date(ac.lastCleaningDate).getTime()) /
+                              (1000 * 60 * 60 * 24),
+                          ) <= 7,
+                      ).length
+                    }
                   </p>
                 </div>
                 <Clock className="h-8 w-8 text-aviation-blue-300" />
@@ -782,13 +1058,21 @@ export default function AircraftManager() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-white/70 text-sm font-medium">Precisam Limpeza</p>
+                  <p className="text-white/70 text-sm font-medium">
+                    Precisam Limpeza
+                  </p>
                   <p className="text-3xl font-bold text-white">
-                    {aircraft.filter(ac => {
-                      if (!ac.lastCleaningDate) return true;
-                      const diffDays = Math.ceil((new Date().getTime() - new Date(ac.lastCleaningDate).getTime()) / (1000 * 60 * 60 * 24));
-                      return diffDays > 14;
-                    }).length}
+                    {
+                      aircraft.filter((ac) => {
+                        if (!ac.lastCleaningDate) return true;
+                        const diffDays = Math.ceil(
+                          (new Date().getTime() -
+                            new Date(ac.lastCleaningDate).getTime()) /
+                            (1000 * 60 * 60 * 24),
+                        );
+                        return diffDays > 14;
+                      }).length
+                    }
                   </p>
                 </div>
                 <AlertTriangle className="h-8 w-8 text-yellow-400" />
@@ -799,21 +1083,32 @@ export default function AircraftManager() {
 
         {/* Aircraft List */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredAircraft.map(aircraftItem => {
-            const cleaningStatus = getCleaningStatus(aircraftItem.lastCleaningDate || '');
-            
+          {filteredAircraft.map((aircraftItem) => {
+            const cleaningStatus = getCleaningStatus(
+              aircraftItem.lastCleaningDate || "",
+            );
+
             return (
-              <Card key={aircraftItem.id} className="glass-card border-white/20 hover:bg-white/20 transition-all duration-300">
+              <Card
+                key={aircraftItem.id}
+                className="glass-card border-white/20 hover:bg-white/20 transition-all duration-300"
+              >
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div>
-                      <CardTitle className="text-white text-xl">{aircraftItem.registration}</CardTitle>
+                      <CardTitle className="text-white text-xl">
+                        {aircraftItem.registration}
+                      </CardTitle>
                       <CardDescription className="text-white/70">
                         {aircraftItem.model} • {aircraftItem.manufacturer}
                       </CardDescription>
-                      <p className="text-white/60 text-sm mt-1">{aircraftItem.owner}</p>
+                      <p className="text-white/60 text-sm mt-1">
+                        {aircraftItem.owner}
+                      </p>
                     </div>
-                    <Badge className={`${getStatusColor(aircraftItem.status)} text-white`}>
+                    <Badge
+                      className={`${getStatusColor(aircraftItem.status)} text-white`}
+                    >
                       {getStatusText(aircraftItem.status)}
                     </Badge>
                   </div>
@@ -824,10 +1119,10 @@ export default function AircraftManager() {
                       <Plane className="h-4 w-4 mr-2" />
                       {getTypeText(aircraftItem.type)}
                     </div>
-                    
+
                     <div className="flex items-center text-white/80">
                       <Clock className="h-4 w-4 mr-2" />
-                      {aircraftItem.lastCleaningType || 'Sem limpeza'}
+                      {aircraftItem.lastCleaningType || "Sem limpeza"}
                     </div>
 
                     {aircraftItem.capacity.passengers && (
@@ -843,9 +1138,15 @@ export default function AircraftManager() {
 
                   {cleaningStatus && (
                     <div className="flex items-center justify-between p-2 bg-black/20 rounded">
-                      <span className="text-white/80 text-sm">Última limpeza:</span>
-                      <Badge className={`${cleaningStatus.color} text-white border-none`}>
-                        {cleaningStatus.urgent && <AlertTriangle className="h-3 w-3 mr-1" />}
+                      <span className="text-white/80 text-sm">
+                        Última limpeza:
+                      </span>
+                      <Badge
+                        className={`${cleaningStatus.color} text-white border-none`}
+                      >
+                        {cleaningStatus.urgent && (
+                          <AlertTriangle className="h-3 w-3 mr-1" />
+                        )}
                         {cleaningStatus.text}
                       </Badge>
                     </div>
@@ -853,13 +1154,22 @@ export default function AircraftManager() {
 
                   {aircraftItem.certifications.length > 0 && (
                     <div className="flex flex-wrap gap-1">
-                      {aircraftItem.certifications.slice(0, 2).map((cert, index) => (
-                        <Badge key={index} variant="outline" className="text-xs border-white/30 text-white">
-                          {cert.replace('Certificado de ', '')}
-                        </Badge>
-                      ))}
+                      {aircraftItem.certifications
+                        .slice(0, 2)
+                        .map((cert, index) => (
+                          <Badge
+                            key={index}
+                            variant="outline"
+                            className="text-xs border-white/30 text-white"
+                          >
+                            {cert.replace("Certificado de ", "")}
+                          </Badge>
+                        ))}
                       {aircraftItem.certifications.length > 2 && (
-                        <Badge variant="outline" className="text-xs border-white/30 text-white">
+                        <Badge
+                          variant="outline"
+                          className="text-xs border-white/30 text-white"
+                        >
                           +{aircraftItem.certifications.length - 2}
                         </Badge>
                       )}
@@ -868,20 +1178,23 @@ export default function AircraftManager() {
 
                   <div className="flex justify-between items-center pt-4">
                     <span className="text-white/60 text-xs">
-                      Atualizada em {format(new Date(aircraftItem.updatedAt), 'dd/MM/yyyy', { locale: ptBR })}
+                      Atualizada em{" "}
+                      {format(new Date(aircraftItem.updatedAt), "dd/MM/yyyy", {
+                        locale: ptBR,
+                      })}
                     </span>
-                    
+
                     <div className="flex space-x-2">
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={() => handleEdit(aircraftItem)}
                         className="border-white/30 text-white hover:bg-white/20"
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={() => handleDelete(aircraftItem)}
                         className="border-red-500/30 text-red-400 hover:bg-red-500/20"
@@ -899,16 +1212,20 @@ export default function AircraftManager() {
             <div className="col-span-full text-center py-12">
               <Plane className="h-16 w-16 text-white/30 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-white mb-2">
-                {searchTerm ? 'Nenhuma aeronave encontrada' : 'Nenhuma aeronave cadastrada'}
+                {searchTerm
+                  ? "Nenhuma aeronave encontrada"
+                  : "Nenhuma aeronave cadastrada"}
               </h3>
               <p className="text-white/70 mb-6">
-                {searchTerm 
-                  ? 'Tente usar termos diferentes na busca'
-                  : 'Comece cadastrando aeronaves no sistema'
-                }
+                {searchTerm
+                  ? "Tente usar termos diferentes na busca"
+                  : "Comece cadastrando aeronaves no sistema"}
               </p>
               {!searchTerm && (
-                <Button onClick={() => setIsCreateDialogOpen(true)} className="aviation-button">
+                <Button
+                  onClick={() => setIsCreateDialogOpen(true)}
+                  className="aviation-button"
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   Cadastrar Primeira Aeronave
                 </Button>

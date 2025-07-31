@@ -1,12 +1,12 @@
-import jsPDF from 'jspdf';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import jsPDF from "jspdf";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface CleaningFormData {
   id: string;
   code: string;
   date: string;
-  shift: 'morning' | 'afternoon' | 'night';
+  shift: "morning" | "afternoon" | "night";
   location: string;
   interventionTypes: string[];
   aircraftId: string;
@@ -40,73 +40,91 @@ interface CleaningFormData {
   createdAt: string;
 }
 
-export const generateCleaningFormPDF = async (formData: CleaningFormData, aircraftData?: any) => {
-  const pdf = new jsPDF('p', 'mm', 'a4');
+export const generateCleaningFormPDF = async (
+  formData: CleaningFormData,
+  aircraftData?: any,
+) => {
+  const pdf = new jsPDF("p", "mm", "a4");
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
   const margin = 12;
-  const contentWidth = pageWidth - (margin * 2);
+  const contentWidth = pageWidth - margin * 2;
   const primaryColor = [0, 176, 234]; // Aviation blue #00b0ea
   const gradientColor = [0, 157, 223]; // Aviation blue #009ddf
   const accentColor = [0, 136, 199]; // Aviation blue #0088c7
 
   let yPosition = margin;
-  const hasEmployeePhotos = formData.employees.some(emp => emp.photo);
-  const hasInterventionPhotos = formData.interventionPhotos && (
+  const hasEmployeePhotos = formData.employees.some((emp) => emp.photo);
+  const hasInterventionPhotos =
+    formData.interventionPhotos &&
     (formData.interventionPhotos.before.exterior?.length || 0) +
-    (formData.interventionPhotos.before.interior?.length || 0) +
-    (formData.interventionPhotos.before.details?.length || 0) +
-    (formData.interventionPhotos.after.exterior?.length || 0) +
-    (formData.interventionPhotos.after.interior?.length || 0) +
-    (formData.interventionPhotos.after.details?.length || 0)
-  ) > 0;
-  const totalPages = hasEmployeePhotos && hasInterventionPhotos ? 3 : hasEmployeePhotos || hasInterventionPhotos ? 2 : 1;
+      (formData.interventionPhotos.before.interior?.length || 0) +
+      (formData.interventionPhotos.before.details?.length || 0) +
+      (formData.interventionPhotos.after.exterior?.length || 0) +
+      (formData.interventionPhotos.after.interior?.length || 0) +
+      (formData.interventionPhotos.after.details?.length || 0) >
+      0;
+  const totalPages =
+    hasEmployeePhotos && hasInterventionPhotos
+      ? 3
+      : hasEmployeePhotos || hasInterventionPhotos
+        ? 2
+        : 1;
 
   // Helper functions
   const addModernHeader = () => {
     // Modern gradient header
     pdf.setFillColor(...primaryColor);
-    pdf.rect(0, 0, pageWidth, 35, 'F');
+    pdf.rect(0, 0, pageWidth, 35, "F");
 
     // Light gradient overlay
     pdf.setFillColor(255, 255, 255, 0.1);
-    pdf.rect(0, 0, pageWidth, 35, 'F');
+    pdf.rect(0, 0, pageWidth, 35, "F");
 
     // Company branding section
     pdf.setFillColor(255, 255, 255);
-    pdf.roundedRect(margin, 8, 25, 20, 3, 3, 'F');
+    pdf.roundedRect(margin, 8, 25, 20, 3, 3, "F");
 
     // Logo placeholder with modern styling
     pdf.setFillColor(...primaryColor);
     pdf.setFontSize(14);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('AO', margin + 8, 20);
+    pdf.setFont("helvetica", "bold");
+    pdf.text("AO", margin + 8, 20);
 
     // Main title with modern typography
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(22);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('AVIATIONOPS', margin + 35, 16);
+    pdf.setFont("helvetica", "bold");
+    pdf.text("AVIATIONOPS", margin + 35, 16);
 
     pdf.setFontSize(11);
-    pdf.setFont('helvetica', 'normal');
-    pdf.text('FOLHA DE REQUISIÇÃO DE LIMPEZA', margin + 35, 23);
+    pdf.setFont("helvetica", "normal");
+    pdf.text("FOLHA DE REQUISIÇÃO DE LIMPEZA", margin + 35, 23);
 
     // Modern info box on the right
     const infoBoxWidth = 60;
     pdf.setFillColor(255, 255, 255, 0.2);
-    pdf.roundedRect(pageWidth - margin - infoBoxWidth, 8, infoBoxWidth, 20, 2, 2, 'F');
+    pdf.roundedRect(
+      pageWidth - margin - infoBoxWidth,
+      8,
+      infoBoxWidth,
+      20,
+      2,
+      2,
+      "F",
+    );
 
     pdf.setFontSize(8);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('CÓDIGO:', pageWidth - margin - infoBoxWidth + 3, 15);
-    pdf.setFont('helvetica', 'normal');
+    pdf.setFont("helvetica", "bold");
+    pdf.text("CÓDIGO:", pageWidth - margin - infoBoxWidth + 3, 15);
+    pdf.setFont("helvetica", "normal");
     pdf.text(formData.code, pageWidth - margin - infoBoxWidth + 3, 19);
 
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('STATUS:', pageWidth - margin - infoBoxWidth + 3, 23);
-    pdf.setFont('helvetica', 'normal');
-    const statusText = formData.status === 'completed' ? 'CONCLUÍDA' : 'EM ANDAMENTO';
+    pdf.setFont("helvetica", "bold");
+    pdf.text("STATUS:", pageWidth - margin - infoBoxWidth + 3, 23);
+    pdf.setFont("helvetica", "normal");
+    const statusText =
+      formData.status === "completed" ? "CONCLUÍDA" : "EM ANDAMENTO";
     pdf.text(statusText, pageWidth - margin - infoBoxWidth + 3, 27);
 
     return 40;
@@ -115,16 +133,16 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
   const addSectionHeader = (title: string, y: number, icon?: string) => {
     // Modern section header with subtle background
     pdf.setFillColor(248, 250, 252);
-    pdf.rect(margin, y, contentWidth, 10, 'F');
+    pdf.rect(margin, y, contentWidth, 10, "F");
 
     // Left accent bar
     pdf.setFillColor(...primaryColor);
-    pdf.rect(margin, y, 3, 10, 'F');
+    pdf.rect(margin, y, 3, 10, "F");
 
     // Title
     pdf.setTextColor(51, 65, 85);
     pdf.setFontSize(12);
-    pdf.setFont('helvetica', 'bold');
+    pdf.setFont("helvetica", "bold");
     pdf.text(title, margin + 8, y + 7);
 
     // Subtle border
@@ -135,7 +153,10 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
     return y + 15;
   };
 
-  const addInfoGrid = (data: Array<{label: string, value: string}>, y: number) => {
+  const addInfoGrid = (
+    data: Array<{ label: string; value: string }>,
+    y: number,
+  ) => {
     const colWidth = contentWidth / 2;
     let currentY = y;
 
@@ -143,27 +164,27 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
       // Row background
       if (Math.floor(i / 2) % 2 === 0) {
         pdf.setFillColor(249, 250, 251);
-        pdf.rect(margin, currentY - 2, contentWidth, 8, 'F');
+        pdf.rect(margin, currentY - 2, contentWidth, 8, "F");
       }
 
       // Left column
       pdf.setTextColor(71, 85, 105);
       pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text(data[i].label + ':', margin + 3, currentY + 3);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(data[i].label + ":", margin + 3, currentY + 3);
 
       pdf.setTextColor(15, 23, 42);
-      pdf.setFont('helvetica', 'normal');
+      pdf.setFont("helvetica", "normal");
       pdf.text(data[i].value, margin + 3, currentY + 6);
 
       // Right column (if exists)
       if (data[i + 1]) {
         pdf.setTextColor(71, 85, 105);
-        pdf.setFont('helvetica', 'bold');
-        pdf.text(data[i + 1].label + ':', margin + colWidth + 3, currentY + 3);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(data[i + 1].label + ":", margin + colWidth + 3, currentY + 3);
 
         pdf.setTextColor(15, 23, 42);
-        pdf.setFont('helvetica', 'normal');
+        pdf.setFont("helvetica", "normal");
         pdf.text(data[i + 1].value, margin + colWidth + 3, currentY + 6);
       }
 
@@ -177,24 +198,35 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
   yPosition = addModernHeader();
 
   // Basic Information Section
-  yPosition = addSectionHeader('INFORMAÇÕES BÁSICAS', yPosition);
+  yPosition = addSectionHeader("INFORMAÇÕES BÁSICAS", yPosition);
 
-  const formattedDate = format(new Date(formData.date), 'dd/MM/yyyy', { locale: ptBR });
-  const shiftText = formData.shift === 'morning' ? 'Manhã (06:00-14:00)' :
-                   formData.shift === 'afternoon' ? 'Tarde (14:00-22:00)' : 'Noite (22:00-06:00)';
+  const formattedDate = format(new Date(formData.date), "dd/MM/yyyy", {
+    locale: ptBR,
+  });
+  const shiftText =
+    formData.shift === "morning"
+      ? "Manhã (06:00-14:00)"
+      : formData.shift === "afternoon"
+        ? "Tarde (14:00-22:00)"
+        : "Noite (22:00-06:00)";
 
   const basicInfo = [
-    { label: 'Data da Intervenção', value: formattedDate },
-    { label: 'Turno', value: shiftText },
-    { label: 'Local', value: formData.location },
-    { label: 'Aeronave', value: aircraftData ? `${aircraftData.registration} - ${aircraftData.model}` : 'Não especificada' }
+    { label: "Data da Intervenção", value: formattedDate },
+    { label: "Turno", value: shiftText },
+    { label: "Local", value: formData.location },
+    {
+      label: "Aeronave",
+      value: aircraftData
+        ? `${aircraftData.registration} - ${aircraftData.model}`
+        : "Não especificada",
+    },
   ];
 
   yPosition = addInfoGrid(basicInfo, yPosition);
 
   // Intervention Types Section - Only show if types are selected
   if (formData.interventionTypes.length > 0) {
-    yPosition = addSectionHeader('TIPOS DE INTERVENÇÃO REALIZADOS', yPosition);
+    yPosition = addSectionHeader("TIPOS DE INTERVENÇÃO REALIZADOS", yPosition);
 
     const itemsPerCol = Math.ceil(formData.interventionTypes.length / 2);
     const colWidth = contentWidth / 2;
@@ -202,38 +234,57 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
     formData.interventionTypes.forEach((type, index) => {
       const col = Math.floor(index / itemsPerCol);
       const row = index % itemsPerCol;
-      const xPos = margin + 5 + (col * colWidth);
-      const typeYPos = yPosition + (row * 6);
+      const xPos = margin + 5 + col * colWidth;
+      const typeYPos = yPosition + row * 6;
 
       // Modern bullet point
       pdf.setFillColor(...primaryColor);
-      pdf.circle(xPos, typeYPos + 2, 1, 'F');
+      pdf.circle(xPos, typeYPos + 2, 1, "F");
 
       pdf.setTextColor(15, 23, 42);
       pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
+      pdf.setFont("helvetica", "normal");
       pdf.text(type, xPos + 4, typeYPos + 3);
     });
 
-    yPosition += (itemsPerCol * 6) + 8;
+    yPosition += itemsPerCol * 6 + 8;
   }
 
   // Employees Section - Only show if employees are selected
   if (formData.employees.length > 0) {
-    yPosition = addSectionHeader('FUNCIONÁRIOS DESIGNADOS', yPosition);
+    yPosition = addSectionHeader("FUNCIONÁRIOS DESIGNADOS", yPosition);
 
     formData.employees.forEach((employee, index) => {
       const isEven = index % 2 === 0;
       const employeeHeight = employee.photo ? 35 : 25;
 
       // Employee card background
-      pdf.setFillColor(isEven ? 255 : 249, isEven ? 255 : 250, isEven ? 255 : 251);
-      pdf.roundedRect(margin, yPosition, contentWidth, employeeHeight, 2, 2, 'F');
+      pdf.setFillColor(
+        isEven ? 255 : 249,
+        isEven ? 255 : 250,
+        isEven ? 255 : 251,
+      );
+      pdf.roundedRect(
+        margin,
+        yPosition,
+        contentWidth,
+        employeeHeight,
+        2,
+        2,
+        "F",
+      );
 
       // Employee photo
       if (employee.photo) {
         try {
-          pdf.addImage(employee.photo, 'JPEG', margin + 5, yPosition + 3, 20, 20);
+          pdf.addImage(
+            employee.photo,
+            "JPEG",
+            margin + 5,
+            yPosition + 3,
+            20,
+            20,
+          );
           // Photo border
           pdf.setDrawColor(226, 232, 240);
           pdf.setLineWidth(0.5);
@@ -241,10 +292,10 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
         } catch (error) {
           // Photo placeholder
           pdf.setFillColor(229, 231, 235);
-          pdf.rect(margin + 5, yPosition + 3, 20, 20, 'F');
+          pdf.rect(margin + 5, yPosition + 3, 20, 20, "F");
           pdf.setTextColor(107, 114, 128);
           pdf.setFontSize(8);
-          pdf.text('FOTO', margin + 12, yPosition + 15);
+          pdf.text("FOTO", margin + 12, yPosition + 15);
         }
       }
 
@@ -254,21 +305,25 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
       // Name
       pdf.setTextColor(15, 23, 42);
       pdf.setFontSize(11);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text(employee.name || 'Nome não informado', detailsX, yPosition + 8);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(employee.name || "Nome não informado", detailsX, yPosition + 8);
 
       // Task
       pdf.setTextColor(71, 85, 105);
       pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Tarefa: ${employee.task || 'Não especificada'}`, detailsX, yPosition + 13);
+      pdf.setFont("helvetica", "normal");
+      pdf.text(
+        `Tarefa: ${employee.task || "Não especificada"}`,
+        detailsX,
+        yPosition + 13,
+      );
 
       // Contact info
-      const contactInfo = `Tel: ${employee.phone || 'N/A'} | ID: ${employee.idNumber || 'N/A'}`;
+      const contactInfo = `Tel: ${employee.phone || "N/A"} | ID: ${employee.idNumber || "N/A"}`;
       pdf.text(contactInfo, detailsX, yPosition + 17);
 
       // Time info
-      const timeInfo = `Horário: ${employee.startTime || '--:--'} às ${employee.endTime || '--:--'}`;
+      const timeInfo = `Horário: ${employee.startTime || "--:--"} às ${employee.endTime || "--:--"}`;
       pdf.text(timeInfo, detailsX, yPosition + 21);
 
       yPosition += employeeHeight + 5;
@@ -283,30 +338,56 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
     try {
       // QR Code with modern styling
       pdf.setFillColor(255, 255, 255);
-      pdf.roundedRect(pageWidth - margin - qrSize - 4, qrY - 2, qrSize + 8, qrSize + 8, 2, 2, 'F');
+      pdf.roundedRect(
+        pageWidth - margin - qrSize - 4,
+        qrY - 2,
+        qrSize + 8,
+        qrSize + 8,
+        2,
+        2,
+        "F",
+      );
 
-      pdf.addImage(formData.qrCode, 'PNG', pageWidth - margin - qrSize, qrY, qrSize, qrSize);
+      pdf.addImage(
+        formData.qrCode,
+        "PNG",
+        pageWidth - margin - qrSize,
+        qrY,
+        qrSize,
+        qrSize,
+      );
 
       // QR Code info
       pdf.setTextColor(71, 85, 105);
       pdf.setFontSize(7);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text('Escaneie para acessar', pageWidth - margin - qrSize - 2, qrY + qrSize + 10);
-      pdf.text('a versão digital', pageWidth - margin - qrSize - 2, qrY + qrSize + 14);
-
+      pdf.setFont("helvetica", "normal");
+      pdf.text(
+        "Escaneie para acessar",
+        pageWidth - margin - qrSize - 2,
+        qrY + qrSize + 10,
+      );
+      pdf.text(
+        "a versão digital",
+        pageWidth - margin - qrSize - 2,
+        qrY + qrSize + 14,
+      );
     } catch (error) {
-      console.error('Error adding QR code to PDF:', error);
+      console.error("Error adding QR code to PDF:", error);
     }
   }
 
   // Document generation info with secure ID verification
   pdf.setTextColor(107, 114, 128);
   pdf.setFontSize(8);
-  pdf.text(`Gerado em: ${format(new Date(), 'dd/MM/yyyy HH:mm', { locale: ptBR })}`, margin, qrY + 10);
+  pdf.text(
+    `Gerado em: ${format(new Date(), "dd/MM/yyyy HH:mm", { locale: ptBR })}`,
+    margin,
+    qrY + 10,
+  );
   pdf.text(`Código de rastreamento: ${formData.code}`, margin, qrY + 15);
 
   // Security verification for AP-PS-SNR format
-  if (formData.code.startsWith('AP-PS-SNR')) {
+  if (formData.code.startsWith("AP-PS-SNR")) {
     pdf.setFontSize(7);
     pdf.setTextColor(34, 197, 94); // Green color for secure ID
     pdf.text(`✓ ID Seguro Verificado: ${formData.code}`, margin, qrY + 20);
@@ -321,7 +402,7 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
     sigY = addModernHeader();
   }
 
-  sigY = addSectionHeader('ASSINATURAS E APROVAÇÕES', sigY);
+  sigY = addSectionHeader("ASSINATURAS E APROVAÇÕES", sigY);
 
   const signatureWidth = (contentWidth - 15) / 2;
   const signatureHeight = 30;
@@ -329,71 +410,119 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
   // Supervisor signature (left)
   pdf.setTextColor(15, 23, 42);
   pdf.setFontSize(10);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('SUPERVISOR', margin, sigY);
+  pdf.setFont("helvetica", "bold");
+  pdf.text("SUPERVISOR", margin, sigY);
 
   pdf.setFillColor(255, 255, 255);
-  pdf.roundedRect(margin, sigY + 5, signatureWidth, signatureHeight, 2, 2, 'F');
+  pdf.roundedRect(margin, sigY + 5, signatureWidth, signatureHeight, 2, 2, "F");
   pdf.setDrawColor(226, 232, 240);
   pdf.setLineWidth(0.5);
   pdf.roundedRect(margin, sigY + 5, signatureWidth, signatureHeight, 2, 2);
 
   if (formData.supervisorSignature) {
     try {
-      pdf.addImage(formData.supervisorSignature, 'PNG', margin + 2, sigY + 7, signatureWidth - 4, signatureHeight - 4);
+      pdf.addImage(
+        formData.supervisorSignature,
+        "PNG",
+        margin + 2,
+        sigY + 7,
+        signatureWidth - 4,
+        signatureHeight - 4,
+      );
     } catch (error) {
-      console.error('Error adding supervisor signature:', error);
+      console.error("Error adding supervisor signature:", error);
     }
   }
 
   // Client signature (right)
   const clientX = margin + signatureWidth + 15;
   pdf.setTextColor(15, 23, 42);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('CLIENTE', clientX, sigY);
+  pdf.setFont("helvetica", "bold");
+  pdf.text("CLIENTE", clientX, sigY);
 
   pdf.setFillColor(255, 255, 255);
-  pdf.roundedRect(clientX, sigY + 5, signatureWidth, signatureHeight, 2, 2, 'F');
+  pdf.roundedRect(
+    clientX,
+    sigY + 5,
+    signatureWidth,
+    signatureHeight,
+    2,
+    2,
+    "F",
+  );
   pdf.setDrawColor(226, 232, 240);
   pdf.roundedRect(clientX, sigY + 5, signatureWidth, signatureHeight, 2, 2);
 
   if (formData.clientConfirmedWithoutSignature) {
     pdf.setTextColor(185, 28, 28);
-    pdf.setFont('helvetica', 'italic');
+    pdf.setFont("helvetica", "italic");
     pdf.setFontSize(9);
-    pdf.text('CONFIRMADO SEM', clientX + 10, sigY + 18);
-    pdf.text('ASSINATURA', clientX + 10, sigY + 23);
+    pdf.text("CONFIRMADO SEM", clientX + 10, sigY + 18);
+    pdf.text("ASSINATURA", clientX + 10, sigY + 23);
   } else if (formData.clientSignature) {
     try {
-      pdf.addImage(formData.clientSignature, 'PNG', clientX + 2, sigY + 7, signatureWidth - 4, signatureHeight - 4);
+      pdf.addImage(
+        formData.clientSignature,
+        "PNG",
+        clientX + 2,
+        sigY + 7,
+        signatureWidth - 4,
+        signatureHeight - 4,
+      );
     } catch (error) {
-      console.error('Error adding client signature:', error);
+      console.error("Error adding client signature:", error);
     }
   }
 
   // Signature lines
   pdf.setTextColor(107, 114, 128);
-  pdf.setFont('helvetica', 'normal');
+  pdf.setFont("helvetica", "normal");
   pdf.setFontSize(8);
-  pdf.text('Nome: ________________________', margin, sigY + signatureHeight + 10);
-  pdf.text('Data: ___/___/___ Hora: ___:___', margin, sigY + signatureHeight + 15);
+  pdf.text(
+    "Nome: ________________________",
+    margin,
+    sigY + signatureHeight + 10,
+  );
+  pdf.text(
+    "Data: ___/___/___ Hora: ___:___",
+    margin,
+    sigY + signatureHeight + 15,
+  );
 
-  pdf.text('Nome: ________________________', clientX, sigY + signatureHeight + 10);
-  pdf.text('Data: ___/___/___ Hora: ___:___', clientX, sigY + signatureHeight + 15);
+  pdf.text(
+    "Nome: ________________________",
+    clientX,
+    sigY + signatureHeight + 10,
+  );
+  pdf.text(
+    "Data: ___/___/___ Hora: ___:___",
+    clientX,
+    sigY + signatureHeight + 15,
+  );
 
   // Modern footer
   const footerY = pageHeight - 20;
   pdf.setFillColor(...primaryColor);
-  pdf.rect(0, footerY - 2, pageWidth, 22, 'F');
+  pdf.rect(0, footerY - 2, pageWidth, 22, "F");
 
   pdf.setTextColor(255, 255, 255);
-  pdf.setFont('helvetica', 'normal');
+  pdf.setFont("helvetica", "normal");
   pdf.setFontSize(8);
-  pdf.text('AviationOps - Sistema de Gestão Aeronáutica', margin, footerY + 3);
-  pdf.text('Documento gerado automaticamente | Verificação digital disponível', margin, footerY + 8);
+  pdf.text("AviationOps - Sistema de Gestão Aeronáutica", margin, footerY + 3);
+  pdf.text(
+    "Documento gerado automaticamente | Verificação digital disponível",
+    margin,
+    footerY + 8,
+  );
 
-  const currentDateTime = format(new Date(), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR });
-  pdf.text(`Impresso: ${currentDateTime}`, pageWidth - margin - 45, footerY + 3);
+  const currentDateTime = format(new Date(), "dd/MM/yyyy HH:mm:ss", {
+    locale: ptBR,
+  });
+  pdf.text(
+    `Impresso: ${currentDateTime}`,
+    pageWidth - margin - 45,
+    footerY + 3,
+  );
   pdf.text(`Página 1 de ${totalPages}`, pageWidth - margin - 25, footerY + 8);
 
   // PAGE 2 - EMPLOYEE PHOTOGRAPHIC EVIDENCE (if employee photos exist)
@@ -401,9 +530,9 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
     pdf.addPage();
     let evidenceY = addModernHeader();
 
-    evidenceY = addSectionHeader('EVIDÊNCIAS FOTOGRÁFICAS', evidenceY);
+    evidenceY = addSectionHeader("EVIDÊNCIAS FOTOGRÁFICAS", evidenceY);
 
-    const photosWithEvidence = formData.employees.filter(emp => emp.photo);
+    const photosWithEvidence = formData.employees.filter((emp) => emp.photo);
     const photosPerRow = 2;
     const photoWidth = (contentWidth - 20) / photosPerRow;
     const photoHeight = photoWidth * 0.75;
@@ -411,31 +540,55 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
     photosWithEvidence.forEach((employee, index) => {
       const col = index % photosPerRow;
       const row = Math.floor(index / photosPerRow);
-      const photoX = margin + 5 + (col * (photoWidth + 10));
-      const photoY = evidenceY + (row * (photoHeight + 40));
+      const photoX = margin + 5 + col * (photoWidth + 10);
+      const photoY = evidenceY + row * (photoHeight + 40);
 
       // Check if we need a new page
       if (photoY + photoHeight + 40 > pageHeight - 30) {
         pdf.addPage();
         evidenceY = addModernHeader();
-        evidenceY = addSectionHeader('EVIDÊNCIAS FOTOGRÁFICAS (CONT.)', evidenceY);
+        evidenceY = addSectionHeader(
+          "EVIDÊNCIAS FOTOGRÁFICAS (CONT.)",
+          evidenceY,
+        );
         const newRow = 0;
-        const newPhotoY = evidenceY + (newRow * (photoHeight + 40));
+        const newPhotoY = evidenceY + newRow * (photoHeight + 40);
 
         // Recalculate position
         const newCol = index % photosPerRow;
-        const newPhotoX = margin + 5 + (newCol * (photoWidth + 10));
+        const newPhotoX = margin + 5 + newCol * (photoWidth + 10);
 
-        addPhotoEvidence(employee, newPhotoX, newPhotoY, photoWidth, photoHeight, index + 1);
+        addPhotoEvidence(
+          employee,
+          newPhotoX,
+          newPhotoY,
+          photoWidth,
+          photoHeight,
+          index + 1,
+        );
       } else {
-        addPhotoEvidence(employee, photoX, photoY, photoWidth, photoHeight, index + 1);
+        addPhotoEvidence(
+          employee,
+          photoX,
+          photoY,
+          photoWidth,
+          photoHeight,
+          index + 1,
+        );
       }
     });
 
-    function addPhotoEvidence(employee: any, x: number, y: number, width: number, height: number, photoNum: number) {
+    function addPhotoEvidence(
+      employee: any,
+      x: number,
+      y: number,
+      width: number,
+      height: number,
+      photoNum: number,
+    ) {
       // Photo background
       pdf.setFillColor(255, 255, 255);
-      pdf.roundedRect(x, y, width, height + 30, 3, 3, 'F');
+      pdf.roundedRect(x, y, width, height + 30, 3, 3, "F");
       pdf.setDrawColor(226, 232, 240);
       pdf.setLineWidth(0.5);
       pdf.roundedRect(x, y, width, height + 30, 3, 3);
@@ -443,42 +596,73 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
       // Photo
       if (employee.photo) {
         try {
-          pdf.addImage(employee.photo, 'JPEG', x + 2, y + 2, width - 4, height - 4);
+          pdf.addImage(
+            employee.photo,
+            "JPEG",
+            x + 2,
+            y + 2,
+            width - 4,
+            height - 4,
+          );
         } catch (error) {
           // Error placeholder
           pdf.setFillColor(229, 231, 235);
-          pdf.rect(x + 2, y + 2, width - 4, height - 4, 'F');
+          pdf.rect(x + 2, y + 2, width - 4, height - 4, "F");
           pdf.setTextColor(107, 114, 128);
           pdf.setFontSize(10);
-          pdf.text('ERRO AO CARREGAR FOTO', x + 10, y + height/2);
+          pdf.text("ERRO AO CARREGAR FOTO", x + 10, y + height / 2);
         }
       }
 
       // Caption
       pdf.setTextColor(15, 23, 42);
       pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'bold');
+      pdf.setFont("helvetica", "bold");
       pdf.text(`FOTO ${photoNum}: ${employee.name}`, x + 2, y + height + 8);
 
       pdf.setTextColor(71, 85, 105);
-      pdf.setFont('helvetica', 'normal');
+      pdf.setFont("helvetica", "normal");
       pdf.setFontSize(8);
-      pdf.text(`Função: ${employee.task || 'Não especificada'}`, x + 2, y + height + 13);
-      pdf.text(`Horário: ${employee.startTime || '--:--'} às ${employee.endTime || '--:--'}`, x + 2, y + height + 18);
-      pdf.text(`Timestamp: ${format(new Date(), 'dd/MM/yyyy HH:mm', { locale: ptBR })}`, x + 2, y + height + 23);
+      pdf.text(
+        `Função: ${employee.task || "Não especificada"}`,
+        x + 2,
+        y + height + 13,
+      );
+      pdf.text(
+        `Horário: ${employee.startTime || "--:--"} às ${employee.endTime || "--:--"}`,
+        x + 2,
+        y + height + 18,
+      );
+      pdf.text(
+        `Timestamp: ${format(new Date(), "dd/MM/yyyy HH:mm", { locale: ptBR })}`,
+        x + 2,
+        y + height + 23,
+      );
     }
 
     // Footer for evidence page
     const evidenceFooterY = pageHeight - 20;
     pdf.setFillColor(...primaryColor);
-    pdf.rect(0, evidenceFooterY - 2, pageWidth, 22, 'F');
+    pdf.rect(0, evidenceFooterY - 2, pageWidth, 22, "F");
 
     pdf.setTextColor(255, 255, 255);
-    pdf.setFont('helvetica', 'normal');
+    pdf.setFont("helvetica", "normal");
     pdf.setFontSize(8);
-    pdf.text('AviationOps - Evidências Fotográficas', margin, evidenceFooterY + 3);
-    pdf.text('Fotos capturadas durante a execução dos serviços', margin, evidenceFooterY + 8);
-    pdf.text(`Página 2 de ${totalPages}`, pageWidth - margin - 25, evidenceFooterY + 8);
+    pdf.text(
+      "AviationOps - Evidências Fotográficas",
+      margin,
+      evidenceFooterY + 3,
+    );
+    pdf.text(
+      "Fotos capturadas durante a execução dos serviços",
+      margin,
+      evidenceFooterY + 8,
+    );
+    pdf.text(
+      `Página 2 de ${totalPages}`,
+      pageWidth - margin - 25,
+      evidenceFooterY + 8,
+    );
   }
 
   // PAGE 3 (or 2) - INTERVENTION PHOTOGRAPHIC EVIDENCE (if intervention photos exist)
@@ -486,26 +670,46 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
     pdf.addPage();
     let interventionY = addModernHeader();
 
-    interventionY = addSectionHeader('EVIDÊNCIAS FOTOGRÁFICAS DA INTERVENÇÃO', interventionY);
+    interventionY = addSectionHeader(
+      "EVIDÊNCIAS FOTOGRÁFICAS DA INTERVENÇÃO",
+      interventionY,
+    );
 
     const photoCategories = [
-      { key: 'before', title: 'ANTES DA INTERVENÇÃO', data: formData.interventionPhotos?.before },
-      { key: 'after', title: 'DEPOIS DA INTERVENÇÃO', data: formData.interventionPhotos?.after }
+      {
+        key: "before",
+        title: "ANTES DA INTERVENÇÃO",
+        data: formData.interventionPhotos?.before,
+      },
+      {
+        key: "after",
+        title: "DEPOIS DA INTERVENÇÃO",
+        data: formData.interventionPhotos?.after,
+      },
     ];
 
-    photoCategories.forEach(category => {
+    photoCategories.forEach((category) => {
       if (category.data) {
         const allPhotos = [
-          ...(category.data.exterior || []).map(photo => ({ photo, type: 'Exterior' })),
-          ...(category.data.interior || []).map(photo => ({ photo, type: 'Interior' })),
-          ...(category.data.details || []).map(photo => ({ photo, type: 'Detalhes' }))
+          ...(category.data.exterior || []).map((photo) => ({
+            photo,
+            type: "Exterior",
+          })),
+          ...(category.data.interior || []).map((photo) => ({
+            photo,
+            type: "Interior",
+          })),
+          ...(category.data.details || []).map((photo) => ({
+            photo,
+            type: "Detalhes",
+          })),
         ];
 
         if (allPhotos.length > 0) {
           // Section header
           pdf.setTextColor(15, 23, 42);
           pdf.setFontSize(11);
-          pdf.setFont('helvetica', 'bold');
+          pdf.setFont("helvetica", "bold");
           pdf.text(category.title, margin, interventionY + 5);
           interventionY += 15;
 
@@ -516,34 +720,60 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
           allPhotos.forEach((item, index) => {
             const col = index % photosPerRow;
             const row = Math.floor(index / photosPerRow);
-            const photoX = margin + 5 + (col * (photoWidth + 10));
-            const photoY = interventionY + (row * (photoHeight + 35));
+            const photoX = margin + 5 + col * (photoWidth + 10);
+            const photoY = interventionY + row * (photoHeight + 35);
 
             // Check if we need a new page
             if (photoY + photoHeight + 35 > pageHeight - 30) {
               pdf.addPage();
               interventionY = addModernHeader();
-              interventionY = addSectionHeader(`${category.title} (CONT.)`, interventionY);
+              interventionY = addSectionHeader(
+                `${category.title} (CONT.)`,
+                interventionY,
+              );
               const newRow = 0;
-              const newPhotoY = interventionY + (newRow * (photoHeight + 35));
+              const newPhotoY = interventionY + newRow * (photoHeight + 35);
               const newCol = index % photosPerRow;
-              const newPhotoX = margin + 5 + (newCol * (photoWidth + 10));
+              const newPhotoX = margin + 5 + newCol * (photoWidth + 10);
 
-              addInterventionPhotoEvidence(item, newPhotoX, newPhotoY, photoWidth, photoHeight, index + 1);
+              addInterventionPhotoEvidence(
+                item,
+                newPhotoX,
+                newPhotoY,
+                photoWidth,
+                photoHeight,
+                index + 1,
+              );
             } else {
-              addInterventionPhotoEvidence(item, photoX, photoY, photoWidth, photoHeight, index + 1);
+              addInterventionPhotoEvidence(
+                item,
+                photoX,
+                photoY,
+                photoWidth,
+                photoHeight,
+                index + 1,
+              );
             }
           });
 
-          interventionY += Math.ceil(allPhotos.length / photosPerRow) * (photoHeight + 35) + 10;
+          interventionY +=
+            Math.ceil(allPhotos.length / photosPerRow) * (photoHeight + 35) +
+            10;
         }
       }
     });
 
-    function addInterventionPhotoEvidence(item: any, x: number, y: number, width: number, height: number, photoNum: number) {
+    function addInterventionPhotoEvidence(
+      item: any,
+      x: number,
+      y: number,
+      width: number,
+      height: number,
+      photoNum: number,
+    ) {
       // Photo background
       pdf.setFillColor(255, 255, 255);
-      pdf.roundedRect(x, y, width, height + 25, 3, 3, 'F');
+      pdf.roundedRect(x, y, width, height + 25, 3, 3, "F");
       pdf.setDrawColor(226, 232, 240);
       pdf.setLineWidth(0.5);
       pdf.roundedRect(x, y, width, height + 25, 3, 3);
@@ -551,30 +781,34 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
       // Photo
       if (item.photo) {
         try {
-          pdf.addImage(item.photo, 'JPEG', x + 2, y + 2, width - 4, height - 4);
+          pdf.addImage(item.photo, "JPEG", x + 2, y + 2, width - 4, height - 4);
         } catch (error) {
           // Error placeholder
           pdf.setFillColor(229, 231, 235);
-          pdf.rect(x + 2, y + 2, width - 4, height - 4, 'F');
+          pdf.rect(x + 2, y + 2, width - 4, height - 4, "F");
           pdf.setTextColor(107, 114, 128);
           pdf.setFontSize(10);
-          pdf.text('ERRO AO CARREGAR FOTO', x + 10, y + height/2);
+          pdf.text("ERRO AO CARREGAR FOTO", x + 10, y + height / 2);
         }
       }
 
       // Caption
       pdf.setTextColor(15, 23, 42);
       pdf.setFontSize(9);
-      pdf.setFont('helvetica', 'bold');
+      pdf.setFont("helvetica", "bold");
       pdf.text(`${item.type.toUpperCase()} ${photoNum}`, x + 2, y + height + 8);
 
       pdf.setTextColor(71, 85, 105);
-      pdf.setFont('helvetica', 'normal');
+      pdf.setFont("helvetica", "normal");
       pdf.setFontSize(8);
-      pdf.text(`Timestamp: ${format(new Date(), 'dd/MM/yyyy HH:mm', { locale: ptBR })}`, x + 2, y + height + 15);
+      pdf.text(
+        `Timestamp: ${format(new Date(), "dd/MM/yyyy HH:mm", { locale: ptBR })}`,
+        x + 2,
+        y + height + 15,
+      );
 
       // Security verification stamp for secure IDs
-      if (formData.code.startsWith('AP-PS-SNR')) {
+      if (formData.code.startsWith("AP-PS-SNR")) {
         pdf.setTextColor(34, 197, 94);
         pdf.setFontSize(7);
         pdf.text(`✓ ${formData.code}`, x + 2, y + height + 20);
@@ -584,56 +818,85 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
     // Footer for intervention evidence page
     const interventionFooterY = pageHeight - 20;
     pdf.setFillColor(...primaryColor);
-    pdf.rect(0, interventionFooterY - 2, pageWidth, 22, 'F');
+    pdf.rect(0, interventionFooterY - 2, pageWidth, 22, "F");
 
     pdf.setTextColor(255, 255, 255);
-    pdf.setFont('helvetica', 'normal');
+    pdf.setFont("helvetica", "normal");
     pdf.setFontSize(8);
-    pdf.text('AviationOps - Evidências Fotográficas da Intervenção', margin, interventionFooterY + 3);
-    pdf.text('Fotos capturadas durante e após a execução dos serviços', margin, interventionFooterY + 8);
-    pdf.text(`Página ${totalPages} de ${totalPages}`, pageWidth - margin - 25, interventionFooterY + 8);
+    pdf.text(
+      "AviationOps - Evidências Fotográficas da Intervenção",
+      margin,
+      interventionFooterY + 3,
+    );
+    pdf.text(
+      "Fotos capturadas durante e após a execução dos serviços",
+      margin,
+      interventionFooterY + 8,
+    );
+    pdf.text(
+      `Página ${totalPages} de ${totalPages}`,
+      pageWidth - margin - 25,
+      interventionFooterY + 8,
+    );
   }
 
   return pdf;
 };
 
-export const downloadCleaningFormPDF = async (formData: CleaningFormData, aircraftData?: any) => {
+export const downloadCleaningFormPDF = async (
+  formData: CleaningFormData,
+  aircraftData?: any,
+) => {
   const pdf = await generateCleaningFormPDF(formData, aircraftData);
 
   // Try to upload to Supabase Storage if configured
   try {
-    const { supabaseStorage, dataURLToBlob } = await import('./supabase-storage');
-    const pdfBlob = pdf.output('blob');
-    const uploadedUrl = await supabaseStorage.uploadCleaningFormPDF(formData.code, pdfBlob);
+    const { supabaseStorage, dataURLToBlob } = await import(
+      "./supabase-storage"
+    );
+    const pdfBlob = pdf.output("blob");
+    const uploadedUrl = await supabaseStorage.uploadCleaningFormPDF(
+      formData.code,
+      pdfBlob,
+    );
 
     if (uploadedUrl) {
-      console.log('PDF uploaded to Supabase Storage:', uploadedUrl);
+      console.log("PDF uploaded to Supabase Storage:", uploadedUrl);
     }
   } catch (error) {
-    console.log('Supabase Storage upload skipped:', error);
+    console.log("Supabase Storage upload skipped:", error);
   }
 
   // Download locally
   pdf.save(`folha-limpeza-${formData.code}.pdf`);
 };
 
-export const previewCleaningFormPDF = async (formData: CleaningFormData, aircraftData?: any) => {
+export const previewCleaningFormPDF = async (
+  formData: CleaningFormData,
+  aircraftData?: any,
+) => {
   const pdf = await generateCleaningFormPDF(formData, aircraftData);
-  const pdfDataUri = pdf.output('datauristring');
-  window.open(pdfDataUri, '_blank');
+  const pdfDataUri = pdf.output("datauristring");
+  window.open(pdfDataUri, "_blank");
 };
 
-export const generateAndUploadPDF = async (formData: CleaningFormData, aircraftData?: any): Promise<string | null> => {
+export const generateAndUploadPDF = async (
+  formData: CleaningFormData,
+  aircraftData?: any,
+): Promise<string | null> => {
   try {
     const pdf = await generateCleaningFormPDF(formData, aircraftData);
-    const pdfBlob = pdf.output('blob');
+    const pdfBlob = pdf.output("blob");
 
-    const { supabaseStorage } = await import('./supabase-storage');
-    const uploadedUrl = await supabaseStorage.uploadCleaningFormPDF(formData.code, pdfBlob);
+    const { supabaseStorage } = await import("./supabase-storage");
+    const uploadedUrl = await supabaseStorage.uploadCleaningFormPDF(
+      formData.code,
+      pdfBlob,
+    );
 
     return uploadedUrl;
   } catch (error) {
-    console.error('Error generating and uploading PDF:', error);
+    console.error("Error generating and uploading PDF:", error);
     return null;
   }
 };

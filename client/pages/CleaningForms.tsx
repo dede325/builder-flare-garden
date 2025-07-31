@@ -1,34 +1,85 @@
-import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Search, Download, QrCode, Calendar, Clock, MapPin, Wrench, Users, FileText, Camera, Phone, IdCard, Signature, X, Edit, CheckSquare, Shield, Wifi, WifiOff, AlertTriangle, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { db } from '@/lib/supabase';
-import SignatureCanvas from '@/components/SignatureCanvas';
-import PhotoUpload from '@/components/PhotoUpload';
-import { downloadCleaningFormPDF, previewCleaningFormPDF, generateAndUploadPDF } from '@/lib/pdf-utils';
-import { supabaseStorage } from '@/lib/supabase-storage';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/hooks/useAuth';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import QRCode from 'qrcode';
-import { generateSecureFormId, generateSecureQRData, checkSecureContext } from '@/lib/crypto-utils';
-import { secureSyncService } from '@/lib/secure-sync';
+import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
+import {
+  ArrowLeft,
+  Plus,
+  Search,
+  Download,
+  QrCode,
+  Calendar,
+  Clock,
+  MapPin,
+  Wrench,
+  Users,
+  FileText,
+  Camera,
+  Phone,
+  IdCard,
+  Signature,
+  X,
+  Edit,
+  CheckSquare,
+  Shield,
+  Wifi,
+  WifiOff,
+  AlertTriangle,
+  RefreshCw,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { db } from "@/lib/supabase";
+import SignatureCanvas from "@/components/SignatureCanvas";
+import PhotoUpload from "@/components/PhotoUpload";
+import {
+  downloadCleaningFormPDF,
+  previewCleaningFormPDF,
+  generateAndUploadPDF,
+} from "@/lib/pdf-utils";
+import { supabaseStorage } from "@/lib/supabase-storage";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import QRCode from "qrcode";
+import {
+  generateSecureFormId,
+  generateSecureQRData,
+  checkSecureContext,
+} from "@/lib/crypto-utils";
+import { secureSyncService } from "@/lib/secure-sync";
 
 interface CleaningForm {
   id: string;
   code: string;
   date: string;
-  shift: 'morning' | 'afternoon' | 'night';
+  shift: "morning" | "afternoon" | "night";
   location: string;
   interventionTypes: string[];
   aircraftId: string;
@@ -58,7 +109,7 @@ interface CleaningForm {
   clientSignature?: string;
   clientConfirmedWithoutSignature: boolean;
   qrCode: string;
-  status: 'draft' | 'pending_signatures' | 'completed';
+  status: "draft" | "pending_signatures" | "completed";
   createdAt: string;
   updatedAt: string;
   version: number;
@@ -69,7 +120,7 @@ interface CleaningForm {
     author: string;
     previousData?: any;
   }[];
-  syncStatus?: 'pending' | 'synced' | 'error';
+  syncStatus?: "pending" | "synced" | "error";
   lastSyncAt?: string;
 }
 
@@ -79,16 +130,24 @@ export default function CleaningForms() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [aircraft, setAircraft] = useState([]);
   const [employees, setEmployees] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [showSignatureDialog, setShowSignatureDialog] = useState<'supervisor' | 'client' | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [showSignatureDialog, setShowSignatureDialog] = useState<
+    "supervisor" | "client" | null
+  >(null);
   const [showQRDialog, setShowQRDialog] = useState<CleaningForm | null>(null);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [autoSaveStatus, setAutoSaveStatus] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
   const [editingForm, setEditingForm] = useState<CleaningForm | null>(null);
-  const [syncStatus, setSyncStatus] = useState<'synced' | 'pending' | 'error' | 'offline'>('offline');
-  const [securityStatus, setSecurityStatus] = useState<'secure' | 'insecure'>('secure');
+  const [syncStatus, setSyncStatus] = useState<
+    "synced" | "pending" | "error" | "offline"
+  >("offline");
+  const [securityStatus, setSecurityStatus] = useState<"secure" | "insecure">(
+    "secure",
+  );
   const [isSecureMode, setIsSecureMode] = useState(false);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
@@ -96,48 +155,50 @@ export default function CleaningForms() {
 
   // Form state
   const [formData, setFormData] = useState({
-    date: format(new Date(), 'yyyy-MM-dd'),
-    shift: 'morning' as 'morning' | 'afternoon' | 'night',
-    location: '',
+    date: format(new Date(), "yyyy-MM-dd"),
+    shift: "morning" as "morning" | "afternoon" | "night",
+    location: "",
     interventionTypes: [] as string[],
-    aircraftId: '',
+    aircraftId: "",
     employees: [] as any[],
     interventionPhotos: {
       before: { exterior: [], interior: [], details: [] },
-      after: { exterior: [], interior: [], details: [] }
+      after: { exterior: [], interior: [], details: [] },
     },
-    supervisorSignature: '',
-    clientSignature: '',
-    clientConfirmedWithoutSignature: false
+    supervisorSignature: "",
+    clientSignature: "",
+    clientConfirmedWithoutSignature: false,
   });
 
   // Get intervention types from localStorage or use defaults
   const getInterventionTypes = () => {
-    const saved = localStorage.getItem('intervention_types');
+    const saved = localStorage.getItem("intervention_types");
     if (saved) {
       return JSON.parse(saved);
     }
     const defaults = [
-      'Limpeza Exterior',
-      'Limpeza Interior',
-      'Polimento',
-      'Lavagem Profunda Durante a Manutenção de Base'
+      "Limpeza Exterior",
+      "Limpeza Interior",
+      "Polimento",
+      "Lavagem Profunda Durante a Manutenção de Base",
     ];
-    localStorage.setItem('intervention_types', JSON.stringify(defaults));
+    localStorage.setItem("intervention_types", JSON.stringify(defaults));
     return defaults;
   };
 
-  const [interventionTypeOptions, setInterventionTypeOptions] = useState<string[]>(getInterventionTypes());
+  const [interventionTypeOptions, setInterventionTypeOptions] = useState<
+    string[]
+  >(getInterventionTypes());
 
   const locationOptions = [
-    'Hangar Principal',
-    'Pátio de Aeronaves',
-    'Terminal de Passageiros',
-    'Área de Manutenção',
-    'Rampa Norte',
-    'Rampa Sul',
-    'Hangar de Manutenção',
-    'Estacionamento VIP'
+    "Hangar Principal",
+    "Pátio de Aeronaves",
+    "Terminal de Passageiros",
+    "Área de Manutenção",
+    "Rampa Norte",
+    "Rampa Sul",
+    "Hangar de Manutenção",
+    "Estacionamento VIP",
   ];
 
   useEffect(() => {
@@ -147,7 +208,7 @@ export default function CleaningForms() {
   const initializeSecureSystem = async () => {
     // Check secure context
     checkSecureContext();
-    setSecurityStatus(window.isSecureContext ? 'secure' : 'insecure');
+    setSecurityStatus(window.isSecureContext ? "secure" : "insecure");
 
     // Enable secure mode if available
     setIsSecureMode(window.isSecureContext);
@@ -163,39 +224,43 @@ export default function CleaningForms() {
       updateSyncStatus();
     };
 
-    window.addEventListener('online', handleOnlineStatus);
-    window.addEventListener('offline', handleOnlineStatus);
+    window.addEventListener("online", handleOnlineStatus);
+    window.addEventListener("offline", handleOnlineStatus);
 
     return () => {
-      window.removeEventListener('online', handleOnlineStatus);
-      window.removeEventListener('offline', handleOnlineStatus);
+      window.removeEventListener("online", handleOnlineStatus);
+      window.removeEventListener("offline", handleOnlineStatus);
     };
   };
 
   const updateSyncStatus = async () => {
     if (!navigator.onLine) {
-      setSyncStatus('offline');
+      setSyncStatus("offline");
       return;
     }
 
     try {
       const stats = await secureSyncService.getSyncStats();
       if (stats.errors > 0) {
-        setSyncStatus('error');
+        setSyncStatus("error");
       } else if (stats.pendingSync > 0) {
-        setSyncStatus('pending');
+        setSyncStatus("pending");
       } else {
-        setSyncStatus('synced');
+        setSyncStatus("synced");
       }
     } catch {
-      setSyncStatus('error');
+      setSyncStatus("error");
     }
   };
 
   // Auto-save effect
   useEffect(() => {
-    if (formData.location || formData.employees.length > 0 || formData.interventionTypes.length > 0) {
-      setAutoSaveStatus('saving');
+    if (
+      formData.location ||
+      formData.employees.length > 0 ||
+      formData.interventionTypes.length > 0
+    ) {
+      setAutoSaveStatus("saving");
 
       // Clear existing timeout
       if (autoSaveTimeoutRef.current) {
@@ -218,7 +283,9 @@ export default function CleaningForms() {
   const autoSave = () => {
     try {
       const draftKey = `cleaning_form_draft_${Date.now()}`;
-      const existingDrafts = JSON.parse(localStorage.getItem('cleaning_form_drafts') || '[]');
+      const existingDrafts = JSON.parse(
+        localStorage.getItem("cleaning_form_drafts") || "[]",
+      );
 
       // Keep only the latest 5 drafts
       const updatedDrafts = [
@@ -226,25 +293,28 @@ export default function CleaningForms() {
           key: draftKey,
           data: formData,
           timestamp: new Date().toISOString(),
-          description: `${formData.location || 'Sem local'} - ${format(new Date(), 'dd/MM HH:mm')}`
+          description: `${formData.location || "Sem local"} - ${format(new Date(), "dd/MM HH:mm")}`,
         },
-        ...existingDrafts.slice(0, 4)
+        ...existingDrafts.slice(0, 4),
       ];
 
-      localStorage.setItem('cleaning_form_drafts', JSON.stringify(updatedDrafts));
+      localStorage.setItem(
+        "cleaning_form_drafts",
+        JSON.stringify(updatedDrafts),
+      );
       localStorage.setItem(draftKey, JSON.stringify(formData));
 
-      setAutoSaveStatus('saved');
+      setAutoSaveStatus("saved");
 
       // Reset status after 3 seconds
       setTimeout(() => {
-        setAutoSaveStatus('idle');
+        setAutoSaveStatus("idle");
       }, 3000);
     } catch (error) {
-      console.error('Auto-save failed:', error);
-      setAutoSaveStatus('error');
+      console.error("Auto-save failed:", error);
+      setAutoSaveStatus("error");
       setTimeout(() => {
-        setAutoSaveStatus('idle');
+        setAutoSaveStatus("idle");
       }, 3000);
     }
   };
@@ -257,13 +327,13 @@ export default function CleaningForms() {
         setFormErrors({});
       }
     } catch (error) {
-      console.error('Error loading draft:', error);
+      console.error("Error loading draft:", error);
     }
   };
 
   const getDrafts = () => {
     try {
-      return JSON.parse(localStorage.getItem('cleaning_form_drafts') || '[]');
+      return JSON.parse(localStorage.getItem("cleaning_form_drafts") || "[]");
     } catch (error) {
       return [];
     }
@@ -272,13 +342,15 @@ export default function CleaningForms() {
   const loadData = async () => {
     try {
       // Load from management modules first
-      const savedAircraft = localStorage.getItem('aviation_aircraft');
-      const savedEmployees = localStorage.getItem('aviation_employees');
+      const savedAircraft = localStorage.getItem("aviation_aircraft");
+      const savedEmployees = localStorage.getItem("aviation_employees");
 
       if (savedAircraft) {
         const aircraftData = JSON.parse(savedAircraft);
         // Filter only active aircraft for selection
-        const activeAircraft = aircraftData.filter((ac: any) => ac.status === 'active');
+        const activeAircraft = aircraftData.filter(
+          (ac: any) => ac.status === "active",
+        );
         setAircraft(activeAircraft);
       } else {
         // Fallback to Supabase
@@ -289,7 +361,9 @@ export default function CleaningForms() {
       if (savedEmployees) {
         const employeesData = JSON.parse(savedEmployees);
         // Filter only active employees for selection
-        const activeEmployees = employeesData.filter((emp: any) => emp.status === 'active');
+        const activeEmployees = employeesData.filter(
+          (emp: any) => emp.status === "active",
+        );
         setEmployees(activeEmployees);
       } else {
         // Fallback to Supabase
@@ -302,51 +376,58 @@ export default function CleaningForms() {
         if (isSecureMode) {
           const secureForms = await secureSyncService.getAllForms();
           setForms(secureForms);
-          console.log('Loaded forms from secure storage:', secureForms.length);
+          console.log("Loaded forms from secure storage:", secureForms.length);
         } else {
           // Fallback to localStorage
-          const savedForms = localStorage.getItem('cleaningForms');
+          const savedForms = localStorage.getItem("cleaningForms");
           if (savedForms) {
             const parsedForms = JSON.parse(savedForms);
             // Ensure all forms have proper changeHistory array
             const normalizedForms = parsedForms.map((form: any) => ({
               ...form,
-              changeHistory: form.changeHistory || []
+              changeHistory: form.changeHistory || [],
             }));
             setForms(normalizedForms);
           }
         }
       } catch (error) {
-        console.warn('Failed to load from secure storage, falling back to localStorage:', error);
+        console.warn(
+          "Failed to load from secure storage, falling back to localStorage:",
+          error,
+        );
         // Fallback to localStorage
-        const savedForms = localStorage.getItem('cleaningForms');
+        const savedForms = localStorage.getItem("cleaningForms");
         if (savedForms) {
           const parsedForms = JSON.parse(savedForms);
           const normalizedForms = parsedForms.map((form: any) => ({
             ...form,
-            changeHistory: form.changeHistory || []
+            changeHistory: form.changeHistory || [],
           }));
           setForms(normalizedForms);
         }
       }
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error("Error loading data:", error);
     }
   };
 
   const generateFormCode = (date: string, shift: string, location: string) => {
     // Use the new secure ID format: AP-PS-SNR01-DDMMAAHHMMSS
     const now = new Date();
-    const day = String(now.getDate()).padStart(2, '0');
-    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, "0");
+    const month = String(now.getMonth() + 1).padStart(2, "0");
     const year = String(now.getFullYear()).slice(-2);
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
 
     // Generate unique serial number based on location and shift
-    const locationCode = location.replace(/\s+/g, '').substring(0, 2).toUpperCase();
-    const shiftCode = shift === 'morning' ? '01' : shift === 'afternoon' ? '02' : '03';
+    const locationCode = location
+      .replace(/\s+/g, "")
+      .substring(0, 2)
+      .toUpperCase();
+    const shiftCode =
+      shift === "morning" ? "01" : shift === "afternoon" ? "02" : "03";
     const serialNumber = `${locationCode}${shiftCode}`;
 
     const timestamp = `${day}${month}${year}${hours}${minutes}${seconds}`;
@@ -364,23 +445,25 @@ export default function CleaningForms() {
       } else {
         // Fallback to regular URL
         const supabaseStorageUrl = `${window.location.origin}/storage/v1/object/public/cleaning-forms/${formCode}`;
-        finalUrl = import.meta.env.VITE_SUPABASE_URL ? supabaseStorageUrl : `${window.location.origin}/cleaning-forms/${formCode}`;
+        finalUrl = import.meta.env.VITE_SUPABASE_URL
+          ? supabaseStorageUrl
+          : `${window.location.origin}/cleaning-forms/${formCode}`;
       }
 
       const qrCodeDataURL = await QRCode.toDataURL(finalUrl, {
         width: 250,
         margin: 2,
         color: {
-          dark: '#0f172a', // Darker for better security indication
-          light: '#ffffff'
+          dark: "#0f172a", // Darker for better security indication
+          light: "#ffffff",
         },
-        errorCorrectionLevel: 'H' // Higher error correction for security
+        errorCorrectionLevel: "H", // Higher error correction for security
       });
 
       return qrCodeDataURL;
     } catch (error) {
-      console.error('Error generating QR code:', error);
-      return '';
+      console.error("Error generating QR code:", error);
+      return "";
     }
   };
 
@@ -389,40 +472,43 @@ export default function CleaningForms() {
 
     // Basic validation
     if (!formData.date) {
-      errors.date = 'Data é obrigatória';
+      errors.date = "Data é obrigatória";
     }
 
     if (!formData.location) {
-      errors.location = 'Local da intervenção é obrigatório';
+      errors.location = "Local da intervenção é obrigatório";
     }
 
     if (formData.interventionTypes.length === 0) {
-      errors.interventionTypes = 'Selecione pelo menos um tipo de intervenção';
+      errors.interventionTypes = "Selecione pelo menos um tipo de intervenção";
     }
 
     if (!formData.aircraftId) {
-      errors.aircraftId = 'Selecione uma aeronave';
+      errors.aircraftId = "Selecione uma aeronave";
     }
 
     if (formData.employees.length === 0) {
-      errors.employees = 'Adicione pelo menos um funcionário';
+      errors.employees = "Adicione pelo menos um funcionário";
     }
 
     // Employee validation - simplified since data comes from system
     formData.employees.forEach((employee, index) => {
       if (!employee.name.trim()) {
-        errors[`employee_${index}_name`] = 'Funcionário inválido - reselecione do sistema';
+        errors[`employee_${index}_name`] =
+          "Funcionário inválido - reselecione do sistema";
       }
 
       if (!employee.id) {
-        errors[`employee_${index}_id`] = 'Funcionário deve ser selecionado do sistema';
+        errors[`employee_${index}_id`] =
+          "Funcionário deve ser selecionado do sistema";
       }
 
       if (employee.startTime && employee.endTime) {
         const start = new Date(`2000-01-01T${employee.startTime}`);
         const end = new Date(`2000-01-01T${employee.endTime}`);
         if (start >= end) {
-          errors[`employee_${index}_time`] = 'Horário de fim deve ser maior que o início';
+          errors[`employee_${index}_time`] =
+            "Horário de fim deve ser maior que o início";
         }
       }
     });
@@ -442,14 +528,28 @@ export default function CleaningForms() {
       if (editingForm) {
         // Track changes for version history
         const changes: string[] = [];
-        if (editingForm.date !== formData.date) changes.push(`Data alterada de ${editingForm.date} para ${formData.date}`);
-        if (editingForm.shift !== formData.shift) changes.push(`Turno alterado de ${editingForm.shift} para ${formData.shift}`);
-        if (editingForm.location !== formData.location) changes.push(`Local alterado de ${editingForm.location} para ${formData.location}`);
-        if (JSON.stringify(editingForm.interventionTypes) !== JSON.stringify(formData.interventionTypes)) {
+        if (editingForm.date !== formData.date)
+          changes.push(
+            `Data alterada de ${editingForm.date} para ${formData.date}`,
+          );
+        if (editingForm.shift !== formData.shift)
+          changes.push(
+            `Turno alterado de ${editingForm.shift} para ${formData.shift}`,
+          );
+        if (editingForm.location !== formData.location)
+          changes.push(
+            `Local alterado de ${editingForm.location} para ${formData.location}`,
+          );
+        if (
+          JSON.stringify(editingForm.interventionTypes) !==
+          JSON.stringify(formData.interventionTypes)
+        ) {
           changes.push(`Tipos de intervenção alterados`);
         }
         if (editingForm.employees.length !== formData.employees.length) {
-          changes.push(`Funcionários alterados (${editingForm.employees.length} → ${formData.employees.length})`);
+          changes.push(
+            `Funcionários alterados (${editingForm.employees.length} → ${formData.employees.length})`,
+          );
         }
 
         // Update existing form
@@ -464,8 +564,14 @@ export default function CleaningForms() {
           interventionPhotos: formData.interventionPhotos,
           supervisorSignature: formData.supervisorSignature,
           clientSignature: formData.clientSignature,
-          clientConfirmedWithoutSignature: formData.clientConfirmedWithoutSignature,
-          status: formData.supervisorSignature && (formData.clientSignature || formData.clientConfirmedWithoutSignature) ? 'completed' : 'draft',
+          clientConfirmedWithoutSignature:
+            formData.clientConfirmedWithoutSignature,
+          status:
+            formData.supervisorSignature &&
+            (formData.clientSignature ||
+              formData.clientConfirmedWithoutSignature)
+              ? "completed"
+              : "draft",
           updatedAt: new Date().toISOString(),
           version: editingForm.version + 1,
           changeHistory: [
@@ -474,41 +580,48 @@ export default function CleaningForms() {
               version: editingForm.version + 1,
               timestamp: new Date().toISOString(),
               changes,
-              author: user.email || 'Usuário',
+              author: user.email || "Usuário",
               previousData: {
                 date: editingForm.date,
                 shift: editingForm.shift,
                 location: editingForm.location,
                 interventionTypes: editingForm.interventionTypes,
-                employees: editingForm.employees
-              }
-            }
+                employees: editingForm.employees,
+              },
+            },
           ],
-          syncStatus: 'pending'
+          syncStatus: "pending",
         };
 
         // Regenerate PDF and QR code if needed
-        const aircraftData = aircraft.find((ac: any) => ac.id === formData.aircraftId);
-        const pdfStorageUrl = await generateAndUploadPDF(updatedForm, aircraftData);
+        const aircraftData = aircraft.find(
+          (ac: any) => ac.id === formData.aircraftId,
+        );
+        const pdfStorageUrl = await generateAndUploadPDF(
+          updatedForm,
+          aircraftData,
+        );
 
-        const qrCodeUrl = pdfStorageUrl || `${window.location.origin}/cleaning-forms/${updatedForm.code}`;
+        const qrCodeUrl =
+          pdfStorageUrl ||
+          `${window.location.origin}/cleaning-forms/${updatedForm.code}`;
         const qrCode = await QRCode.toDataURL(qrCodeUrl, {
           width: 250,
           margin: 2,
           color: {
-            dark: '#1e293b',
-            light: '#ffffff'
+            dark: "#1e293b",
+            light: "#ffffff",
           },
-          errorCorrectionLevel: 'M'
+          errorCorrectionLevel: "M",
         });
 
         updatedForm.qrCode = qrCode;
 
-        const updatedForms = forms.map(form =>
-          form.id === editingForm.id ? updatedForm : form
+        const updatedForms = forms.map((form) =>
+          form.id === editingForm.id ? updatedForm : form,
         );
         setForms(updatedForms);
-        localStorage.setItem('cleaningForms', JSON.stringify(updatedForms));
+        localStorage.setItem("cleaningForms", JSON.stringify(updatedForms));
 
         // Force re-render by updating the forms state
         setForms([...updatedForms]);
@@ -519,7 +632,9 @@ export default function CleaningForms() {
         });
       } else {
         // Create new form with secure ID
-        const formCode = isSecureMode ? generateSecureFormId() : generateFormCode(formData.date, formData.shift, formData.location);
+        const formCode = isSecureMode
+          ? generateSecureFormId()
+          : generateFormCode(formData.date, formData.shift, formData.location);
         const formId = isSecureMode ? formCode : crypto.randomUUID();
 
         const now = new Date().toISOString();
@@ -535,34 +650,46 @@ export default function CleaningForms() {
           interventionPhotos: formData.interventionPhotos,
           supervisorSignature: formData.supervisorSignature,
           clientSignature: formData.clientSignature,
-          clientConfirmedWithoutSignature: formData.clientConfirmedWithoutSignature,
-          qrCode: '',
-          status: formData.supervisorSignature && (formData.clientSignature || formData.clientConfirmedWithoutSignature) ? 'completed' : 'draft',
+          clientConfirmedWithoutSignature:
+            formData.clientConfirmedWithoutSignature,
+          qrCode: "",
+          status:
+            formData.supervisorSignature &&
+            (formData.clientSignature ||
+              formData.clientConfirmedWithoutSignature)
+              ? "completed"
+              : "draft",
           createdAt: now,
           updatedAt: now,
           version: 1,
-          changeHistory: [{
-            version: 1,
-            timestamp: now,
-            changes: ['Folha criada com sistema seguro'],
-            author: user.email || 'Usuário'
-          }],
-          syncStatus: 'pending'
+          changeHistory: [
+            {
+              version: 1,
+              timestamp: now,
+              changes: ["Folha criada com sistema seguro"],
+              author: user.email || "Usuário",
+            },
+          ],
+          syncStatus: "pending",
         };
 
         // Generate and upload PDF
-        const aircraftData = aircraft.find((ac: any) => ac.id === formData.aircraftId);
+        const aircraftData = aircraft.find(
+          (ac: any) => ac.id === formData.aircraftId,
+        );
         const pdfStorageUrl = await generateAndUploadPDF(newForm, aircraftData);
 
-        const qrCodeUrl = pdfStorageUrl || `${window.location.origin}/cleaning-forms/${formCode}`;
+        const qrCodeUrl =
+          pdfStorageUrl ||
+          `${window.location.origin}/cleaning-forms/${formCode}`;
         const qrCode = await QRCode.toDataURL(qrCodeUrl, {
           width: 250,
           margin: 2,
           color: {
-            dark: '#1e293b',
-            light: '#ffffff'
+            dark: "#1e293b",
+            light: "#ffffff",
           },
-          errorCorrectionLevel: 'M'
+          errorCorrectionLevel: "M",
         });
 
         newForm.qrCode = qrCode;
@@ -580,16 +707,19 @@ export default function CleaningForms() {
               description: `Nova folha criada e criptografada. ID: ${formCode}`,
             });
           } catch (error) {
-            console.error('Secure save failed, falling back to localStorage:', error);
+            console.error(
+              "Secure save failed, falling back to localStorage:",
+              error,
+            );
             // Fallback to localStorage
             const updatedForms = [...forms, newForm];
             setForms(updatedForms);
-            localStorage.setItem('cleaningForms', JSON.stringify(updatedForms));
+            localStorage.setItem("cleaningForms", JSON.stringify(updatedForms));
 
             toast({
               title: "Folha criada (modo local)",
               description: "Salva localmente. Sincronização pendente.",
-              variant: "default"
+              variant: "default",
             });
           }
         } else {
@@ -597,12 +727,12 @@ export default function CleaningForms() {
           try {
             await supabaseStorage.saveFormMetadata(newForm);
           } catch (error) {
-            console.log('Supabase metadata save skipped:', error);
+            console.log("Supabase metadata save skipped:", error);
           }
 
           const updatedForms = [...forms, newForm];
           setForms(updatedForms);
-          localStorage.setItem('cleaningForms', JSON.stringify(updatedForms));
+          localStorage.setItem("cleaningForms", JSON.stringify(updatedForms));
 
           toast({
             title: "Folha criada",
@@ -616,11 +746,11 @@ export default function CleaningForms() {
       resetForm();
       setFormErrors({});
     } catch (error) {
-      console.error('Error creating/updating form:', error);
+      console.error("Error creating/updating form:", error);
       toast({
         title: "Erro",
         description: "Ocorreu um erro ao salvar a folha.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
@@ -629,19 +759,19 @@ export default function CleaningForms() {
 
   const resetForm = () => {
     setFormData({
-      date: format(new Date(), 'yyyy-MM-dd'),
-      shift: 'morning',
-      location: '',
+      date: format(new Date(), "yyyy-MM-dd"),
+      shift: "morning",
+      location: "",
       interventionTypes: [],
-      aircraftId: '',
+      aircraftId: "",
       employees: [],
       interventionPhotos: {
         before: { exterior: [], interior: [], details: [] },
-        after: { exterior: [], interior: [], details: [] }
+        after: { exterior: [], interior: [], details: [] },
       },
-      supervisorSignature: '',
-      clientSignature: '',
-      clientConfirmedWithoutSignature: false
+      supervisorSignature: "",
+      clientSignature: "",
+      clientConfirmedWithoutSignature: false,
     });
     setFormErrors({});
     setEditingForm(null);
@@ -653,10 +783,14 @@ export default function CleaningForms() {
     // Get default working hours based on shift
     const getShiftTimes = (shift: string) => {
       switch (shift) {
-        case 'morning': return { start: '06:00', end: '14:00' };
-        case 'afternoon': return { start: '14:00', end: '22:00' };
-        case 'night': return { start: '22:00', end: '06:00' };
-        default: return { start: '08:00', end: '17:00' };
+        case "morning":
+          return { start: "06:00", end: "14:00" };
+        case "afternoon":
+          return { start: "14:00", end: "22:00" };
+        case "night":
+          return { start: "22:00", end: "06:00" };
+        default:
+          return { start: "08:00", end: "17:00" };
       }
     };
 
@@ -664,67 +798,74 @@ export default function CleaningForms() {
 
     const newEmployee = {
       id: employeeFromDb.id, // Use the actual employee ID from database
-      name: employeeFromDb.name || '',
-      task: employeeFromDb.role || '', // Use role as default task
+      name: employeeFromDb.name || "",
+      task: employeeFromDb.role || "", // Use role as default task
       startTime: shiftTimes.start,
       endTime: shiftTimes.end,
-      phone: employeeFromDb.phone || '',
-      idNumber: employeeFromDb.idNumber || '',
-      photo: employeeFromDb.photo || ''
+      phone: employeeFromDb.phone || "",
+      idNumber: employeeFromDb.idNumber || "",
+      photo: employeeFromDb.photo || "",
     };
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      employees: [...prev.employees, newEmployee]
+      employees: [...prev.employees, newEmployee],
     }));
   };
 
   const updateEmployee = (index: number, field: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       employees: prev.employees.map((emp, i) =>
-        i === index ? { ...emp, [field]: value } : emp
-      )
+        i === index ? { ...emp, [field]: value } : emp,
+      ),
     }));
   };
 
   const updateEmployeePhoto = (index: number, photoDataURL: string | null) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       employees: prev.employees.map((emp, i) =>
-        i === index ? { ...emp, photo: photoDataURL || undefined } : emp
-      )
+        i === index ? { ...emp, photo: photoDataURL || undefined } : emp,
+      ),
     }));
   };
 
   const removeEmployee = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      employees: prev.employees.filter((_, i) => i !== index)
+      employees: prev.employees.filter((_, i) => i !== index),
     }));
   };
 
   const handleSignature = (signatureDataURL: string) => {
-    if (showSignatureDialog === 'supervisor') {
-      setFormData(prev => ({ ...prev, supervisorSignature: signatureDataURL }));
-    } else if (showSignatureDialog === 'client') {
-      setFormData(prev => ({ ...prev, clientSignature: signatureDataURL }));
+    if (showSignatureDialog === "supervisor") {
+      setFormData((prev) => ({
+        ...prev,
+        supervisorSignature: signatureDataURL,
+      }));
+    } else if (showSignatureDialog === "client") {
+      setFormData((prev) => ({ ...prev, clientSignature: signatureDataURL }));
     }
     setShowSignatureDialog(null);
   };
 
-  const clearSignature = (type: 'supervisor' | 'client') => {
-    if (type === 'supervisor') {
-      setFormData(prev => ({ ...prev, supervisorSignature: '' }));
+  const clearSignature = (type: "supervisor" | "client") => {
+    if (type === "supervisor") {
+      setFormData((prev) => ({ ...prev, supervisorSignature: "" }));
     } else {
-      setFormData(prev => ({ ...prev, clientSignature: '' }));
+      setFormData((prev) => ({ ...prev, clientSignature: "" }));
     }
   };
 
-  const addInterventionPhoto = (timing: 'before' | 'after', category: 'exterior' | 'interior' | 'details', photoDataURL: string | null) => {
+  const addInterventionPhoto = (
+    timing: "before" | "after",
+    category: "exterior" | "interior" | "details",
+    photoDataURL: string | null,
+  ) => {
     if (!photoDataURL) return;
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       interventionPhotos: {
         ...prev.interventionPhotos,
@@ -732,79 +873,90 @@ export default function CleaningForms() {
           ...prev.interventionPhotos[timing],
           [category]: [
             ...(prev.interventionPhotos[timing][category] || []),
-            photoDataURL
-          ]
-        }
-      }
+            photoDataURL,
+          ],
+        },
+      },
     }));
   };
 
-  const removeInterventionPhoto = (timing: 'before' | 'after', category: 'exterior' | 'interior' | 'details', index: number) => {
-    setFormData(prev => ({
+  const removeInterventionPhoto = (
+    timing: "before" | "after",
+    category: "exterior" | "interior" | "details",
+    index: number,
+  ) => {
+    setFormData((prev) => ({
       ...prev,
       interventionPhotos: {
         ...prev.interventionPhotos,
         [timing]: {
           ...prev.interventionPhotos[timing],
-          [category]: (prev.interventionPhotos[timing][category] || []).filter((_, i) => i !== index)
-        }
-      }
+          [category]: (prev.interventionPhotos[timing][category] || []).filter(
+            (_, i) => i !== index,
+          ),
+        },
+      },
     }));
   };
 
   const handleDownloadPDF = async (form: CleaningForm) => {
     try {
-      const aircraftData = aircraft.find((ac: any) => ac.id === form.aircraftId);
+      const aircraftData = aircraft.find(
+        (ac: any) => ac.id === form.aircraftId,
+      );
       await downloadCleaningFormPDF(form, aircraftData);
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      console.error("Error generating PDF:", error);
     }
   };
 
   const handlePreviewPDF = async (form: CleaningForm) => {
     try {
-      const aircraftData = aircraft.find((ac: any) => ac.id === form.aircraftId);
+      const aircraftData = aircraft.find(
+        (ac: any) => ac.id === form.aircraftId,
+      );
       await previewCleaningFormPDF(form, aircraftData);
     } catch (error) {
-      console.error('Error previewing PDF:', error);
+      console.error("Error previewing PDF:", error);
     }
   };
 
   const handleEditForm = (form: CleaningForm) => {
     // Only allow editing of draft forms
-    if (form.status !== 'draft') {
+    if (form.status !== "draft") {
       toast({
         title: "Edição não permitida",
         description: "Apenas folhas em rascunho podem ser editadas.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
     // Load form data into the form
     setFormData({
-      date: form.date || format(new Date(), 'yyyy-MM-dd'),
-      shift: form.shift || 'morning',
-      location: form.location || '',
+      date: form.date || format(new Date(), "yyyy-MM-dd"),
+      shift: form.shift || "morning",
+      location: form.location || "",
       interventionTypes: form.interventionTypes || [],
-      aircraftId: form.aircraftId || '',
-      employees: (form.employees || []).map(emp => ({
+      aircraftId: form.aircraftId || "",
+      employees: (form.employees || []).map((emp) => ({
         id: emp.id || crypto.randomUUID(),
-        name: emp.name || '',
-        task: emp.task || '',
-        startTime: emp.startTime || '',
-        endTime: emp.endTime || '',
-        phone: emp.phone || '',
-        idNumber: emp.idNumber || '',
-        photo: emp.photo || ''
+        name: emp.name || "",
+        task: emp.task || "",
+        startTime: emp.startTime || "",
+        endTime: emp.endTime || "",
+        phone: emp.phone || "",
+        idNumber: emp.idNumber || "",
+        photo: emp.photo || "",
       })),
       interventionPhotos: form.interventionPhotos || {
         before: { exterior: [], interior: [], details: [] },
-        after: { exterior: [], interior: [], details: [] }
+        after: { exterior: [], interior: [], details: [] },
       },
-      supervisorSignature: form.supervisorSignature || '',
-      clientSignature: form.clientSignature || '',
-      clientConfirmedWithoutSignature: form.clientConfirmedWithoutSignature || false
+      supervisorSignature: form.supervisorSignature || "",
+      clientSignature: form.clientSignature || "",
+      clientConfirmedWithoutSignature:
+        form.clientConfirmedWithoutSignature || false,
     });
 
     // Set editing mode
@@ -812,30 +964,40 @@ export default function CleaningForms() {
     setIsCreateDialogOpen(true);
   };
 
-  const filteredForms = forms.filter(form => {
-    const matchesSearch = form.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredForms = forms.filter((form) => {
+    const matchesSearch =
+      form.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
       form.location.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesStatus = filterStatus === 'all' || form.status === filterStatus;
+    const matchesStatus =
+      filterStatus === "all" || form.status === filterStatus;
 
     return matchesSearch && matchesStatus;
   });
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'draft': return 'bg-yellow-500';
-      case 'pending_signatures': return 'bg-blue-500';
-      case 'completed': return 'bg-green-500';
-      default: return 'bg-gray-500';
+      case "draft":
+        return "bg-yellow-500";
+      case "pending_signatures":
+        return "bg-blue-500";
+      case "completed":
+        return "bg-green-500";
+      default:
+        return "bg-gray-500";
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'draft': return 'Rascunho';
-      case 'pending_signatures': return 'Aguardando Assinaturas';
-      case 'completed': return 'Concluído';
-      default: return 'Desconhecido';
+      case "draft":
+        return "Rascunho";
+      case "pending_signatures":
+        return "Aguardando Assinaturas";
+      case "completed":
+        return "Concluído";
+      default:
+        return "Desconhecido";
     }
   };
 
@@ -846,38 +1008,66 @@ export default function CleaningForms() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-16 space-x-4">
             <Link to="/">
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-white/20"
+              >
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
             <div className="flex items-center space-x-3 flex-1">
               <FileText className="h-6 w-6 text-white" />
-              <h1 className="text-2xl font-bold text-white">Folhas de Limpeza</h1>
+              <h1 className="text-2xl font-bold text-white">
+                Folhas de Limpeza
+              </h1>
 
               {/* Security and Sync Status Indicators */}
               <div className="flex items-center space-x-2 ml-4">
                 {/* Security Status */}
                 <div className="flex items-center space-x-1">
-                  <Shield className={`h-4 w-4 ${securityStatus === 'secure' ? 'text-green-400' : 'text-yellow-400'}`} />
-                  <span className={`text-xs ${securityStatus === 'secure' ? 'text-green-400' : 'text-yellow-400'}`}>
-                    {securityStatus === 'secure' ? 'Seguro' : 'Básico'}
+                  <Shield
+                    className={`h-4 w-4 ${securityStatus === "secure" ? "text-green-400" : "text-yellow-400"}`}
+                  />
+                  <span
+                    className={`text-xs ${securityStatus === "secure" ? "text-green-400" : "text-yellow-400"}`}
+                  >
+                    {securityStatus === "secure" ? "Seguro" : "Básico"}
                   </span>
                 </div>
 
                 {/* Sync Status */}
                 <div className="flex items-center space-x-1">
-                  {syncStatus === 'offline' && <WifiOff className="h-4 w-4 text-gray-400" />}
-                  {syncStatus === 'synced' && <Wifi className="h-4 w-4 text-green-400" />}
-                  {syncStatus === 'pending' && <RefreshCw className="h-4 w-4 text-yellow-400 animate-spin" />}
-                  {syncStatus === 'error' && <AlertTriangle className="h-4 w-4 text-red-400" />}
-                  <span className={`text-xs ${
-                    syncStatus === 'synced' ? 'text-green-400' :
-                    syncStatus === 'pending' ? 'text-yellow-400' :
-                    syncStatus === 'error' ? 'text-red-400' : 'text-gray-400'
-                  }`}>
-                    {syncStatus === 'synced' ? 'Sincronizado' :
-                     syncStatus === 'pending' ? 'Sincronizando' :
-                     syncStatus === 'error' ? 'Erro' : 'Offline'}
+                  {syncStatus === "offline" && (
+                    <WifiOff className="h-4 w-4 text-gray-400" />
+                  )}
+                  {syncStatus === "synced" && (
+                    <Wifi className="h-4 w-4 text-green-400" />
+                  )}
+                  {syncStatus === "pending" && (
+                    <RefreshCw className="h-4 w-4 text-yellow-400 animate-spin" />
+                  )}
+                  {syncStatus === "error" && (
+                    <AlertTriangle className="h-4 w-4 text-red-400" />
+                  )}
+                  <span
+                    className={`text-xs ${
+                      syncStatus === "synced"
+                        ? "text-green-400"
+                        : syncStatus === "pending"
+                          ? "text-yellow-400"
+                          : syncStatus === "error"
+                            ? "text-red-400"
+                            : "text-gray-400"
+                    }`}
+                  >
+                    {syncStatus === "synced"
+                      ? "Sincronizado"
+                      : syncStatus === "pending"
+                        ? "Sincronizando"
+                        : syncStatus === "error"
+                          ? "Erro"
+                          : "Offline"}
                   </span>
                 </div>
               </div>
@@ -918,20 +1108,25 @@ export default function CleaningForms() {
                     toast({
                       title: "Erro na sincronização",
                       description: "Falha ao sincronizar dados.",
-                      variant: "destructive"
+                      variant: "destructive",
                     });
                   }
                 }}
                 className="border-white/30 text-white hover:bg-white/20"
-                disabled={syncStatus === 'pending'}
+                disabled={syncStatus === "pending"}
               >
-                <RefreshCw className={`h-4 w-4 mr-2 ${syncStatus === 'pending' ? 'animate-spin' : ''}`} />
+                <RefreshCw
+                  className={`h-4 w-4 mr-2 ${syncStatus === "pending" ? "animate-spin" : ""}`}
+                />
                 Sincronizar
               </Button>
             )}
           </div>
-          
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+
+          <Dialog
+            open={isCreateDialogOpen}
+            onOpenChange={setIsCreateDialogOpen}
+          >
             <DialogTrigger asChild>
               <Button className="aviation-button">
                 <Plus className="h-4 w-4 mr-2" />
@@ -943,36 +1138,42 @@ export default function CleaningForms() {
                 <div className="flex items-center justify-between">
                   <div>
                     <DialogTitle className="text-white flex items-center space-x-2">
-                      <span>{editingForm ? 'Editar Folha de Limpeza' : 'Nova Folha de Limpeza'}</span>
+                      <span>
+                        {editingForm
+                          ? "Editar Folha de Limpeza"
+                          : "Nova Folha de Limpeza"}
+                      </span>
                       {isSecureMode && (
-                        <Shield className="h-4 w-4 text-green-400" title="Modo Seguro Ativo" />
+                        <Shield
+                          className="h-4 w-4 text-green-400"
+                          title="Modo Seguro Ativo"
+                        />
                       )}
                     </DialogTitle>
                     <DialogDescription className="text-white/70">
                       {editingForm
-                        ? `Editando folha ${editingForm.code} - Status: ${editingForm.status === 'draft' ? 'Rascunho' : 'Finalizada'}`
+                        ? `Editando folha ${editingForm.code} - Status: ${editingForm.status === "draft" ? "Rascunho" : "Finalizada"}`
                         : isSecureMode
-                          ? 'Crie uma nova folha criptografada com ID único seguro (AP-PS-SNR##-DDMMAAHHMMSS)'
-                          : 'Preencha os dados para criar uma nova folha de requisição de limpeza'
-                      }
+                          ? "Crie uma nova folha criptografada com ID único seguro (AP-PS-SNR##-DDMMAAHHMMSS)"
+                          : "Preencha os dados para criar uma nova folha de requisição de limpeza"}
                     </DialogDescription>
                   </div>
 
                   {/* Auto-save status */}
                   <div className="flex items-center space-x-2">
-                    {autoSaveStatus === 'saving' && (
+                    {autoSaveStatus === "saving" && (
                       <div className="flex items-center space-x-1 text-yellow-400">
                         <div className="animate-spin rounded-full h-3 w-3 border-b border-yellow-400"></div>
                         <span className="text-xs">Salvando...</span>
                       </div>
                     )}
-                    {autoSaveStatus === 'saved' && (
+                    {autoSaveStatus === "saved" && (
                       <div className="flex items-center space-x-1 text-green-400">
                         <CheckSquare className="h-3 w-3" />
                         <span className="text-xs">Salvo</span>
                       </div>
                     )}
-                    {autoSaveStatus === 'error' && (
+                    {autoSaveStatus === "error" && (
                       <div className="flex items-center space-x-1 text-red-400">
                         <X className="h-3 w-3" />
                         <span className="text-xs">Erro ao salvar</span>
@@ -984,10 +1185,18 @@ export default function CleaningForms() {
 
               <Tabs defaultValue="basic" className="w-full">
                 <TabsList className="grid w-full grid-cols-4 bg-aviation-gray-700">
-                  <TabsTrigger value="basic" className="text-white">Dados Básicos</TabsTrigger>
-                  <TabsTrigger value="employees" className="text-white">Funcionários</TabsTrigger>
-                  <TabsTrigger value="photos" className="text-white">Fotografias</TabsTrigger>
-                  <TabsTrigger value="signatures" className="text-white">Assinaturas</TabsTrigger>
+                  <TabsTrigger value="basic" className="text-white">
+                    Dados Básicos
+                  </TabsTrigger>
+                  <TabsTrigger value="employees" className="text-white">
+                    Funcionários
+                  </TabsTrigger>
+                  <TabsTrigger value="photos" className="text-white">
+                    Fotografias
+                  </TabsTrigger>
+                  <TabsTrigger value="signatures" className="text-white">
+                    Assinaturas
+                  </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="basic" className="space-y-6 mt-6">
@@ -998,46 +1207,91 @@ export default function CleaningForms() {
                       <Input
                         type="date"
                         value={formData.date}
-                        onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            date: e.target.value,
+                          }))
+                        }
                         className="aviation-input"
                       />
                     </div>
 
                     <div className="space-y-2">
                       <Label className="text-white">Turno</Label>
-                      <Select value={formData.shift} onValueChange={(value: any) => setFormData(prev => ({ ...prev, shift: value }))}>
+                      <Select
+                        value={formData.shift}
+                        onValueChange={(value: any) =>
+                          setFormData((prev) => ({ ...prev, shift: value }))
+                        }
+                      >
                         <SelectTrigger className="aviation-input">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="bg-aviation-gray-800 border-white/20">
-                          <SelectItem value="morning" className="text-white">Manhã (06:00 - 14:00)</SelectItem>
-                          <SelectItem value="afternoon" className="text-white">Tarde (14:00 - 22:00)</SelectItem>
-                          <SelectItem value="night" className="text-white">Noite (22:00 - 06:00)</SelectItem>
+                          <SelectItem value="morning" className="text-white">
+                            Manhã (06:00 - 14:00)
+                          </SelectItem>
+                          <SelectItem value="afternoon" className="text-white">
+                            Tarde (14:00 - 22:00)
+                          </SelectItem>
+                          <SelectItem value="night" className="text-white">
+                            Noite (22:00 - 06:00)
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     {/* Location */}
                     <div className="space-y-2">
-                      <Label className="text-white">Local da Intervenção *</Label>
-                      <Select value={formData.location} onValueChange={(value) => setFormData(prev => ({ ...prev, location: value }))}>
-                        <SelectTrigger className={`aviation-input ${formErrors.location ? 'border-red-500' : ''}`}>
+                      <Label className="text-white">
+                        Local da Intervenção *
+                      </Label>
+                      <Select
+                        value={formData.location}
+                        onValueChange={(value) =>
+                          setFormData((prev) => ({ ...prev, location: value }))
+                        }
+                      >
+                        <SelectTrigger
+                          className={`aviation-input ${formErrors.location ? "border-red-500" : ""}`}
+                        >
                           <SelectValue placeholder="Selecione o local" />
                         </SelectTrigger>
                         <SelectContent className="bg-aviation-gray-800 border-white/20">
-                          {locationOptions.map(location => (
-                            <SelectItem key={location} value={location} className="text-white">{location}</SelectItem>
+                          {locationOptions.map((location) => (
+                            <SelectItem
+                              key={location}
+                              value={location}
+                              className="text-white"
+                            >
+                              {location}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      {formErrors.location && <p className="text-red-400 text-sm">{formErrors.location}</p>}
+                      {formErrors.location && (
+                        <p className="text-red-400 text-sm">
+                          {formErrors.location}
+                        </p>
+                      )}
                     </div>
 
                     {/* Aircraft Selection */}
                     <div className="space-y-2">
                       <Label className="text-white">Aeronave *</Label>
-                      <Select value={formData.aircraftId} onValueChange={(value) => setFormData(prev => ({ ...prev, aircraftId: value }))}>
-                        <SelectTrigger className={`aviation-input ${formErrors.aircraftId ? 'border-red-500' : ''}`}>
+                      <Select
+                        value={formData.aircraftId}
+                        onValueChange={(value) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            aircraftId: value,
+                          }))
+                        }
+                      >
+                        <SelectTrigger
+                          className={`aviation-input ${formErrors.aircraftId ? "border-red-500" : ""}`}
+                        >
                           <SelectValue placeholder="Selecione a aeronave cadastrada" />
                         </SelectTrigger>
                         <SelectContent className="bg-aviation-gray-800 border-white/20 max-h-60">
@@ -1045,29 +1299,48 @@ export default function CleaningForms() {
                             <div className="px-4 py-3 text-white/70 text-sm">
                               Nenhuma aeronave cadastrada no sistema.
                               <br />
-                              <Link to="/aircraft-manager" className="text-aviation-blue-300 underline">
+                              <Link
+                                to="/aircraft-manager"
+                                className="text-aviation-blue-300 underline"
+                              >
                                 Cadastrar aeronave
                               </Link>
                             </div>
                           )}
                           {aircraft.map((ac: any) => (
-                            <SelectItem key={ac.id} value={ac.id} className="text-white hover:bg-white/10">
+                            <SelectItem
+                              key={ac.id}
+                              value={ac.id}
+                              className="text-white hover:bg-white/10"
+                            >
                               <div className="flex flex-col py-1">
-                                <div className="font-semibold">{ac.registration}</div>
-                                <div className="text-sm opacity-80">{ac.model} - {ac.manufacturer}</div>
+                                <div className="font-semibold">
+                                  {ac.registration}
+                                </div>
+                                <div className="text-sm opacity-80">
+                                  {ac.model} - {ac.manufacturer}
+                                </div>
                                 <div className="text-xs opacity-60">
-                                  {ac.location ? `📍 ${ac.location}` : ''}
-                                  {ac.status && ` • Status: ${ac.status === 'active' ? 'Ativa' : ac.status === 'maintenance' ? 'Manutenção' : 'Inativa'}`}
+                                  {ac.location ? `📍 ${ac.location}` : ""}
+                                  {ac.status &&
+                                    ` • Status: ${ac.status === "active" ? "Ativa" : ac.status === "maintenance" ? "Manutenção" : "Inativa"}`}
                                 </div>
                               </div>
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      {formErrors.aircraftId && <p className="text-red-400 text-sm">{formErrors.aircraftId}</p>}
+                      {formErrors.aircraftId && (
+                        <p className="text-red-400 text-sm">
+                          {formErrors.aircraftId}
+                        </p>
+                      )}
                       {aircraft.length > 0 && (
                         <p className="text-white/60 text-xs">
-                          {aircraft.length} aeronave{aircraft.length !== 1 ? 's' : ''} ativa{aircraft.length !== 1 ? 's' : ''} disponível{aircraft.length !== 1 ? 'eis' : ''}
+                          {aircraft.length} aeronave
+                          {aircraft.length !== 1 ? "s" : ""} ativa
+                          {aircraft.length !== 1 ? "s" : ""} disponível
+                          {aircraft.length !== 1 ? "eis" : ""}
                         </p>
                       )}
                     </div>
@@ -1076,70 +1349,112 @@ export default function CleaningForms() {
                   {/* Intervention Types */}
                   <div className="space-y-2">
                     <Label className="text-white">Tipos de Intervenção *</Label>
-                    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-3 rounded-lg border ${formErrors.interventionTypes ? 'border-red-500' : 'border-white/30'}`}>
-                      {interventionTypeOptions.map(type => (
+                    <div
+                      className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-3 rounded-lg border ${formErrors.interventionTypes ? "border-red-500" : "border-white/30"}`}
+                    >
+                      {interventionTypeOptions.map((type) => (
                         <div key={type} className="flex items-center space-x-2">
                           <Checkbox
                             id={type}
                             checked={formData.interventionTypes.includes(type)}
                             onCheckedChange={(checked) => {
                               if (checked) {
-                                setFormData(prev => ({
+                                setFormData((prev) => ({
                                   ...prev,
-                                  interventionTypes: [...prev.interventionTypes, type]
+                                  interventionTypes: [
+                                    ...prev.interventionTypes,
+                                    type,
+                                  ],
                                 }));
                               } else {
-                                setFormData(prev => ({
+                                setFormData((prev) => ({
                                   ...prev,
-                                  interventionTypes: prev.interventionTypes.filter(t => t !== type)
+                                  interventionTypes:
+                                    prev.interventionTypes.filter(
+                                      (t) => t !== type,
+                                    ),
                                 }));
                               }
                             }}
                             className="border-white/30"
                           />
-                          <Label htmlFor={type} className="text-white text-sm">{type}</Label>
+                          <Label htmlFor={type} className="text-white text-sm">
+                            {type}
+                          </Label>
                         </div>
                       ))}
                     </div>
-                    {formErrors.interventionTypes && <p className="text-red-400 text-sm">{formErrors.interventionTypes}</p>}
+                    {formErrors.interventionTypes && (
+                      <p className="text-red-400 text-sm">
+                        {formErrors.interventionTypes}
+                      </p>
+                    )}
                   </div>
                 </TabsContent>
 
                 <TabsContent value="employees" className="space-y-6 mt-6">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <h3 className="text-lg font-semibold text-white">Funcionários do Turno</h3>
-                    <p className="text-white/70 text-sm">Selecione funcionários cadastrados no sistema</p>
+                    <h3 className="text-lg font-semibold text-white">
+                      Funcionários do Turno
+                    </h3>
+                    <p className="text-white/70 text-sm">
+                      Selecione funcionários cadastrados no sistema
+                    </p>
                   </div>
 
                   {/* Employee Selection from Database */}
                   {employees.length > 0 && (
                     <Card className="glass-card border-white/20 p-6">
-                      <h4 className="text-white font-medium mb-4">Funcionários Disponíveis</h4>
+                      <h4 className="text-white font-medium mb-4">
+                        Funcionários Disponíveis
+                      </h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                         {employees
-                          .filter(emp => !formData.employees.some(formEmp => formEmp.id === emp.id))
-                          .map(employee => (
-                          <Button
-                            key={employee.id}
-                            variant="outline"
-                            onClick={() => addEmployeeFromDatabase(employee)}
-                            className="border-white/30 text-white hover:bg-white/20 h-20 p-3 flex flex-col items-center justify-center space-y-2"
-                          >
-                            {employee.photo ? (
-                              <img src={employee.photo} alt="" className="w-8 h-8 rounded-full object-cover" />
-                            ) : (
-                              <div className="w-8 h-8 rounded-full bg-aviation-blue-600 flex items-center justify-center text-xs font-bold">
-                                {employee.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                          .filter(
+                            (emp) =>
+                              !formData.employees.some(
+                                (formEmp) => formEmp.id === emp.id,
+                              ),
+                          )
+                          .map((employee) => (
+                            <Button
+                              key={employee.id}
+                              variant="outline"
+                              onClick={() => addEmployeeFromDatabase(employee)}
+                              className="border-white/30 text-white hover:bg-white/20 h-20 p-3 flex flex-col items-center justify-center space-y-2"
+                            >
+                              {employee.photo ? (
+                                <img
+                                  src={employee.photo}
+                                  alt=""
+                                  className="w-8 h-8 rounded-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-8 h-8 rounded-full bg-aviation-blue-600 flex items-center justify-center text-xs font-bold">
+                                  {employee.name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")
+                                    .substring(0, 2)}
+                                </div>
+                              )}
+                              <div className="text-center">
+                                <div className="font-medium text-xs">
+                                  {employee.name}
+                                </div>
+                                <div className="text-xs opacity-70">
+                                  {employee.role}
+                                </div>
                               </div>
-                            )}
-                            <div className="text-center">
-                              <div className="font-medium text-xs">{employee.name}</div>
-                              <div className="text-xs opacity-70">{employee.role}</div>
-                            </div>
-                          </Button>
-                        ))}
+                            </Button>
+                          ))}
                       </div>
-                      {employees.filter(emp => !formData.employees.some(formEmp => formEmp.id === emp.id)).length === 0 && (
+                      {employees.filter(
+                        (emp) =>
+                          !formData.employees.some(
+                            (formEmp) => formEmp.id === emp.id,
+                          ),
+                      ).length === 0 && (
                         <p className="text-white/60 text-center py-4">
                           Todos os funcionários disponíveis já foram adicionados
                         </p>
@@ -1149,28 +1464,47 @@ export default function CleaningForms() {
 
                   {/* Selected Employees Display */}
                   <div className="space-y-4">
-                    <h4 className="text-white font-medium">Funcionários Selecionados ({formData.employees.length})</h4>
+                    <h4 className="text-white font-medium">
+                      Funcionários Selecionados ({formData.employees.length})
+                    </h4>
 
                     {formData.employees.map((employee, index) => (
-                      <Card key={employee.id} className="glass-card border-white/20">
+                      <Card
+                        key={employee.id}
+                        className="glass-card border-white/20"
+                      >
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-4">
                               {employee.photo ? (
-                                <img src={employee.photo} alt="" className="w-12 h-12 rounded-full object-cover" />
+                                <img
+                                  src={employee.photo}
+                                  alt=""
+                                  className="w-12 h-12 rounded-full object-cover"
+                                />
                               ) : (
                                 <div className="w-12 h-12 rounded-full bg-aviation-blue-600 flex items-center justify-center text-white font-bold">
-                                  {employee.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
+                                  {employee.name
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")
+                                    .substring(0, 2)}
                                 </div>
                               )}
 
                               <div className="flex-1">
-                                <h5 className="text-white font-medium">{employee.name}</h5>
-                                <p className="text-white/70 text-sm">{employee.task}</p>
+                                <h5 className="text-white font-medium">
+                                  {employee.name}
+                                </h5>
+                                <p className="text-white/70 text-sm">
+                                  {employee.task}
+                                </p>
                                 <div className="flex items-center space-x-4 text-white/60 text-xs mt-1">
                                   <span>📞 {employee.phone}</span>
                                   <span>🆔 {employee.idNumber}</span>
-                                  <span>⏰ {employee.startTime} - {employee.endTime}</span>
+                                  <span>
+                                    ⏰ {employee.startTime} - {employee.endTime}
+                                  </span>
                                 </div>
                               </div>
                             </div>
@@ -1191,8 +1525,12 @@ export default function CleaningForms() {
                     {formData.employees.length === 0 && (
                       <div className="text-center py-8">
                         <Users className="h-12 w-12 text-white/30 mx-auto mb-4" />
-                        <p className="text-white/70 mb-2">Nenhum funcionário selecionado</p>
-                        <p className="text-white/50 text-sm">Selecione funcionários da lista acima</p>
+                        <p className="text-white/70 mb-2">
+                          Nenhum funcionário selecionado
+                        </p>
+                        <p className="text-white/50 text-sm">
+                          Selecione funcionários da lista acima
+                        </p>
                       </div>
                     )}
                   </div>
@@ -1201,8 +1539,12 @@ export default function CleaningForms() {
                 <TabsContent value="photos" className="space-y-6 mt-6">
                   <div className="space-y-6">
                     <div className="text-center">
-                      <h3 className="text-lg font-semibold text-white mb-2">Fotografias da Intervenção</h3>
-                      <p className="text-white/70 text-sm">Documente o estado da aeronave antes e depois da limpeza</p>
+                      <h3 className="text-lg font-semibold text-white mb-2">
+                        Fotografias da Intervenção
+                      </h3>
+                      <p className="text-white/70 text-sm">
+                        Documente o estado da aeronave antes e depois da limpeza
+                      </p>
                     </div>
 
                     {/* Before Photos */}
@@ -1219,28 +1561,44 @@ export default function CleaningForms() {
                       <CardContent className="space-y-6">
                         {/* Exterior Before */}
                         <div className="space-y-3">
-                          <Label className="text-white font-medium">Exterior</Label>
+                          <Label className="text-white font-medium">
+                            Exterior
+                          </Label>
                           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {formData.interventionPhotos.before.exterior?.map((photo, index) => (
-                              <div key={index} className="relative group">
-                                <img
-                                  src={photo}
-                                  alt={`Exterior antes ${index + 1}`}
-                                  className="w-full h-20 object-cover rounded-lg border border-white/30"
-                                />
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                                  onClick={() => removeInterventionPhoto('before', 'exterior', index)}
-                                >
-                                  <X className="h-3 w-3" />
-                                </Button>
-                              </div>
-                            ))}
+                            {formData.interventionPhotos.before.exterior?.map(
+                              (photo, index) => (
+                                <div key={index} className="relative group">
+                                  <img
+                                    src={photo}
+                                    alt={`Exterior antes ${index + 1}`}
+                                    className="w-full h-20 object-cover rounded-lg border border-white/30"
+                                  />
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                    onClick={() =>
+                                      removeInterventionPhoto(
+                                        "before",
+                                        "exterior",
+                                        index,
+                                      )
+                                    }
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              ),
+                            )}
                             <PhotoUpload
                               currentPhoto=""
-                              onPhotoChange={(photo) => addInterventionPhoto('before', 'exterior', photo)}
+                              onPhotoChange={(photo) =>
+                                addInterventionPhoto(
+                                  "before",
+                                  "exterior",
+                                  photo,
+                                )
+                              }
                               employeeName="Exterior Antes"
                             />
                           </div>
@@ -1248,28 +1606,44 @@ export default function CleaningForms() {
 
                         {/* Interior Before */}
                         <div className="space-y-3">
-                          <Label className="text-white font-medium">Interior</Label>
+                          <Label className="text-white font-medium">
+                            Interior
+                          </Label>
                           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {formData.interventionPhotos.before.interior?.map((photo, index) => (
-                              <div key={index} className="relative group">
-                                <img
-                                  src={photo}
-                                  alt={`Interior antes ${index + 1}`}
-                                  className="w-full h-20 object-cover rounded-lg border border-white/30"
-                                />
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                                  onClick={() => removeInterventionPhoto('before', 'interior', index)}
-                                >
-                                  <X className="h-3 w-3" />
-                                </Button>
-                              </div>
-                            ))}
+                            {formData.interventionPhotos.before.interior?.map(
+                              (photo, index) => (
+                                <div key={index} className="relative group">
+                                  <img
+                                    src={photo}
+                                    alt={`Interior antes ${index + 1}`}
+                                    className="w-full h-20 object-cover rounded-lg border border-white/30"
+                                  />
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                    onClick={() =>
+                                      removeInterventionPhoto(
+                                        "before",
+                                        "interior",
+                                        index,
+                                      )
+                                    }
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              ),
+                            )}
                             <PhotoUpload
                               currentPhoto=""
-                              onPhotoChange={(photo) => addInterventionPhoto('before', 'interior', photo)}
+                              onPhotoChange={(photo) =>
+                                addInterventionPhoto(
+                                  "before",
+                                  "interior",
+                                  photo,
+                                )
+                              }
                               employeeName="Interior Antes"
                             />
                           </div>
@@ -1277,28 +1651,40 @@ export default function CleaningForms() {
 
                         {/* Details Before */}
                         <div className="space-y-3">
-                          <Label className="text-white font-medium">Detalhes Específicos</Label>
+                          <Label className="text-white font-medium">
+                            Detalhes Específicos
+                          </Label>
                           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {formData.interventionPhotos.before.details?.map((photo, index) => (
-                              <div key={index} className="relative group">
-                                <img
-                                  src={photo}
-                                  alt={`Detalhes antes ${index + 1}`}
-                                  className="w-full h-20 object-cover rounded-lg border border-white/30"
-                                />
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                                  onClick={() => removeInterventionPhoto('before', 'details', index)}
-                                >
-                                  <X className="h-3 w-3" />
-                                </Button>
-                              </div>
-                            ))}
+                            {formData.interventionPhotos.before.details?.map(
+                              (photo, index) => (
+                                <div key={index} className="relative group">
+                                  <img
+                                    src={photo}
+                                    alt={`Detalhes antes ${index + 1}`}
+                                    className="w-full h-20 object-cover rounded-lg border border-white/30"
+                                  />
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                    onClick={() =>
+                                      removeInterventionPhoto(
+                                        "before",
+                                        "details",
+                                        index,
+                                      )
+                                    }
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              ),
+                            )}
                             <PhotoUpload
                               currentPhoto=""
-                              onPhotoChange={(photo) => addInterventionPhoto('before', 'details', photo)}
+                              onPhotoChange={(photo) =>
+                                addInterventionPhoto("before", "details", photo)
+                              }
                               employeeName="Detalhes Antes"
                             />
                           </div>
@@ -1320,28 +1706,40 @@ export default function CleaningForms() {
                       <CardContent className="space-y-6">
                         {/* Exterior After */}
                         <div className="space-y-3">
-                          <Label className="text-white font-medium">Exterior</Label>
+                          <Label className="text-white font-medium">
+                            Exterior
+                          </Label>
                           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {formData.interventionPhotos.after.exterior?.map((photo, index) => (
-                              <div key={index} className="relative group">
-                                <img
-                                  src={photo}
-                                  alt={`Exterior depois ${index + 1}`}
-                                  className="w-full h-20 object-cover rounded-lg border border-white/30"
-                                />
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                                  onClick={() => removeInterventionPhoto('after', 'exterior', index)}
-                                >
-                                  <X className="h-3 w-3" />
-                                </Button>
-                              </div>
-                            ))}
+                            {formData.interventionPhotos.after.exterior?.map(
+                              (photo, index) => (
+                                <div key={index} className="relative group">
+                                  <img
+                                    src={photo}
+                                    alt={`Exterior depois ${index + 1}`}
+                                    className="w-full h-20 object-cover rounded-lg border border-white/30"
+                                  />
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                    onClick={() =>
+                                      removeInterventionPhoto(
+                                        "after",
+                                        "exterior",
+                                        index,
+                                      )
+                                    }
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              ),
+                            )}
                             <PhotoUpload
                               currentPhoto=""
-                              onPhotoChange={(photo) => addInterventionPhoto('after', 'exterior', photo)}
+                              onPhotoChange={(photo) =>
+                                addInterventionPhoto("after", "exterior", photo)
+                              }
                               employeeName="Exterior Depois"
                             />
                           </div>
@@ -1349,28 +1747,40 @@ export default function CleaningForms() {
 
                         {/* Interior After */}
                         <div className="space-y-3">
-                          <Label className="text-white font-medium">Interior</Label>
+                          <Label className="text-white font-medium">
+                            Interior
+                          </Label>
                           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {formData.interventionPhotos.after.interior?.map((photo, index) => (
-                              <div key={index} className="relative group">
-                                <img
-                                  src={photo}
-                                  alt={`Interior depois ${index + 1}`}
-                                  className="w-full h-20 object-cover rounded-lg border border-white/30"
-                                />
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                                  onClick={() => removeInterventionPhoto('after', 'interior', index)}
-                                >
-                                  <X className="h-3 w-3" />
-                                </Button>
-                              </div>
-                            ))}
+                            {formData.interventionPhotos.after.interior?.map(
+                              (photo, index) => (
+                                <div key={index} className="relative group">
+                                  <img
+                                    src={photo}
+                                    alt={`Interior depois ${index + 1}`}
+                                    className="w-full h-20 object-cover rounded-lg border border-white/30"
+                                  />
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                    onClick={() =>
+                                      removeInterventionPhoto(
+                                        "after",
+                                        "interior",
+                                        index,
+                                      )
+                                    }
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              ),
+                            )}
                             <PhotoUpload
                               currentPhoto=""
-                              onPhotoChange={(photo) => addInterventionPhoto('after', 'interior', photo)}
+                              onPhotoChange={(photo) =>
+                                addInterventionPhoto("after", "interior", photo)
+                              }
                               employeeName="Interior Depois"
                             />
                           </div>
@@ -1378,28 +1788,40 @@ export default function CleaningForms() {
 
                         {/* Details After */}
                         <div className="space-y-3">
-                          <Label className="text-white font-medium">Detalhes Específicos</Label>
+                          <Label className="text-white font-medium">
+                            Detalhes Específicos
+                          </Label>
                           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {formData.interventionPhotos.after.details?.map((photo, index) => (
-                              <div key={index} className="relative group">
-                                <img
-                                  src={photo}
-                                  alt={`Detalhes depois ${index + 1}`}
-                                  className="w-full h-20 object-cover rounded-lg border border-white/30"
-                                />
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                                  onClick={() => removeInterventionPhoto('after', 'details', index)}
-                                >
-                                  <X className="h-3 w-3" />
-                                </Button>
-                              </div>
-                            ))}
+                            {formData.interventionPhotos.after.details?.map(
+                              (photo, index) => (
+                                <div key={index} className="relative group">
+                                  <img
+                                    src={photo}
+                                    alt={`Detalhes depois ${index + 1}`}
+                                    className="w-full h-20 object-cover rounded-lg border border-white/30"
+                                  />
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                    onClick={() =>
+                                      removeInterventionPhoto(
+                                        "after",
+                                        "details",
+                                        index,
+                                      )
+                                    }
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              ),
+                            )}
                             <PhotoUpload
                               currentPhoto=""
-                              onPhotoChange={(photo) => addInterventionPhoto('after', 'details', photo)}
+                              onPhotoChange={(photo) =>
+                                addInterventionPhoto("after", "details", photo)
+                              }
                               employeeName="Detalhes Depois"
                             />
                           </div>
@@ -1411,19 +1833,53 @@ export default function CleaningForms() {
                     <div className="bg-white/5 rounded-lg p-4 border border-white/20">
                       <div className="grid grid-cols-2 gap-4 text-center">
                         <div>
-                          <h4 className="text-white font-medium mb-2">Antes da Intervenção</h4>
+                          <h4 className="text-white font-medium mb-2">
+                            Antes da Intervenção
+                          </h4>
                           <div className="text-white/70 text-sm space-y-1">
-                            <div>Exterior: {formData.interventionPhotos.before.exterior?.length || 0} fotos</div>
-                            <div>Interior: {formData.interventionPhotos.before.interior?.length || 0} fotos</div>
-                            <div>Detalhes: {formData.interventionPhotos.before.details?.length || 0} fotos</div>
+                            <div>
+                              Exterior:{" "}
+                              {formData.interventionPhotos.before.exterior
+                                ?.length || 0}{" "}
+                              fotos
+                            </div>
+                            <div>
+                              Interior:{" "}
+                              {formData.interventionPhotos.before.interior
+                                ?.length || 0}{" "}
+                              fotos
+                            </div>
+                            <div>
+                              Detalhes:{" "}
+                              {formData.interventionPhotos.before.details
+                                ?.length || 0}{" "}
+                              fotos
+                            </div>
                           </div>
                         </div>
                         <div>
-                          <h4 className="text-white font-medium mb-2">Depois da Intervenção</h4>
+                          <h4 className="text-white font-medium mb-2">
+                            Depois da Intervenção
+                          </h4>
                           <div className="text-white/70 text-sm space-y-1">
-                            <div>Exterior: {formData.interventionPhotos.after.exterior?.length || 0} fotos</div>
-                            <div>Interior: {formData.interventionPhotos.after.interior?.length || 0} fotos</div>
-                            <div>Detalhes: {formData.interventionPhotos.after.details?.length || 0} fotos</div>
+                            <div>
+                              Exterior:{" "}
+                              {formData.interventionPhotos.after.exterior
+                                ?.length || 0}{" "}
+                              fotos
+                            </div>
+                            <div>
+                              Interior:{" "}
+                              {formData.interventionPhotos.after.interior
+                                ?.length || 0}{" "}
+                              fotos
+                            </div>
+                            <div>
+                              Detalhes:{" "}
+                              {formData.interventionPhotos.after.details
+                                ?.length || 0}{" "}
+                              fotos
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1451,7 +1907,7 @@ export default function CleaningForms() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => clearSignature('supervisor')}
+                              onClick={() => clearSignature("supervisor")}
                               className="w-full border-white/30 text-white hover:bg-white/20"
                             >
                               Limpar Assinatura
@@ -1459,7 +1915,7 @@ export default function CleaningForms() {
                           </div>
                         ) : (
                           <Button
-                            onClick={() => setShowSignatureDialog('supervisor')}
+                            onClick={() => setShowSignatureDialog("supervisor")}
                             className="w-full h-32 border-2 border-dashed border-white/30 rounded-lg bg-transparent hover:bg-white/10 text-white"
                           >
                             <div className="text-center">
@@ -1489,7 +1945,7 @@ export default function CleaningForms() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => clearSignature('client')}
+                              onClick={() => clearSignature("client")}
                               className="w-full border-white/30 text-white hover:bg-white/20"
                             >
                               Limpar Assinatura
@@ -1497,7 +1953,7 @@ export default function CleaningForms() {
                           </div>
                         ) : (
                           <Button
-                            onClick={() => setShowSignatureDialog('client')}
+                            onClick={() => setShowSignatureDialog("client")}
                             className="w-full h-32 border-2 border-dashed border-white/30 rounded-lg bg-transparent hover:bg-white/10 text-white"
                             disabled={formData.clientConfirmedWithoutSignature}
                           >
@@ -1513,15 +1969,20 @@ export default function CleaningForms() {
                             id="noSignature"
                             checked={formData.clientConfirmedWithoutSignature}
                             onCheckedChange={(checked) => {
-                              setFormData(prev => ({
+                              setFormData((prev) => ({
                                 ...prev,
                                 clientConfirmedWithoutSignature: !!checked,
-                                clientSignature: checked ? '' : prev.clientSignature
+                                clientSignature: checked
+                                  ? ""
+                                  : prev.clientSignature,
                               }));
                             }}
                             className="border-white/30"
                           />
-                          <Label htmlFor="noSignature" className="text-white text-sm">
+                          <Label
+                            htmlFor="noSignature"
+                            className="text-white text-sm"
+                          >
                             Cliente confirmou sem assinar
                           </Label>
                         </div>
@@ -1550,15 +2011,19 @@ export default function CleaningForms() {
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                       <span>Criando...</span>
                     </div>
+                  ) : editingForm ? (
+                    "Atualizar Folha de Limpeza"
                   ) : (
-                    editingForm ? 'Atualizar Folha de Limpeza' : 'Criar Folha de Limpeza'
+                    "Criar Folha de Limpeza"
                   )}
                 </Button>
               </div>
 
               {Object.keys(formErrors).length > 0 && (
                 <div className="mt-4 p-4 bg-red-500/20 border border-red-500/30 rounded-lg">
-                  <p className="text-red-400 text-sm font-medium mb-2">Corrija os seguintes erros:</p>
+                  <p className="text-red-400 text-sm font-medium mb-2">
+                    Corrija os seguintes erros:
+                  </p>
                   <ul className="text-red-400 text-sm space-y-1">
                     {Object.values(formErrors).map((error, index) => (
                       <li key={index}>• {error}</li>
@@ -1572,36 +2037,60 @@ export default function CleaningForms() {
 
         {/* Forms List */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredForms.map(form => (
-            <Card key={form.id} className="glass-card border-white/20 hover:bg-white/20 transition-all duration-300">
+          {filteredForms.map((form) => (
+            <Card
+              key={form.id}
+              className="glass-card border-white/20 hover:bg-white/20 transition-all duration-300"
+            >
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
                     <div className="flex items-center space-x-2">
-                      <CardTitle className="text-white text-lg">{form.code}</CardTitle>
+                      <CardTitle className="text-white text-lg">
+                        {form.code}
+                      </CardTitle>
                       {/* Security indicator - check if ID follows secure format */}
-                      {form.code.startsWith('AP-PS-SNR') && (
-                        <Shield className="h-4 w-4 text-green-400" title="Folha Segura" />
+                      {form.code.startsWith("AP-PS-SNR") && (
+                        <Shield
+                          className="h-4 w-4 text-green-400"
+                          title="Folha Segura"
+                        />
                       )}
                       {/* Sync status indicator */}
-                      {form.syncStatus === 'pending' && (
-                        <RefreshCw className="h-3 w-3 text-yellow-400 animate-spin" title="Sincronização Pendente" />
+                      {form.syncStatus === "pending" && (
+                        <RefreshCw
+                          className="h-3 w-3 text-yellow-400 animate-spin"
+                          title="Sincronização Pendente"
+                        />
                       )}
-                      {form.syncStatus === 'synced' && (
-                        <Wifi className="h-3 w-3 text-green-400" title="Sincronizado" />
+                      {form.syncStatus === "synced" && (
+                        <Wifi
+                          className="h-3 w-3 text-green-400"
+                          title="Sincronizado"
+                        />
                       )}
-                      {form.syncStatus === 'error' && (
-                        <AlertTriangle className="h-3 w-3 text-red-400" title="Erro de Sincronização" />
+                      {form.syncStatus === "error" && (
+                        <AlertTriangle
+                          className="h-3 w-3 text-red-400"
+                          title="Erro de Sincronização"
+                        />
                       )}
                     </div>
                     <CardDescription className="text-white/70">
-                      {format(new Date(form.date), 'dd/MM/yyyy', { locale: ptBR })} - {
-                        form.shift === 'morning' ? 'Manhã' :
-                        form.shift === 'afternoon' ? 'Tarde' : 'Noite'
-                      }
+                      {format(new Date(form.date), "dd/MM/yyyy", {
+                        locale: ptBR,
+                      })}{" "}
+                      -{" "}
+                      {form.shift === "morning"
+                        ? "Manhã"
+                        : form.shift === "afternoon"
+                          ? "Tarde"
+                          : "Noite"}
                     </CardDescription>
                   </div>
-                  <Badge className={`${getStatusColor(form.status)} text-white`}>
+                  <Badge
+                    className={`${getStatusColor(form.status)} text-white`}
+                  >
                     {getStatusText(form.status)}
                   </Badge>
                 </div>
@@ -1611,12 +2100,12 @@ export default function CleaningForms() {
                   <MapPin className="h-4 w-4 mr-2" />
                   {form.location}
                 </div>
-                
+
                 <div className="flex items-center text-white/80 text-sm">
                   <Wrench className="h-4 w-4 mr-2" />
                   {form.interventionTypes.length} tipo(s) de intervenção
                 </div>
-                
+
                 <div className="flex items-center text-white/80 text-sm">
                   <Users className="h-4 w-4 mr-2" />
                   {form.employees.length} funcionário(s)
@@ -1624,7 +2113,7 @@ export default function CleaningForms() {
 
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pt-4">
                   <div className="flex gap-2 w-full sm:w-auto">
-                    {form.status === 'draft' && (
+                    {form.status === "draft" && (
                       <Button
                         variant="outline"
                         size="sm"
@@ -1675,16 +2164,20 @@ export default function CleaningForms() {
             <div className="col-span-full text-center py-12">
               <FileText className="h-16 w-16 text-white/30 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-white mb-2">
-                {searchTerm ? 'Nenhuma folha encontrada' : 'Nenhuma folha de limpeza criada'}
+                {searchTerm
+                  ? "Nenhuma folha encontrada"
+                  : "Nenhuma folha de limpeza criada"}
               </h3>
               <p className="text-white/70 mb-6">
-                {searchTerm 
-                  ? 'Tente usar termos diferentes na busca'
-                  : 'Comece criando sua primeira folha de requisição de limpeza'
-                }
+                {searchTerm
+                  ? "Tente usar termos diferentes na busca"
+                  : "Comece criando sua primeira folha de requisição de limpeza"}
               </p>
               {!searchTerm && (
-                <Button onClick={() => setIsCreateDialogOpen(true)} className="aviation-button">
+                <Button
+                  onClick={() => setIsCreateDialogOpen(true)}
+                  className="aviation-button"
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   Criar Primeira Folha
                 </Button>
@@ -1704,36 +2197,53 @@ export default function CleaningForms() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="flex items-center space-x-3">
-                <div className={`h-3 w-3 rounded-full ${securityStatus === 'secure' ? 'bg-green-400' : 'bg-yellow-400'}`}></div>
+                <div
+                  className={`h-3 w-3 rounded-full ${securityStatus === "secure" ? "bg-green-400" : "bg-yellow-400"}`}
+                ></div>
                 <div>
                   <p className="text-white font-medium">Criptografia</p>
                   <p className="text-white/70 text-sm">
-                    {securityStatus === 'secure' ? 'AES-256-GCM Ativa' : 'Não Disponível (HTTP)'}
+                    {securityStatus === "secure"
+                      ? "AES-256-GCM Ativa"
+                      : "Não Disponível (HTTP)"}
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center space-x-3">
-                <div className={`h-3 w-3 rounded-full ${
-                  syncStatus === 'synced' ? 'bg-green-400' :
-                  syncStatus === 'pending' ? 'bg-yellow-400' : 'bg-red-400'
-                }`}></div>
+                <div
+                  className={`h-3 w-3 rounded-full ${
+                    syncStatus === "synced"
+                      ? "bg-green-400"
+                      : syncStatus === "pending"
+                        ? "bg-yellow-400"
+                        : "bg-red-400"
+                  }`}
+                ></div>
                 <div>
                   <p className="text-white font-medium">Sincronização</p>
                   <p className="text-white/70 text-sm">
-                    {syncStatus === 'synced' ? 'Todos os dados sincronizados' :
-                     syncStatus === 'pending' ? 'Sincronização em andamento' :
-                     syncStatus === 'error' ? 'Erro na sincronização' : 'Modo offline'}
+                    {syncStatus === "synced"
+                      ? "Todos os dados sincronizados"
+                      : syncStatus === "pending"
+                        ? "Sincronização em andamento"
+                        : syncStatus === "error"
+                          ? "Erro na sincronização"
+                          : "Modo offline"}
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center space-x-3">
-                <div className={`h-3 w-3 rounded-full ${isSecureMode ? 'bg-green-400' : 'bg-gray-400'}`}></div>
+                <div
+                  className={`h-3 w-3 rounded-full ${isSecureMode ? "bg-green-400" : "bg-gray-400"}`}
+                ></div>
                 <div>
                   <p className="text-white font-medium">ID Único</p>
                   <p className="text-white/70 text-sm">
-                    {isSecureMode ? 'Formato: AP-PS-SNR##-DDMMAAHHMMSS' : 'Formato básico'}
+                    {isSecureMode
+                      ? "Formato: AP-PS-SNR##-DDMMAAHHMMSS"
+                      : "Formato básico"}
                   </p>
                 </div>
               </div>
@@ -1746,7 +2256,9 @@ export default function CleaningForms() {
                   Sistema Seguro Ativo
                 </p>
                 <p className="text-green-400/80 text-xs mt-1">
-                  Todas as folhas são criptografadas com AES-256-GCM, possuem IDs únicos rastreáveis e são sincronizadas de forma segura com o Supabase.
+                  Todas as folhas são criptografadas com AES-256-GCM, possuem
+                  IDs únicos rastreáveis e são sincronizadas de forma segura com
+                  o Supabase.
                 </p>
               </div>
             )}
@@ -1758,7 +2270,8 @@ export default function CleaningForms() {
                   Modo Básico
                 </p>
                 <p className="text-yellow-400/80 text-xs mt-1">
-                  Para ativar criptografia e segurança avançada, acesse via HTTPS. Dados são salvos localmente sem criptografia.
+                  Para ativar criptografia e segurança avançada, acesse via
+                  HTTPS. Dados são salvos localmente sem criptografia.
                 </p>
               </div>
             )}
@@ -1767,11 +2280,16 @@ export default function CleaningForms() {
       </main>
 
       {/* Signature Dialog */}
-      <Dialog open={!!showSignatureDialog} onOpenChange={() => setShowSignatureDialog(null)}>
+      <Dialog
+        open={!!showSignatureDialog}
+        onOpenChange={() => setShowSignatureDialog(null)}
+      >
         <DialogContent className="max-w-2xl bg-aviation-gray-800 border-white/20">
           <DialogHeader>
             <DialogTitle className="text-white">
-              {showSignatureDialog === 'supervisor' ? 'Assinatura do Supervisor' : 'Assinatura do Cliente'}
+              {showSignatureDialog === "supervisor"
+                ? "Assinatura do Supervisor"
+                : "Assinatura do Cliente"}
             </DialogTitle>
             <DialogDescription className="text-white/70">
               Use o mouse ou toque na tela para desenhar sua assinatura
@@ -1780,7 +2298,9 @@ export default function CleaningForms() {
 
           {showSignatureDialog && (
             <SignatureCanvas
-              title={showSignatureDialog === 'supervisor' ? 'Supervisor' : 'Cliente'}
+              title={
+                showSignatureDialog === "supervisor" ? "Supervisor" : "Cliente"
+              }
               onSave={handleSignature}
               onCancel={() => setShowSignatureDialog(null)}
             />
@@ -1792,7 +2312,9 @@ export default function CleaningForms() {
       <Dialog open={!!showQRDialog} onOpenChange={() => setShowQRDialog(null)}>
         <DialogContent className="max-w-md bg-aviation-gray-800 border-white/20">
           <DialogHeader>
-            <DialogTitle className="text-white">QR Code - {showQRDialog?.code}</DialogTitle>
+            <DialogTitle className="text-white">
+              QR Code - {showQRDialog?.code}
+            </DialogTitle>
             <DialogDescription className="text-white/70">
               Escaneie para acessar a folha online ou compartilhar
             </DialogDescription>
@@ -1809,9 +2331,7 @@ export default function CleaningForms() {
               </div>
 
               <div className="text-center">
-                <p className="text-white/80 text-sm mb-2">
-                  Link para acesso:
-                </p>
+                <p className="text-white/80 text-sm mb-2">Link para acesso:</p>
                 <p className="text-aviation-blue-300 text-xs break-all mb-4">
                   {`${window.location.origin}/cleaning-forms/${showQRDialog.code}`}
                 </p>
@@ -1842,7 +2362,7 @@ export default function CleaningForms() {
                   </Button>
                   <Button
                     onClick={() => {
-                      const link = document.createElement('a');
+                      const link = document.createElement("a");
                       link.download = `qr-code-${showQRDialog.code}.png`;
                       link.href = showQRDialog.qrCode;
                       link.click();
@@ -1857,7 +2377,7 @@ export default function CleaningForms() {
                   <Button
                     onClick={() => {
                       const pdfUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/documents/cleaning-forms/${showQRDialog.code}.pdf`;
-                      window.open(pdfUrl, '_blank');
+                      window.open(pdfUrl, "_blank");
                     }}
                     className="w-full aviation-button"
                   >

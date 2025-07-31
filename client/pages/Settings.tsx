@@ -1,122 +1,141 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  Settings, 
-  User, 
-  Shield, 
-  Bell, 
-  Palette, 
-  Database, 
-  Download, 
+import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Settings,
+  User,
+  Shield,
+  Bell,
+  Palette,
+  Database,
+  Download,
   Upload,
   Save,
   Camera,
   Plane,
   LogOut,
-  ArrowLeft
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
+  ArrowLeft,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Settings() {
   const { user: authUser, signOut } = useAuth();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [profileData, setProfileData] = useState({
-    name: '',
-    email: '',
-    role: '',
-    department: '',
-    phone: '',
-    emergencyContact: ''
+    name: "",
+    email: "",
+    role: "",
+    department: "",
+    phone: "",
+    emergencyContact: "",
   });
 
   const [systemSettings, setSystemSettings] = useState({
-    theme: 'aviation-blue',
+    theme: "aviation-blue",
     notifications: true,
     autoSync: true,
     offlineMode: false,
-    language: 'pt',
-    timezone: 'Atlantic/Azores'
+    language: "pt",
+    timezone: "Atlantic/Azores",
   });
 
   const [companySettings, setCompanySettings] = useState({
-    companyName: 'AviationOps',
-    logo: '',
-    primaryColor: '#00b0ea',
-    secondaryColor: '#009ddf',
+    companyName: "AviationOps",
+    logo: "",
+    primaryColor: "#00b0ea",
+    secondaryColor: "#009ddf",
     interventionTypes: [
-      'Limpeza Exterior',
-      'Limpeza Interior', 
-      'Polimento',
-      'Lavagem Profunda Durante a Manutenção de Base'
-    ]
+      "Limpeza Exterior",
+      "Limpeza Interior",
+      "Polimento",
+      "Lavagem Profunda Durante a Manutenção de Base",
+    ],
   });
 
   // Fallback user data for demo mode
   const user = authUser
     ? {
-        name: authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'Usuário',
-        role: authUser.user_metadata?.role || 'Gestor de Operações',
-        email: authUser.email
+        name:
+          authUser.user_metadata?.name ||
+          authUser.email?.split("@")[0] ||
+          "Usuário",
+        role: authUser.user_metadata?.role || "Gestor de Operações",
+        email: authUser.email,
       }
-    : { name: 'João Silva', role: 'Gestor de Operações', email: 'demo@aviation.com' };
+    : {
+        name: "João Silva",
+        role: "Gestor de Operações",
+        email: "demo@aviation.com",
+      };
 
   useEffect(() => {
     // Load user profile data
     setProfileData({
       name: user.name,
-      email: user.email || '',
+      email: user.email || "",
       role: user.role,
-      department: 'Operações de Limpeza',
-      phone: '+351 291 123 456',
-      emergencyContact: '+351 291 654 321'
+      department: "Operações de Limpeza",
+      phone: "+351 291 123 456",
+      emergencyContact: "+351 291 654 321",
     });
 
     // Load settings from localStorage
-    const savedSettings = localStorage.getItem('systemSettings');
+    const savedSettings = localStorage.getItem("systemSettings");
     if (savedSettings) {
       setSystemSettings(JSON.parse(savedSettings));
     }
 
-    const savedCompanySettings = localStorage.getItem('companySettings');
+    const savedCompanySettings = localStorage.getItem("companySettings");
     if (savedCompanySettings) {
       setCompanySettings(JSON.parse(savedCompanySettings));
     }
 
     // Check online status
     const handleOnlineStatus = () => setIsOnline(navigator.onLine);
-    window.addEventListener('online', handleOnlineStatus);
-    window.addEventListener('offline', handleOnlineStatus);
-    
+    window.addEventListener("online", handleOnlineStatus);
+    window.addEventListener("offline", handleOnlineStatus);
+
     return () => {
-      window.removeEventListener('online', handleOnlineStatus);
-      window.removeEventListener('offline', handleOnlineStatus);
+      window.removeEventListener("online", handleOnlineStatus);
+      window.removeEventListener("offline", handleOnlineStatus);
     };
   }, [user]);
 
   const handleSaveProfile = () => {
-    localStorage.setItem('userProfile', JSON.stringify(profileData));
+    localStorage.setItem("userProfile", JSON.stringify(profileData));
     // TODO: Sync with Supabase when connected
-    console.log('Profile saved:', profileData);
+    console.log("Profile saved:", profileData);
   };
 
   const handleSaveSystemSettings = () => {
-    localStorage.setItem('systemSettings', JSON.stringify(systemSettings));
-    console.log('System settings saved:', systemSettings);
+    localStorage.setItem("systemSettings", JSON.stringify(systemSettings));
+    console.log("System settings saved:", systemSettings);
   };
 
   const handleSaveCompanySettings = () => {
-    localStorage.setItem('companySettings', JSON.stringify(companySettings));
-    console.log('Company settings saved:', companySettings);
+    localStorage.setItem("companySettings", JSON.stringify(companySettings));
+    console.log("Company settings saved:", companySettings);
   };
 
   const handleExportData = () => {
@@ -124,14 +143,16 @@ export default function Settings() {
       profile: profileData,
       systemSettings,
       companySettings,
-      exportDate: new Date().toISOString()
+      exportDate: new Date().toISOString(),
     };
-    
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `aviation-settings-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `aviation-settings-${new Date().toISOString().split("T")[0]}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -149,9 +170,9 @@ export default function Settings() {
         if (data.profile) setProfileData(data.profile);
         if (data.systemSettings) setSystemSettings(data.systemSettings);
         if (data.companySettings) setCompanySettings(data.companySettings);
-        console.log('Data imported successfully');
+        console.log("Data imported successfully");
       } catch (error) {
-        console.error('Error importing data:', error);
+        console.error("Error importing data:", error);
       }
     };
     reader.readAsText(file);
@@ -165,17 +186,21 @@ export default function Settings() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
               <Link to="/">
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-white/20"
+                >
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
               </Link>
               <Settings className="h-8 w-8 text-white" />
               <h1 className="text-2xl font-bold text-white">Configurações</h1>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <Badge variant={isOnline ? "default" : "destructive"}>
-                {isOnline ? 'Online' : 'Offline'}
+                {isOnline ? "Online" : "Offline"}
               </Badge>
 
               <div className="text-right">
@@ -201,19 +226,31 @@ export default function Settings() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="profile" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4 bg-white/10 backdrop-blur-md">
-            <TabsTrigger value="profile" className="text-white data-[state=active]:bg-white/20">
+            <TabsTrigger
+              value="profile"
+              className="text-white data-[state=active]:bg-white/20"
+            >
               <User className="h-4 w-4 mr-2" />
               Perfil
             </TabsTrigger>
-            <TabsTrigger value="system" className="text-white data-[state=active]:bg-white/20">
+            <TabsTrigger
+              value="system"
+              className="text-white data-[state=active]:bg-white/20"
+            >
               <Settings className="h-4 w-4 mr-2" />
               Sistema
             </TabsTrigger>
-            <TabsTrigger value="company" className="text-white data-[state=active]:bg-white/20">
+            <TabsTrigger
+              value="company"
+              className="text-white data-[state=active]:bg-white/20"
+            >
               <Shield className="h-4 w-4 mr-2" />
               Empresa
             </TabsTrigger>
-            <TabsTrigger value="data" className="text-white data-[state=active]:bg-white/20">
+            <TabsTrigger
+              value="data"
+              className="text-white data-[state=active]:bg-white/20"
+            >
               <Database className="h-4 w-4 mr-2" />
               Dados
             </TabsTrigger>
@@ -237,81 +274,136 @@ export default function Settings() {
                   <Avatar className="h-20 w-20">
                     <AvatarImage src="" />
                     <AvatarFallback className="bg-aviation-blue-600 text-white text-xl">
-                      {user.name.split(' ').map(n => n[0]).join('')}
+                      {user.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <Button variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20">
+                    <Button
+                      variant="outline"
+                      className="bg-white/10 text-white border-white/20 hover:bg-white/20"
+                    >
                       <Camera className="h-4 w-4 mr-2" />
                       Alterar Foto
                     </Button>
-                    <p className="text-sm text-white/70 mt-1">JPG, PNG até 5MB</p>
+                    <p className="text-sm text-white/70 mt-1">
+                      JPG, PNG até 5MB
+                    </p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="text-white">Nome Completo</Label>
+                    <Label htmlFor="name" className="text-white">
+                      Nome Completo
+                    </Label>
                     <Input
                       id="name"
                       value={profileData.name}
-                      onChange={(e) => setProfileData({...profileData, name: e.target.value})}
+                      onChange={(e) =>
+                        setProfileData({ ...profileData, name: e.target.value })
+                      }
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-white">Email</Label>
+                    <Label htmlFor="email" className="text-white">
+                      Email
+                    </Label>
                     <Input
                       id="email"
                       type="email"
                       value={profileData.email}
-                      onChange={(e) => setProfileData({...profileData, email: e.target.value})}
+                      onChange={(e) =>
+                        setProfileData({
+                          ...profileData,
+                          email: e.target.value,
+                        })
+                      }
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="role" className="text-white">Função</Label>
-                    <Select value={profileData.role} onValueChange={(value) => setProfileData({...profileData, role: value})}>
+                    <Label htmlFor="role" className="text-white">
+                      Função
+                    </Label>
+                    <Select
+                      value={profileData.role}
+                      onValueChange={(value) =>
+                        setProfileData({ ...profileData, role: value })
+                      }
+                    >
                       <SelectTrigger className="bg-white/10 border-white/20 text-white">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Gestor de Operações">Gestor de Operações</SelectItem>
-                        <SelectItem value="Supervisor de Limpeza">Supervisor de Limpeza</SelectItem>
-                        <SelectItem value="Técnico de Limpeza">Técnico de Limpeza</SelectItem>
-                        <SelectItem value="Administrador">Administrador</SelectItem>
+                        <SelectItem value="Gestor de Operações">
+                          Gestor de Operações
+                        </SelectItem>
+                        <SelectItem value="Supervisor de Limpeza">
+                          Supervisor de Limpeza
+                        </SelectItem>
+                        <SelectItem value="Técnico de Limpeza">
+                          Técnico de Limpeza
+                        </SelectItem>
+                        <SelectItem value="Administrador">
+                          Administrador
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="department" className="text-white">Departamento</Label>
+                    <Label htmlFor="department" className="text-white">
+                      Departamento
+                    </Label>
                     <Input
                       id="department"
                       value={profileData.department}
-                      onChange={(e) => setProfileData({...profileData, department: e.target.value})}
+                      onChange={(e) =>
+                        setProfileData({
+                          ...profileData,
+                          department: e.target.value,
+                        })
+                      }
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-white">Telefone</Label>
+                    <Label htmlFor="phone" className="text-white">
+                      Telefone
+                    </Label>
                     <Input
                       id="phone"
                       value={profileData.phone}
-                      onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
+                      onChange={(e) =>
+                        setProfileData({
+                          ...profileData,
+                          phone: e.target.value,
+                        })
+                      }
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="emergencyContact" className="text-white">Contacto de Emergência</Label>
+                    <Label htmlFor="emergencyContact" className="text-white">
+                      Contacto de Emergência
+                    </Label>
                     <Input
                       id="emergencyContact"
                       value={profileData.emergencyContact}
-                      onChange={(e) => setProfileData({...profileData, emergencyContact: e.target.value})}
+                      onChange={(e) =>
+                        setProfileData({
+                          ...profileData,
+                          emergencyContact: e.target.value,
+                        })
+                      }
                       className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                     />
                   </div>
@@ -346,12 +438,19 @@ export default function Settings() {
                     </h3>
                     <div className="space-y-2">
                       <Label className="text-white">Tema</Label>
-                      <Select value={systemSettings.theme} onValueChange={(value) => setSystemSettings({...systemSettings, theme: value})}>
+                      <Select
+                        value={systemSettings.theme}
+                        onValueChange={(value) =>
+                          setSystemSettings({ ...systemSettings, theme: value })
+                        }
+                      >
                         <SelectTrigger className="bg-white/10 border-white/20 text-white">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="aviation-blue">Aviation Blue</SelectItem>
+                          <SelectItem value="aviation-blue">
+                            Aviation Blue
+                          </SelectItem>
                           <SelectItem value="dark">Escuro</SelectItem>
                           <SelectItem value="light">Claro</SelectItem>
                         </SelectContent>
@@ -360,7 +459,15 @@ export default function Settings() {
 
                     <div className="space-y-2">
                       <Label className="text-white">Idioma</Label>
-                      <Select value={systemSettings.language} onValueChange={(value) => setSystemSettings({...systemSettings, language: value})}>
+                      <Select
+                        value={systemSettings.language}
+                        onValueChange={(value) =>
+                          setSystemSettings({
+                            ...systemSettings,
+                            language: value,
+                          })
+                        }
+                      >
                         <SelectTrigger className="bg-white/10 border-white/20 text-white">
                           <SelectValue />
                         </SelectTrigger>
@@ -374,13 +481,25 @@ export default function Settings() {
 
                     <div className="space-y-2">
                       <Label className="text-white">Fuso Horário</Label>
-                      <Select value={systemSettings.timezone} onValueChange={(value) => setSystemSettings({...systemSettings, timezone: value})}>
+                      <Select
+                        value={systemSettings.timezone}
+                        onValueChange={(value) =>
+                          setSystemSettings({
+                            ...systemSettings,
+                            timezone: value,
+                          })
+                        }
+                      >
                         <SelectTrigger className="bg-white/10 border-white/20 text-white">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Atlantic/Azores">Açores (UTC-1)</SelectItem>
-                          <SelectItem value="Europe/Lisbon">Lisboa (UTC+0)</SelectItem>
+                          <SelectItem value="Atlantic/Azores">
+                            Açores (UTC-1)
+                          </SelectItem>
+                          <SelectItem value="Europe/Lisbon">
+                            Lisboa (UTC+0)
+                          </SelectItem>
                           <SelectItem value="UTC">UTC</SelectItem>
                         </SelectContent>
                       </Select>
@@ -392,20 +511,32 @@ export default function Settings() {
                       <Bell className="h-5 w-5 mr-2" />
                       Notificações & Sincronização
                     </h3>
-                    
+
                     <div className="flex items-center justify-between">
                       <Label className="text-white">Notificações Push</Label>
                       <Switch
                         checked={systemSettings.notifications}
-                        onCheckedChange={(checked) => setSystemSettings({...systemSettings, notifications: checked})}
+                        onCheckedChange={(checked) =>
+                          setSystemSettings({
+                            ...systemSettings,
+                            notifications: checked,
+                          })
+                        }
                       />
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <Label className="text-white">Sincronização Automática</Label>
+                      <Label className="text-white">
+                        Sincronização Automática
+                      </Label>
                       <Switch
                         checked={systemSettings.autoSync}
-                        onCheckedChange={(checked) => setSystemSettings({...systemSettings, autoSync: checked})}
+                        onCheckedChange={(checked) =>
+                          setSystemSettings({
+                            ...systemSettings,
+                            autoSync: checked,
+                          })
+                        }
                       />
                     </div>
 
@@ -413,13 +544,21 @@ export default function Settings() {
                       <Label className="text-white">Modo Offline</Label>
                       <Switch
                         checked={systemSettings.offlineMode}
-                        onCheckedChange={(checked) => setSystemSettings({...systemSettings, offlineMode: checked})}
+                        onCheckedChange={(checked) =>
+                          setSystemSettings({
+                            ...systemSettings,
+                            offlineMode: checked,
+                          })
+                        }
                       />
                     </div>
                   </div>
                 </div>
 
-                <Button onClick={handleSaveSystemSettings} className="aviation-button">
+                <Button
+                  onClick={handleSaveSystemSettings}
+                  className="aviation-button"
+                >
                   <Save className="h-4 w-4 mr-2" />
                   Salvar Configurações
                 </Button>
@@ -446,7 +585,12 @@ export default function Settings() {
                       <Label className="text-white">Nome da Empresa</Label>
                       <Input
                         value={companySettings.companyName}
-                        onChange={(e) => setCompanySettings({...companySettings, companyName: e.target.value})}
+                        onChange={(e) =>
+                          setCompanySettings({
+                            ...companySettings,
+                            companyName: e.target.value,
+                          })
+                        }
                         className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                       />
                     </div>
@@ -456,7 +600,12 @@ export default function Settings() {
                       <Input
                         type="color"
                         value={companySettings.primaryColor}
-                        onChange={(e) => setCompanySettings({...companySettings, primaryColor: e.target.value})}
+                        onChange={(e) =>
+                          setCompanySettings({
+                            ...companySettings,
+                            primaryColor: e.target.value,
+                          })
+                        }
                         className="bg-white/10 border-white/20 h-12"
                       />
                     </div>
@@ -466,7 +615,12 @@ export default function Settings() {
                       <Input
                         type="color"
                         value={companySettings.secondaryColor}
-                        onChange={(e) => setCompanySettings({...companySettings, secondaryColor: e.target.value})}
+                        onChange={(e) =>
+                          setCompanySettings({
+                            ...companySettings,
+                            secondaryColor: e.target.value,
+                          })
+                        }
                         className="bg-white/10 border-white/20 h-12"
                       />
                     </div>
@@ -476,25 +630,38 @@ export default function Settings() {
                     <div className="space-y-2">
                       <Label className="text-white">Tipos de Intervenção</Label>
                       <div className="space-y-2">
-                        {companySettings.interventionTypes.map((type, index) => (
-                          <div key={index} className="flex items-center space-x-2">
-                            <Input
-                              value={type}
-                              onChange={(e) => {
-                                const newTypes = [...companySettings.interventionTypes];
-                                newTypes[index] = e.target.value;
-                                setCompanySettings({...companySettings, interventionTypes: newTypes});
-                              }}
-                              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
-                            />
-                          </div>
-                        ))}
+                        {companySettings.interventionTypes.map(
+                          (type, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center space-x-2"
+                            >
+                              <Input
+                                value={type}
+                                onChange={(e) => {
+                                  const newTypes = [
+                                    ...companySettings.interventionTypes,
+                                  ];
+                                  newTypes[index] = e.target.value;
+                                  setCompanySettings({
+                                    ...companySettings,
+                                    interventionTypes: newTypes,
+                                  });
+                                }}
+                                className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                              />
+                            </div>
+                          ),
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <Button onClick={handleSaveCompanySettings} className="aviation-button">
+                <Button
+                  onClick={handleSaveCompanySettings}
+                  className="aviation-button"
+                >
                   <Save className="h-4 w-4 mr-2" />
                   Salvar Configurações da Empresa
                 </Button>
@@ -517,18 +684,25 @@ export default function Settings() {
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-white">Backup de Dados</h3>
+                    <h3 className="text-lg font-semibold text-white">
+                      Backup de Dados
+                    </h3>
                     <p className="text-white/70 text-sm">
                       Faça backup das suas configurações e dados locais
                     </p>
-                    <Button onClick={handleExportData} className="aviation-button w-full">
+                    <Button
+                      onClick={handleExportData}
+                      className="aviation-button w-full"
+                    >
                       <Download className="h-4 w-4 mr-2" />
                       Exportar Dados
                     </Button>
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-white">Restaurar Dados</h3>
+                    <h3 className="text-lg font-semibold text-white">
+                      Restaurar Dados
+                    </h3>
                     <p className="text-white/70 text-sm">
                       Importe configurações de um backup anterior
                     </p>
@@ -556,9 +730,11 @@ export default function Settings() {
                         <span className="text-white">Dados Locais</span>
                         <Badge variant="default">Atualizado</Badge>
                       </div>
-                      <p className="text-sm text-white/70 mt-1">Última atualização: Agora</p>
+                      <p className="text-sm text-white/70 mt-1">
+                        Última atualização: Agora
+                      </p>
                     </div>
-                    
+
                     <div className="p-4 bg-white/5 rounded-lg">
                       <div className="flex items-center justify-between">
                         <span className="text-white">Supabase</span>
@@ -567,16 +743,20 @@ export default function Settings() {
                         </Badge>
                       </div>
                       <p className="text-sm text-white/70 mt-1">
-                        {isOnline ? "Sincronização ativa" : "Aguardando conexão"}
+                        {isOnline
+                          ? "Sincronização ativa"
+                          : "Aguardando conexão"}
                       </p>
                     </div>
-                    
+
                     <div className="p-4 bg-white/5 rounded-lg">
                       <div className="flex items-center justify-between">
                         <span className="text-white">Backup Automático</span>
                         <Badge variant="default">Ativo</Badge>
                       </div>
-                      <p className="text-sm text-white/70 mt-1">Próximo: em 24h</p>
+                      <p className="text-sm text-white/70 mt-1">
+                        Próximo: em 24h
+                      </p>
                     </div>
                   </div>
                 </div>

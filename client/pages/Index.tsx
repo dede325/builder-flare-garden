@@ -1,10 +1,27 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Plane, Users, FileText, Activity, Shield, Cloud, Wifi, WifiOff, LogOut, Settings } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import {
+  Plane,
+  Users,
+  FileText,
+  Activity,
+  Shield,
+  Cloud,
+  Wifi,
+  WifiOff,
+  LogOut,
+  Settings,
+} from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default function Index() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -12,18 +29,25 @@ export default function Index() {
     aircraft: 0,
     employees: 0,
     activeForms: 0,
-    completedForms: 0
+    completedForms: 0,
   });
   const { user: authUser, signOut } = useAuth();
 
   // Fallback user data for demo mode
   const user = authUser
     ? {
-        name: authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'Usuário',
-        role: authUser.user_metadata?.role || 'Gestor de Operações',
-        email: authUser.email
+        name:
+          authUser.user_metadata?.name ||
+          authUser.email?.split("@")[0] ||
+          "Usuário",
+        role: authUser.user_metadata?.role || "Gestor de Operações",
+        email: authUser.email,
       }
-    : { name: 'João Silva', role: 'Gestor de Operações', email: 'demo@aviation.com' };
+    : {
+        name: "João Silva",
+        role: "Gestor de Operações",
+        email: "demo@aviation.com",
+      };
 
   const handleSignOut = async () => {
     await signOut();
@@ -35,33 +59,63 @@ export default function Index() {
 
   const loadSystemStats = () => {
     // Load aircraft data
-    const savedAircraft = localStorage.getItem('aviation_aircraft');
-    const aircraftCount = savedAircraft ? JSON.parse(savedAircraft).filter((a: any) => a.status === 'active').length : 0;
+    const savedAircraft = localStorage.getItem("aviation_aircraft");
+    const aircraftCount = savedAircraft
+      ? JSON.parse(savedAircraft).filter((a: any) => a.status === "active")
+          .length
+      : 0;
 
     // Load employees data
-    const savedEmployees = localStorage.getItem('aviation_employees');
-    const employeesCount = savedEmployees ? JSON.parse(savedEmployees).filter((e: any) => e.status === 'active').length : 0;
+    const savedEmployees = localStorage.getItem("aviation_employees");
+    const employeesCount = savedEmployees
+      ? JSON.parse(savedEmployees).filter((e: any) => e.status === "active")
+          .length
+      : 0;
 
     // Load cleaning forms data
-    const savedForms = localStorage.getItem('cleaningForms');
+    const savedForms = localStorage.getItem("cleaningForms");
     const forms = savedForms ? JSON.parse(savedForms) : [];
-    const activeForms = forms.filter((f: any) => f.status === 'draft' || f.status === 'pending_signatures').length;
-    const completedForms = forms.filter((f: any) => f.status === 'completed').length;
+    const activeForms = forms.filter(
+      (f: any) => f.status === "draft" || f.status === "pending_signatures",
+    ).length;
+    const completedForms = forms.filter(
+      (f: any) => f.status === "completed",
+    ).length;
 
     setSystemStats({
       aircraft: aircraftCount,
       employees: employeesCount,
       activeForms,
-      completedForms
+      completedForms,
     });
   };
 
   // Real data from system
   const stats = [
-    { title: 'Aeronaves Cadastradas', value: systemStats.aircraft.toString(), icon: Plane, change: '' },
-    { title: 'Funcionários Ativos', value: systemStats.employees.toString(), icon: Users, change: '' },
-    { title: 'Folhas de Limpeza Abertas', value: systemStats.activeForms.toString(), icon: FileText, change: '' },
-    { title: 'Limpezas Concluídas', value: systemStats.completedForms.toString(), icon: Activity, change: '' },
+    {
+      title: "Aeronaves Cadastradas",
+      value: systemStats.aircraft.toString(),
+      icon: Plane,
+      change: "",
+    },
+    {
+      title: "Funcionários Ativos",
+      value: systemStats.employees.toString(),
+      icon: Users,
+      change: "",
+    },
+    {
+      title: "Folhas de Limpeza Abertas",
+      value: systemStats.activeForms.toString(),
+      icon: FileText,
+      change: "",
+    },
+    {
+      title: "Limpezas Concluídas",
+      value: systemStats.completedForms.toString(),
+      icon: Activity,
+      change: "",
+    },
   ];
 
   // Load recent activities from system data
@@ -69,28 +123,38 @@ export default function Index() {
     const activities = [];
 
     // Get recent forms
-    const savedForms = localStorage.getItem('cleaningForms');
+    const savedForms = localStorage.getItem("cleaningForms");
     if (savedForms) {
       const forms = JSON.parse(savedForms);
       const recentForms = forms
-        .sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+        .sort(
+          (a: any, b: any) =>
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+        )
         .slice(0, 3);
 
       recentForms.forEach((form: any, index: number) => {
         const timeAgo = getTimeAgo(form.updatedAt);
         activities.push({
           id: `form-${index}`,
-          action: `Folha ${form.code} - ${form.status === 'completed' ? 'Concluída' : 'Atualizada'}`,
+          action: `Folha ${form.code} - ${form.status === "completed" ? "Concluída" : "Atualizada"}`,
           time: timeAgo,
-          type: 'form'
+          type: "form",
         });
       });
     }
 
-    return activities.length > 0 ? activities : [
-      { id: 1, action: 'Sistema iniciado', time: 'Agora', type: 'system' },
-      { id: 2, action: 'Aguardando atividade do usuário', time: 'Agora', type: 'system' }
-    ];
+    return activities.length > 0
+      ? activities
+      : [
+          { id: 1, action: "Sistema iniciado", time: "Agora", type: "system" },
+          {
+            id: 2,
+            action: "Aguardando atividade do usuário",
+            time: "Agora",
+            type: "system",
+          },
+        ];
   };
 
   const getTimeAgo = (dateString: string) => {
@@ -101,7 +165,7 @@ export default function Index() {
     const diffHours = Math.floor(diffMins / 60);
     const diffDays = Math.floor(diffHours / 24);
 
-    if (diffMins < 1) return 'Agora';
+    if (diffMins < 1) return "Agora";
     if (diffMins < 60) return `${diffMins} min atrás`;
     if (diffHours < 24) return `${diffHours}h atrás`;
     return `${diffDays} dias atrás`;
@@ -119,7 +183,7 @@ export default function Index() {
               <Plane className="h-8 w-8 text-white" />
               <h1 className="text-2xl font-bold text-white">AviationOps</h1>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 {isOnline ? (
@@ -128,7 +192,7 @@ export default function Index() {
                   <WifiOff className="h-5 w-5 text-red-400" />
                 )}
                 <Badge variant={isOnline ? "default" : "destructive"}>
-                  {isOnline ? 'Online' : 'Offline'}
+                  {isOnline ? "Online" : "Offline"}
                 </Badge>
               </div>
 
@@ -139,7 +203,10 @@ export default function Index() {
 
               <div className="h-10 w-10 bg-aviation-blue-600 rounded-full flex items-center justify-center">
                 <span className="text-white font-semibold">
-                  {user.name.split(' ').map(n => n[0]).join('')}
+                  {user.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
                 </span>
               </div>
 
@@ -172,12 +239,19 @@ export default function Index() {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {stats.map((stat, index) => (
-            <Card key={index} className="glass-card border-white/20 hover:bg-white/20 transition-all duration-300">
+            <Card
+              key={index}
+              className="glass-card border-white/20 hover:bg-white/20 transition-all duration-300"
+            >
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-white/70 text-sm font-medium">{stat.title}</p>
-                    <p className="text-3xl font-bold text-white">{stat.value}</p>
+                    <p className="text-white/70 text-sm font-medium">
+                      {stat.title}
+                    </p>
+                    <p className="text-3xl font-bold text-white">
+                      {stat.value}
+                    </p>
                     <p className="text-aviation-blue-300 text-sm">
                       {stat.change} esta semana
                     </p>
@@ -213,8 +287,12 @@ export default function Index() {
                         <FileText className="h-8 w-8 text-blue-300" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white mb-1">Folhas de Limpeza</h3>
-                        <p className="text-blue-200/80 text-sm">Criar requisições com IDs seguros</p>
+                        <h3 className="text-xl font-bold text-white mb-1">
+                          Folhas de Limpeza
+                        </h3>
+                        <p className="text-blue-200/80 text-sm">
+                          Criar requisições com IDs seguros
+                        </p>
                         <div className="flex items-center mt-2 text-xs text-blue-300/70">
                           <Shield className="h-3 w-3 mr-1" />
                           <span>Sistema criptografado</span>
@@ -232,8 +310,12 @@ export default function Index() {
                         <Plane className="h-8 w-8 text-cyan-300" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white mb-1">Aeronaves</h3>
-                        <p className="text-cyan-200/80 text-sm">Gestão completa da frota</p>
+                        <h3 className="text-xl font-bold text-white mb-1">
+                          Aeronaves
+                        </h3>
+                        <p className="text-cyan-200/80 text-sm">
+                          Gestão completa da frota
+                        </p>
                         <div className="flex items-center mt-2 text-xs text-cyan-300/70">
                           <Activity className="h-3 w-3 mr-1" />
                           <span>Dados em tempo real</span>
@@ -251,8 +333,12 @@ export default function Index() {
                         <Users className="h-8 w-8 text-emerald-300" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white mb-1">Funcionários</h3>
-                        <p className="text-emerald-200/80 text-sm">Equipe de limpeza especializada</p>
+                        <h3 className="text-xl font-bold text-white mb-1">
+                          Funcionários
+                        </h3>
+                        <p className="text-emerald-200/80 text-sm">
+                          Equipe de limpeza especializada
+                        </p>
                         <div className="flex items-center mt-2 text-xs text-emerald-300/70">
                           <Users className="h-3 w-3 mr-1" />
                           <span>Gestão integrada</span>
@@ -270,8 +356,12 @@ export default function Index() {
                         <Settings className="h-8 w-8 text-purple-300" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white mb-1">Configurações</h3>
-                        <p className="text-purple-200/80 text-sm">Perfis e segurança</p>
+                        <h3 className="text-xl font-bold text-white mb-1">
+                          Configurações
+                        </h3>
+                        <p className="text-purple-200/80 text-sm">
+                          Perfis e segurança
+                        </p>
                         <div className="flex items-center mt-2 text-xs text-purple-300/70">
                           <Shield className="h-3 w-3 mr-1" />
                           <span>Configuração avançada</span>
@@ -323,7 +413,7 @@ export default function Index() {
                   <p className="text-white/70 text-sm">Conectado</p>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-3">
                 <div className="h-3 w-3 bg-green-400 rounded-full animate-pulse"></div>
                 <div>
@@ -331,7 +421,7 @@ export default function Index() {
                   <p className="text-white/70 text-sm">Online</p>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-3">
                 <Cloud className="h-5 w-5 text-aviation-blue-300" />
                 <div>

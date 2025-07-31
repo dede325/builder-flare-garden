@@ -34,6 +34,7 @@ Este sistema implementa um conjunto robusto de medidas de segurança para garant
 ### 4. Armazenamento Seguro Offline
 
 #### IndexedDB com Criptografia
+
 ```typescript
 // Estrutura do armazenamento seguro
 interface SecureFormPackage {
@@ -45,12 +46,12 @@ interface SecureFormPackage {
     lastModified: string;
   };
   encryptedData: {
-    encryptedData: string;    // Dados criptografados em Base64
-    iv: string;               // IV em Base64
-    authTag: string;          // Tag de autenticação em Base64
-    timestamp: string;        // Timestamp da criptografia
+    encryptedData: string; // Dados criptografados em Base64
+    iv: string; // IV em Base64
+    authTag: string; // Tag de autenticação em Base64
+    timestamp: string; // Timestamp da criptografia
   };
-  syncStatus: 'pending' | 'synced' | 'error';
+  syncStatus: "pending" | "synced" | "error";
   retryCount: number;
 }
 ```
@@ -58,6 +59,7 @@ interface SecureFormPackage {
 ### 5. Sincronização Segura com Supabase
 
 #### Processo de Sincronização
+
 1. **Criptografia Local**: Dados são criptografados antes do envio
 2. **Verificação de Integridade**: Hash SHA-256 é calculado e verificado
 3. **Retry Logic**: Sistema tenta até 3 vezes em caso de falha
@@ -65,6 +67,7 @@ interface SecureFormPackage {
 5. **Conflict Resolution**: Resolução automática de conflitos baseada em timestamp
 
 #### Edge Functions (Supabase)
+
 - Descriptografia segura no servidor
 - Validação de dados antes do armazenamento
 - Logs de auditoria automáticos
@@ -73,13 +76,14 @@ interface SecureFormPackage {
 ### 6. QR Code Seguro
 
 #### Geração de Links Protegidos
+
 ```typescript
 // Estrutura do QR Code seguro
 interface SecureQRData {
-  url: string;           // URL base do documento
-  token: string;         // Token de autenticação (16 caracteres)
-  timestamp: number;     // Timestamp de geração
-  signature: string;     // Assinatura digital
+  url: string; // URL base do documento
+  token: string; // Token de autenticação (16 caracteres)
+  timestamp: number; // Timestamp de geração
+  signature: string; // Assinatura digital
 }
 ```
 
@@ -114,31 +118,34 @@ VITE_SYNC_INTERVAL_MS=300000
 
 ```sql
 -- Políticas de segurança para cleaning_forms
-CREATE POLICY "Users can view own forms" ON cleaning_forms 
+CREATE POLICY "Users can view own forms" ON cleaning_forms
   FOR SELECT USING (auth.uid() = created_by);
 
-CREATE POLICY "Users can create forms" ON cleaning_forms 
+CREATE POLICY "Users can create forms" ON cleaning_forms
   FOR INSERT WITH CHECK (auth.uid() = created_by);
 
-CREATE POLICY "Users can update own draft forms" ON cleaning_forms 
+CREATE POLICY "Users can update own draft forms" ON cleaning_forms
   FOR UPDATE USING (auth.uid() = created_by AND status = 'draft');
 ```
 
 ## 📊 Monitoramento e Auditoria
 
 ### 1. Logs de Auditoria
+
 - **Criação de Folhas**: Timestamp, usuário, dados alterados
 - **Modificações**: Versioning completo com histórico de mudanças
 - **Acessos**: Log de downloads de PDF e visualizações
 - **Erros de Sincronização**: Logs detalhados para troubleshooting
 
 ### 2. Métricas de Segurança
+
 - **Taxa de Sincronização**: Percentual de forms sincronizados com sucesso
 - **Erros de Criptografia**: Monitoramento de falhas de criptografia/descriptografia
 - **Tentativas de Acesso**: Rastreamento de tentativas de acesso não autorizadas
 - **Performance**: Tempo de criptografia/descriptografia
 
 ### 3. Alertas Automáticos
+
 - **Falhas de Sincronização**: Alertas após 3 tentativas falhadas
 - **Dados Corrompidos**: Notificação imediata em caso de falha na verificação de integridade
 - **Acessos Suspeitos**: Alertas para tentativas de acesso fora do padrão
@@ -146,6 +153,7 @@ CREATE POLICY "Users can update own draft forms" ON cleaning_forms
 ## 🚀 Fluxo de Operação Segura
 
 ### Criação de Folha
+
 1. Usuário preenche o formulário
 2. Sistema gera ID único no formato AP-PS-SNR##-DDMMAAHHMMSS
 3. Dados são validados e sanitizados
@@ -157,6 +165,7 @@ CREATE POLICY "Users can update own draft forms" ON cleaning_forms
 9. QR Code seguro é gerado com link protegido
 
 ### Acesso via QR Code
+
 1. QR Code é escaneado
 2. Sistema verifica token e timestamp
 3. Valida assinatura digital
@@ -165,6 +174,7 @@ CREATE POLICY "Users can update own draft forms" ON cleaning_forms
 6. PDF é servido se autorizado
 
 ### Sincronização Offline→Online
+
 1. Sistema detecta conexão com internet
 2. Busca todas as folhas com `syncStatus: 'pending'`
 3. Para cada folha:
@@ -179,16 +189,19 @@ CREATE POLICY "Users can update own draft forms" ON cleaning_forms
 ## ⚡ Performance e Otimizações
 
 ### Criptografia
+
 - **WebCrypto API**: Usa a API nativa do navegador para máxima performance
 - **Streaming**: Para arquivos grandes, implementa criptografia em chunks
 - **Worker Threads**: Criptografia em background para não bloquear UI
 
 ### Armazenamento
+
 - **Compressão**: Dados são comprimidos antes da criptografia
 - **Indexação**: Índices otimizados no IndexedDB para consultas rápidas
 - **Cleanup**: Limpeza automática de dados antigos e temporários
 
 ### Sincronização
+
 - **Batching**: Múltiplas operações são agrupadas para eficiência
 - **Delta Sync**: Apenas mudanças são sincronizadas, não dados completos
 - **Background Sync**: Sincronização em background usando Service Workers
@@ -235,16 +248,19 @@ const isValid = await verifyDataIntegrity(formData, expectedHash);
 ## 🔄 Roadmap de Melhorias
 
 ### Curto Prazo
+
 - [ ] Implementar 2FA para usuários administrativos
 - [ ] Adicionar watermarks nos PDFs
 - [ ] Implementar assinatura digital PKI
 
 ### Médio Prazo
+
 - [ ] Integração com HSM (Hardware Security Module)
 - [ ] Audit trail imutável via blockchain
 - [ ] Análise de comportamento anômalo com ML
 
 ### Longo Prazo
+
 - [ ] Certificação ISO 27001
 - [ ] Compliance com GDPR/LGPD
 - [ ] Integração com sistemas SIEM corporativos
