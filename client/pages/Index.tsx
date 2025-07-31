@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plane, Users, FileText, Activity, Shield, Cloud, Wifi, WifiOff, LogOut, Settings } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -8,6 +8,12 @@ import { Badge } from '@/components/ui/badge';
 
 export default function Index() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [systemStats, setSystemStats] = useState({
+    aircraft: 0,
+    employees: 0,
+    activeForms: 0,
+    completedForms: 0
+  });
   const { user: authUser, signOut } = useAuth();
 
   // Fallback user data for demo mode
@@ -23,20 +29,85 @@ export default function Index() {
     await signOut();
   };
 
+  useEffect(() => {
+    loadSystemStats();
+  }, []);
+
+  const loadSystemStats = () => {
+    // Load aircraft data
+    const savedAircraft = localStorage.getItem('aviation_aircraft');
+    const aircraftCount = savedAircraft ? JSON.parse(savedAircraft).filter((a: any) => a.status === 'active').length : 0;
+
+    // Load employees data
+    const savedEmployees = localStorage.getItem('aviation_employees');
+    const employeesCount = savedEmployees ? JSON.parse(savedEmployees).filter((e: any) => e.status === 'active').length : 0;
+
+    // Load cleaning forms data
+    const savedForms = localStorage.getItem('cleaningForms');
+    const forms = savedForms ? JSON.parse(savedForms) : [];
+    const activeForms = forms.filter((f: any) => f.status === 'draft' || f.status === 'pending_signatures').length;
+    const completedForms = forms.filter((f: any) => f.status === 'completed').length;
+
+    setSystemStats({
+      aircraft: aircraftCount,
+      employees: employeesCount,
+      activeForms,
+      completedForms
+    });
+  };
+
   // Real data from system
   const stats = [
-    { title: 'Aeronaves Cadastradas', value: '12', icon: Plane, change: '+2' },
-    { title: 'Funcionários Ativos', value: '48', icon: Users, change: '+3' },
-    { title: 'Folhas de Limpeza Abertas', value: '8', icon: FileText, change: '+1' },
-    { title: 'Limpezas Concluídas (Semana)', value: '15', icon: Activity, change: '+5' },
+    { title: 'Aeronaves Cadastradas', value: systemStats.aircraft.toString(), icon: Plane, change: '' },
+    { title: 'Funcionários Ativos', value: systemStats.employees.toString(), icon: Users, change: '' },
+    { title: 'Folhas de Limpeza Abertas', value: systemStats.activeForms.toString(), icon: FileText, change: '' },
+    { title: 'Limpezas Concluídas', value: systemStats.completedForms.toString(), icon: Activity, change: '' },
   ];
 
-  const recentActivities = [
-    { id: 1, action: 'Aeronave PT-ABC - Limpeza exterior concluída', time: '2 min atrás', type: 'cleaning' },
-    { id: 2, action: 'Folha de limpeza #2024-015 criada por Maria Santos', time: '15 min atrás', type: 'form' },
-    { id: 3, action: 'Polimento da aeronave CS-DXB finalizado', time: '1h atrás', type: 'cleaning' },
-    { id: 4, action: 'Funcionário Carlos Lima adicionado ao sistema', time: '2h atrás', type: 'employee' },
-  ];
+  // Load recent activities from system data
+  const getRecentActivities = () => {
+    const activities = [];
+
+    // Get recent forms
+    const savedForms = localStorage.getItem('cleaningForms');
+    if (savedForms) {
+      const forms = JSON.parse(savedForms);
+      const recentForms = forms
+        .sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+        .slice(0, 3);
+
+      recentForms.forEach((form: any, index: number) => {
+        const timeAgo = getTimeAgo(form.updatedAt);
+        activities.push({
+          id: `form-${index}`,
+          action: `Folha ${form.code} - ${form.status === 'completed' ? 'Concluída' : 'Atualizada'}`,
+          time: timeAgo,
+          type: 'form'
+        });
+      });
+    }
+
+    return activities.length > 0 ? activities : [
+      { id: 1, action: 'Sistema iniciado', time: 'Agora', type: 'system' },
+      { id: 2, action: 'Aguardando atividade do usuário', time: 'Agora', type: 'system' }
+    ];
+  };
+
+  const getTimeAgo = (dateString: string) => {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMins < 1) return 'Agora';
+    if (diffMins < 60) return `${diffMins} min atrás`;
+    if (diffHours < 24) return `${diffHours}h atrás`;
+    return `${diffDays} dias atrás`;
+  };
+
+  const recentActivities = getRecentActivities();
 
   return (
     <div className="min-h-screen bg-aviation-gradient">
