@@ -68,9 +68,16 @@ const queryClient = new QueryClient();
 
 const AppContent = () => {
   useEffect(() => {
+    // Setup intelligent sync service
+    const syncService = setupIntelligentSync();
+
     // Setup photo evidence auto-sync
-    const cleanup = setupPhotoAutoSync();
-    return cleanup;
+    const photoCleanup = setupPhotoAutoSync();
+
+    return () => {
+      photoCleanup();
+      syncService.destroy();
+    };
   }, []);
 
   return (
