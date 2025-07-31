@@ -558,15 +558,15 @@ export default function CleaningForms() {
 
     // Load form data into the form
     setFormData({
-      date: form.date,
-      shift: form.shift,
-      location: form.location,
-      interventionTypes: form.interventionTypes,
-      aircraftId: form.aircraftId,
-      employees: form.employees,
+      date: form.date || format(new Date(), 'yyyy-MM-dd'),
+      shift: form.shift || 'morning',
+      location: form.location || '',
+      interventionTypes: form.interventionTypes || [],
+      aircraftId: form.aircraftId || '',
+      employees: form.employees || [],
       supervisorSignature: form.supervisorSignature || '',
       clientSignature: form.clientSignature || '',
-      clientConfirmedWithoutSignature: form.clientConfirmedWithoutSignature
+      clientConfirmedWithoutSignature: form.clientConfirmedWithoutSignature || false
     });
 
     // Set editing mode
