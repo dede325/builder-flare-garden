@@ -483,10 +483,36 @@ export default function CleaningForms() {
             </DialogTrigger>
             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-aviation-gray-800 border-white/20">
               <DialogHeader>
-                <DialogTitle className="text-white">Nova Folha de Limpeza</DialogTitle>
-                <DialogDescription className="text-white/70">
-                  Preencha os dados para criar uma nova folha de requisição de limpeza
-                </DialogDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <DialogTitle className="text-white">Nova Folha de Limpeza</DialogTitle>
+                    <DialogDescription className="text-white/70">
+                      Preencha os dados para criar uma nova folha de requisição de limpeza
+                    </DialogDescription>
+                  </div>
+
+                  {/* Auto-save status */}
+                  <div className="flex items-center space-x-2">
+                    {autoSaveStatus === 'saving' && (
+                      <div className="flex items-center space-x-1 text-yellow-400">
+                        <div className="animate-spin rounded-full h-3 w-3 border-b border-yellow-400"></div>
+                        <span className="text-xs">Salvando...</span>
+                      </div>
+                    )}
+                    {autoSaveStatus === 'saved' && (
+                      <div className="flex items-center space-x-1 text-green-400">
+                        <CheckSquare className="h-3 w-3" />
+                        <span className="text-xs">Salvo</span>
+                      </div>
+                    )}
+                    {autoSaveStatus === 'error' && (
+                      <div className="flex items-center space-x-1 text-red-400">
+                        <X className="h-3 w-3" />
+                        <span className="text-xs">Erro ao salvar</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </DialogHeader>
 
               <Tabs defaultValue="basic" className="w-full">
