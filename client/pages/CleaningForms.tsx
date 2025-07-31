@@ -80,6 +80,7 @@ import { cacheService } from "@/lib/cache-service";
 import { codeGenerationService } from "@/lib/code-generation-service";
 import SyncStatusIndicator from "@/components/SyncStatusIndicator";
 import QRCodeDisplay from "@/components/QRCodeDisplay";
+import { configurationService } from "@/lib/configuration-service";
 
 interface CleaningForm {
   id: string;
