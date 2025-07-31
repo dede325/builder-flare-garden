@@ -902,12 +902,13 @@ export default function AircraftManager() {
                     </div>
                   </div>
 
-                  {inspectionStatus && (
+                  {cleaningStatus && (
                     <div className="flex items-center justify-between p-2 bg-black/20 rounded">
-                      <span className="text-white/80 text-sm">Próxima inspeção:</span>
-                      <span className={`text-sm font-medium ${inspectionStatus.color}`}>
-                        {inspectionStatus.text}
-                      </span>
+                      <span className="text-white/80 text-sm">Última limpeza:</span>
+                      <Badge className={`${cleaningStatus.color} text-white border-none`}>
+                        {cleaningStatus.urgent && <AlertTriangle className="h-3 w-3 mr-1" />}
+                        {cleaningStatus.text}
+                      </Badge>
                     </div>
                   )}
 
