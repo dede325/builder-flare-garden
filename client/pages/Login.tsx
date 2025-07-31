@@ -27,10 +27,13 @@ export default function Login() {
   // Show loading while auth is initializing
   if (!initialized && authLoading) {
     return (
-      <div className="min-h-screen bg-aviation-gradient flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white text-lg">Carregando...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center">
+        <div className="text-center space-y-6">
+          <div className="h-20 w-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-2xl mx-auto">
+            <Plane className="h-10 w-10 text-white" />
+          </div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto"></div>
+          <p className="text-white text-xl font-medium">Carregando...</p>
         </div>
       </div>
     );
