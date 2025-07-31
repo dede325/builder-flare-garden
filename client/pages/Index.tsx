@@ -251,20 +251,8 @@ export default function Index() {
           </div>
 
           <div className="flex items-center space-x-3">
-            {/* Connection Status */}
-            <div className="flex items-center space-x-2">
-              {isOnline ? (
-                <Wifi className="h-4 w-4 text-green-400" />
-              ) : (
-                <WifiOff className="h-4 w-4 text-red-400" />
-              )}
-              <Badge 
-                variant={isOnline ? "default" : "destructive"}
-                className="text-xs px-2 py-1"
-              >
-                {isOnline ? "Online" : "Offline"}
-              </Badge>
-            </div>
+            {/* Intelligent Sync Status */}
+            <SyncStatusIndicator compact={true} />
 
             {/* User Avatar */}
             <div className="h-8 w-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
