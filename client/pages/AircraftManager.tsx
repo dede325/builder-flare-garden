@@ -829,7 +829,9 @@ export default function AircraftManager() {
                 <div>
                   <p className="text-white/70 text-sm font-medium">Horas de Voo</p>
                   <p className="text-3xl font-bold text-white">
-                    {aircraft.reduce((sum, ac) => sum + ac.flightHours, 0).toLocaleString()}
+                    {aircraft.filter(ac => ac.lastCleaningDate &&
+                      Math.ceil((new Date().getTime() - new Date(ac.lastCleaningDate).getTime()) / (1000 * 60 * 60 * 24)) <= 7
+                    ).length}
                   </p>
                 </div>
                 <Clock className="h-8 w-8 text-aviation-blue-300" />
