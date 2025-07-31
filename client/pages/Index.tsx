@@ -91,10 +91,10 @@ export default function Index() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h2 className="text-4xl font-bold text-white mb-2">
-            Bem-vindo ao Sistema de Gestão
+            Sistema de Gestão de Limpeza de Aeronaves
           </h2>
           <p className="text-xl text-white/80">
-            Gerencie aeronaves, funcionários e operações em um só lugar
+            Controle completo das operações de limpeza, funcionários e aeronaves
           </p>
         </div>
 
