@@ -1,71 +1,84 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { auth } from '@/lib/supabase';
+import { authService, AuthState, UserWithProfile } from '@/lib/auth-service';
 
-interface AuthContextType {
-  user: User | null;
-  session: Session | null;
-  loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string) => Promise<{ error: any }>;
+interface AuthContextType extends AuthState {
+  signIn: (email: string, password: string) => Promise<{ data: any; error: any }>;
+  signUp: (email: string, password: string, userData?: any) => Promise<{ data: any; error: any }>;
   signOut: () => Promise<{ error: any }>;
+  updateProfile: (updates: any) => Promise<{ data: any; error: any }>;
+  hasPermission: (permission: string) => boolean;
+  hasRole: (roleName: string) => boolean;
+  hasMinimumRoleLevel: (minLevel: number) => boolean;
+  getUserLevel: () => number;
+  refreshUser: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [authState, setAuthState] = useState<AuthState>({
+    user: null,
+    loading: true,
+    initialized: false
+  });
 
   useEffect(() => {
-    // Get initial session
-    auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
+    // Subscribe to auth service changes
+    const unsubscribe = authService.subscribe((state) => {
+      setAuthState(state);
     });
 
-    // Listen for auth changes
-    const { data: { subscription } } = auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
-
-    return () => subscription.unsubscribe();
+    return unsubscribe;
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    setLoading(true);
-    const result = await auth.signIn(email, password);
-    setLoading(false);
-    return result;
+    return await authService.signIn(email, password);
   };
 
-  const signUp = async (email: string, password: string) => {
-    setLoading(true);
-    const result = await auth.signUp(email, password);
-    setLoading(false);
-    return result;
+  const signUp = async (email: string, password: string, userData?: any) => {
+    return await authService.signUp(email, password, userData);
   };
 
   const signOut = async () => {
-    setLoading(true);
-    const result = await auth.signOut();
-    setLoading(false);
-    return result;
+    return await authService.signOut();
   };
 
-  const value = {
-    user,
-    session,
-    loading,
+  const updateProfile = async (updates: any) => {
+    return await authService.updateProfile(updates);
+  };
+
+  const hasPermission = (permission: string) => {
+    return authService.hasPermission(permission);
+  };
+
+  const hasRole = (roleName: string) => {
+    return authService.hasRole(roleName);
+  };
+
+  const hasMinimumRoleLevel = (minLevel: number) => {
+    return authService.hasMinimumRoleLevel(minLevel);
+  };
+
+  const getUserLevel = () => {
+    return authService.getUserLevel();
+  };
+
+  const refreshUser = () => {
+    // Force refresh by re-initializing auth state
+    authService.getState();
+  };
+
+  const value: AuthContextType = {
+    ...authState,
     signIn,
     signUp,
-    signOut
+    signOut,
+    updateProfile,
+    hasPermission,
+    hasRole,
+    hasMinimumRoleLevel,
+    getUserLevel,
+    refreshUser,
   };
 
   return (
@@ -82,3 +95,6 @@ export function useAuth() {
   }
   return context;
 }
+
+// Export types for convenience
+export type { UserWithProfile } from '@/lib/auth-service';
