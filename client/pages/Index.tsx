@@ -54,41 +54,66 @@ export default function Index() {
   };
 
   useEffect(() => {
-    loadSystemStats();
+    let isMounted = true;
+
+    const loadSystemStatsAsync = () => {
+      try {
+        // Load aircraft data
+        const savedAircraft = localStorage.getItem("aviation_aircraft");
+        const aircraftCount = savedAircraft
+          ? JSON.parse(savedAircraft).filter((a: any) => a.status === "active")
+              .length
+          : 0;
+
+        // Load employees data
+        const savedEmployees = localStorage.getItem("aviation_employees");
+        const employeesCount = savedEmployees
+          ? JSON.parse(savedEmployees).filter((e: any) => e.status === "active")
+              .length
+          : 0;
+
+        // Load cleaning forms data
+        const savedForms = localStorage.getItem("cleaningForms");
+        const forms = savedForms ? JSON.parse(savedForms) : [];
+        const activeForms = forms.filter(
+          (f: any) => f.status === "draft" || f.status === "pending_signatures",
+        ).length;
+        const completedForms = forms.filter(
+          (f: any) => f.status === "completed",
+        ).length;
+
+        if (isMounted) {
+          setSystemStats({
+            aircraft: aircraftCount,
+            employees: employeesCount,
+            activeForms,
+            completedForms,
+          });
+        }
+      } catch (error) {
+        console.error("Error loading system stats:", error);
+      }
+    };
+
+    const handleOnlineStatus = () => {
+      if (isMounted) {
+        setIsOnline(navigator.onLine);
+      }
+    };
+
+    // Load initial stats
+    loadSystemStatsAsync();
+
+    // Listen for online/offline changes
+    window.addEventListener("online", handleOnlineStatus);
+    window.addEventListener("offline", handleOnlineStatus);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener("online", handleOnlineStatus);
+      window.removeEventListener("offline", handleOnlineStatus);
+    };
   }, []);
-
-  const loadSystemStats = () => {
-    // Load aircraft data
-    const savedAircraft = localStorage.getItem("aviation_aircraft");
-    const aircraftCount = savedAircraft
-      ? JSON.parse(savedAircraft).filter((a: any) => a.status === "active")
-          .length
-      : 0;
-
-    // Load employees data
-    const savedEmployees = localStorage.getItem("aviation_employees");
-    const employeesCount = savedEmployees
-      ? JSON.parse(savedEmployees).filter((e: any) => e.status === "active")
-          .length
-      : 0;
-
-    // Load cleaning forms data
-    const savedForms = localStorage.getItem("cleaningForms");
-    const forms = savedForms ? JSON.parse(savedForms) : [];
-    const activeForms = forms.filter(
-      (f: any) => f.status === "draft" || f.status === "pending_signatures",
-    ).length;
-    const completedForms = forms.filter(
-      (f: any) => f.status === "completed",
-    ).length;
-
-    setSystemStats({
-      aircraft: aircraftCount,
-      employees: employeesCount,
-      activeForms,
-      completedForms,
-    });
-  };
 
   // Real data from system
   const stats = [
