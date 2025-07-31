@@ -501,9 +501,9 @@ export default function CleaningForms() {
           description: "As alterações foram salvas com sucesso.",
         });
       } else {
-        // Create new form
-        const formCode = generateFormCode(formData.date, formData.shift, formData.location);
-        const formId = crypto.randomUUID();
+        // Create new form with secure ID
+        const formCode = isSecureMode ? generateSecureFormId() : generateFormCode(formData.date, formData.shift, formData.location);
+        const formId = isSecureMode ? formCode : crypto.randomUUID();
 
         const now = new Date().toISOString();
         const newForm: CleaningForm = {
@@ -526,7 +526,7 @@ export default function CleaningForms() {
           changeHistory: [{
             version: 1,
             timestamp: now,
-            changes: ['Folha criada'],
+            changes: ['Folha criada com sistema seguro'],
             author: user.email || 'Usuário'
           }],
           syncStatus: 'pending'
