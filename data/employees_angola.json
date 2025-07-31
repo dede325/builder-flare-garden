@@ -1,0 +1,296 @@
+[
+  {
+    "id": "a1234567-89ab-cdef-0123-456789abcd01",
+    "name": "Amizanguel da Silva",
+    "email": "amizanguel.silva@aviationops.ao",
+    "role": "Director",
+    "employee_number": "001023626BA037",
+    "department": "Administração",
+    "phone": "+244 900123456",
+    "emergency_contact": "+244 900654321",
+    "license_number": "DIR001023626BA037",
+    "certifications": ["Gestão", "Liderança"],
+    "hire_date": "2020-01-15",
+    "status": "active",
+    "is_active": true,
+    "preferences": {
+      "theme": "aviation-blue",
+      "notifications": true,
+      "language": "pt",
+      "timezone": "Africa/Luanda"
+    }
+  },
+  {
+    "id": "a1234567-89ab-cdef-0123-456789abcd02",
+    "name": "Jaime da Graça",
+    "email": "jaime.graca@aviationops.ao",
+    "role": "Director",
+    "employee_number": "000821215LA035",
+    "department": "Administração",
+    "phone": "+244 900234567",
+    "emergency_contact": "+244 900765432",
+    "license_number": "DIR000821215LA035",
+    "certifications": ["Gestão", "Liderança"],
+    "hire_date": "2019-03-20",
+    "status": "active",
+    "is_active": true,
+    "preferences": {
+      "theme": "aviation-blue",
+      "notifications": true,
+      "language": "pt",
+      "timezone": "Africa/Luanda"
+    }
+  },
+  {
+    "id": "a1234567-89ab-cdef-0123-456789abcd03",
+    "name": "Evandra dos Santos",
+    "email": "evandra.santos@aviationops.ao",
+    "role": "D. Comercial e Marketing",
+    "employee_number": "005280783LA047",
+    "department": "Comercial e Marketing",
+    "phone": "+244 900345678",
+    "emergency_contact": "+244 900876543",
+    "license_number": "GES005280783LA047",
+    "certifications": ["Marketing", "Gestão Comercial"],
+    "hire_date": "2021-06-10",
+    "status": "active",
+    "is_active": true,
+    "preferences": {
+      "theme": "aviation-blue",
+      "notifications": true,
+      "language": "pt",
+      "timezone": "Africa/Luanda"
+    }
+  },
+  {
+    "id": "a1234567-89ab-cdef-0123-456789abcd04",
+    "name": "Liliana dos Santos",
+    "email": "liliana.santos@aviationops.ao",
+    "role": "D. Recursos Humanos",
+    "employee_number": "005259127LA042",
+    "department": "Recursos Humanos",
+    "phone": "+244 900456789",
+    "emergency_contact": "+244 900987654",
+    "license_number": "GES005259127LA042",
+    "certifications": ["Recursos Humanos", "Gestão de Pessoas"],
+    "hire_date": "2020-09-05",
+    "status": "active",
+    "is_active": true,
+    "preferences": {
+      "theme": "aviation-blue",
+      "notifications": true,
+      "language": "pt",
+      "timezone": "Africa/Luanda"
+    }
+  },
+  {
+    "id": "a1234567-89ab-cdef-0123-456789abcd05",
+    "name": "Augusto Tomás",
+    "email": "augusto.tomas@aviationops.ao",
+    "role": "Técnico Auxiliar de Placa",
+    "employee_number": "000862944ME035",
+    "department": "Manutenção",
+    "phone": "+244 900567890",
+    "emergency_contact": "+244 900098765",
+    "license_number": "TEC000862944ME035",
+    "certifications": ["Manutenção de Aeronaves", "Segurança"],
+    "hire_date": "2018-04-12",
+    "status": "active",
+    "is_active": true,
+    "preferences": {
+      "theme": "aviation-blue",
+      "notifications": true,
+      "language": "pt",
+      "timezone": "Africa/Luanda"
+    }
+  },
+  {
+    "id": "a1234567-89ab-cdef-0123-456789abcd06",
+    "name": "Celestino Domingos",
+    "email": "celestino.domingos@aviationops.ao",
+    "role": "Técnico Auxiliar de Placa",
+    "employee_number": "000951540HA036",
+    "department": "Manutenção",
+    "phone": "+244 900678901",
+    "emergency_contact": "+244 900109876",
+    "license_number": "TEC000951540HA036",
+    "certifications": ["Manutenção de Aeronaves", "Segurança"],
+    "hire_date": "2019-07-08",
+    "status": "active",
+    "is_active": true,
+    "preferences": {
+      "theme": "aviation-blue",
+      "notifications": true,
+      "language": "pt",
+      "timezone": "Africa/Luanda"
+    }
+  },
+  {
+    "id": "a1234567-89ab-cdef-0123-456789abcd07",
+    "name": "Daniel Segunda",
+    "email": "daniel.segunda@aviationops.ao",
+    "role": "Técnico Auxiliar de Placa",
+    "employee_number": "003557571HO034",
+    "department": "Manutenção",
+    "phone": "+244 900789012",
+    "emergency_contact": "+244 900210987",
+    "license_number": "TEC003557571HO034",
+    "certifications": ["Manutenção de Aeronaves", "Operações de Rampa"],
+    "hire_date": "2020-02-14",
+    "status": "active",
+    "is_active": true,
+    "preferences": {
+      "theme": "aviation-blue",
+      "notifications": true,
+      "language": "pt",
+      "timezone": "Africa/Luanda"
+    }
+  },
+  {
+    "id": "a1234567-89ab-cdef-0123-456789abcd08",
+    "name": "Joaquim Cumbando João",
+    "email": "joaquim.joao@aviationops.ao",
+    "role": "Técnico Auxiliar de Placa",
+    "employee_number": "001141347LA031",
+    "department": "Manutenção",
+    "phone": "+244 900890123",
+    "emergency_contact": "+244 900321098",
+    "license_number": "TEC001141347LA031",
+    "certifications": ["Manutenção de Aeronaves", "Segurança"],
+    "hire_date": "2018-11-30",
+    "status": "active",
+    "is_active": true,
+    "preferences": {
+      "theme": "aviation-blue",
+      "notifications": true,
+      "language": "pt",
+      "timezone": "Africa/Luanda"
+    }
+  },
+  {
+    "id": "a1234567-89ab-cdef-0123-456789abcd09",
+    "name": "José Garrido",
+    "email": "jose.garrido@aviationops.ao",
+    "role": "Técnico Auxiliar de Placa",
+    "employee_number": "003588004ME037",
+    "department": "Manutenção",
+    "phone": "+244 900901234",
+    "emergency_contact": "+244 900432109",
+    "license_number": "TEC003588004ME037",
+    "certifications": ["Manutenção de Aeronaves", "Operações de Rampa"],
+    "hire_date": "2019-01-25",
+    "status": "active",
+    "is_active": true,
+    "preferences": {
+      "theme": "aviation-blue",
+      "notifications": true,
+      "language": "pt",
+      "timezone": "Africa/Luanda"
+    }
+  },
+  {
+    "id": "a1234567-89ab-cdef-0123-456789abcd10",
+    "name": "José João",
+    "email": "jose.joao@aviationops.ao",
+    "role": "Técnico Auxiliar de Placa",
+    "employee_number": "000040089LA035",
+    "department": "Manutenção",
+    "phone": "+244 900012345",
+    "emergency_contact": "+244 900543210",
+    "license_number": "TEC000040089LA035",
+    "certifications": ["Manutenção de Aeronaves", "Segurança"],
+    "hire_date": "2017-08-18",
+    "status": "active",
+    "is_active": true,
+    "preferences": {
+      "theme": "aviation-blue",
+      "notifications": true,
+      "language": "pt",
+      "timezone": "Africa/Luanda"
+    }
+  },
+  {
+    "id": "a1234567-89ab-cdef-0123-456789abcd11",
+    "name": "Manuel Coelho",
+    "email": "manuel.coelho@aviationops.ao",
+    "role": "Técnico Auxiliar de Placa",
+    "employee_number": "000650503LN039",
+    "department": "Manutenção",
+    "phone": "+244 900123450",
+    "emergency_contact": "+244 900654321",
+    "license_number": "TEC000650503LN039",
+    "certifications": ["Manutenção de Aeronaves", "Operações de Rampa"],
+    "hire_date": "2020-05-22",
+    "status": "active",
+    "is_active": true,
+    "preferences": {
+      "theme": "aviation-blue",
+      "notifications": true,
+      "language": "pt",
+      "timezone": "Africa/Luanda"
+    }
+  },
+  {
+    "id": "a1234567-89ab-cdef-0123-456789abcd12",
+    "name": "Mário Quiluange",
+    "email": "mario.quiluange@aviationops.ao",
+    "role": "Técnico Auxiliar de Placa",
+    "employee_number": "000062106LA017",
+    "department": "Manutenção",
+    "phone": "+244 900234561",
+    "emergency_contact": "+244 900765432",
+    "license_number": "TEC000062106LA017",
+    "certifications": ["Manutenção de Aeronaves", "Segurança"],
+    "hire_date": "2016-12-03",
+    "status": "active",
+    "is_active": true,
+    "preferences": {
+      "theme": "aviation-blue",
+      "notifications": true,
+      "language": "pt",
+      "timezone": "Africa/Luanda"
+    }
+  },
+  {
+    "id": "a1234567-89ab-cdef-0123-456789abcd13",
+    "name": "Reginaldo Golveia",
+    "email": "reginaldo.golveia@aviationops.ao",
+    "role": "Técnico Auxiliar de Placa",
+    "employee_number": "000195323LA017",
+    "department": "Manutenção",
+    "phone": "+244 900345672",
+    "emergency_contact": "+244 900876543",
+    "license_number": "TEC000195323LA017",
+    "certifications": ["Manutenção de Aeronaves", "Operações de Rampa"],
+    "hire_date": "2016-10-15",
+    "status": "active",
+    "is_active": true,
+    "preferences": {
+      "theme": "aviation-blue",
+      "notifications": true,
+      "language": "pt",
+      "timezone": "Africa/Luanda"
+    }
+  },
+  {
+    "id": "a1234567-89ab-cdef-0123-456789abcd14",
+    "name": "Wilson Hongolo",
+    "email": "wilson.hongolo@aviationops.ao",
+    "role": "Técnico Auxiliar de Placa",
+    "employee_number": "000161916LA015",
+    "department": "Manutenção",
+    "phone": "+244 900456783",
+    "emergency_contact": "+244 900987654",
+    "license_number": "TEC000161916LA015",
+    "certifications": ["Manutenção de Aeronaves", "Segurança"],
+    "hire_date": "2015-03-08",
+    "status": "active",
+    "is_active": true,
+    "preferences": {
+      "theme": "aviation-blue",
+      "notifications": true,
+      "language": "pt",
+      "timezone": "Africa/Luanda"
+    }
+  }
+]
