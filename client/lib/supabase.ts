@@ -85,25 +85,62 @@ export interface FlightSheet {
   updated_at: string;
 }
 
+// Demo user for when Supabase is not configured
+const demoUser = {
+  id: 'demo-user',
+  email: 'demo@aviation.com',
+  user_metadata: {
+    name: 'João Silva (Demo)',
+    role: 'Gestor de Operações'
+  }
+};
+
+const demoSession = {
+  user: demoUser,
+  access_token: 'demo-token',
+  refresh_token: 'demo-refresh'
+};
+
 // Auth helper functions
 export const auth = {
   signUp: async (email: string, password: string) => {
+    if (!supabase) {
+      // Demo mode - simulate successful signup
+      return { data: { user: null, session: null }, error: null };
+    }
     return await supabase.auth.signUp({ email, password });
   },
-  
+
   signIn: async (email: string, password: string) => {
+    if (!supabase) {
+      // Demo mode - simulate successful login
+      return { data: { user: demoUser, session: demoSession }, error: null };
+    }
     return await supabase.auth.signInWithPassword({ email, password });
   },
-  
+
   signOut: async () => {
+    if (!supabase) {
+      // Demo mode - simulate successful logout
+      return { error: null };
+    }
     return await supabase.auth.signOut();
   },
-  
+
   getSession: async () => {
+    if (!supabase) {
+      // Demo mode - return demo session
+      return { data: { session: demoSession }, error: null };
+    }
     return await supabase.auth.getSession();
   },
-  
+
   onAuthStateChange: (callback: (event: string, session: any) => void) => {
+    if (!supabase) {
+      // Demo mode - simulate auth state change
+      setTimeout(() => callback('SIGNED_IN', demoSession), 100);
+      return { data: { subscription: { unsubscribe: () => {} } } };
+    }
     return supabase.auth.onAuthStateChange(callback);
   }
 };
