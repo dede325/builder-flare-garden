@@ -341,8 +341,7 @@ export default function HistoryExportPanel() {
   const handlePrintForm = async (form: CleaningForm) => {
     try {
       const aircraftData = aircraft.find((ac) => ac.id === form.aircraftId);
-      await previewCleaningFormPDF(form, aircraftData);
-      // After opening PDF, user can print from browser
+      await exportService.printForm(form, aircraftData);
     } catch (error) {
       console.error("Error printing form:", error);
       toast({
