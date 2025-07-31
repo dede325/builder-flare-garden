@@ -1,7 +1,7 @@
 {
-  "name": "AviationOps - Sistema de Gestão Aeronáutica",
-  "short_name": "AviationOps",
-  "description": "Sistema completo para gestão de aeronaves, funcionários e operações aeronáuticas",
+  "name": "AirPlus Aviation - Sistema de Limpeza de Aeronaves",
+  "short_name": "AirPlus Aviation",
+  "description": "Sistema profissional para gestão de limpeza de aeronaves da AirPlus",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#2563eb",
