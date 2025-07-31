@@ -92,6 +92,30 @@ As migrations incluem dados de demonstração para:
 - **Formulários de limpeza** completos
 - **Configurações** do sistema para Angola
 
+### Funcionários Específicos
+
+Os seguintes funcionários foram criados com dados reais:
+
+**Diretores:**
+- Amizanguel da Silva (001023626BA037)
+- Jaime da Graça (000821215LA035)
+
+**Chefes de Departamento:**
+- Evandra dos Santos - D. Comercial e Marketing (005280783LA047)
+- Liliana dos Santos - D. Recursos Humanos (005259127LA042)
+
+**Técnicos Auxiliares de Placa:**
+- Augusto Tomás (000862944ME035)
+- Celestino Domingos (000951540HA036)
+- Daniel Segunda (003557571HO034)
+- Joaquim Cumbando João (001141347LA031)
+- José Garrido (003588004ME037)
+- José João (000040089LA035)
+- Manuel Coelho (000650503LN039)
+- Mário Quiluange (000062106LA017)
+- Reginaldo Golveia (000195323LA017)
+- Wilson Hongolo (000161916LA015)
+
 ### Características
 
 - **UUIDs**: Todas as tabelas usam UUID como chave primária
@@ -100,6 +124,8 @@ As migrations incluem dados de demonstração para:
 - **Índices**: Otimização para consultas frequentes
 - **Constraints**: Validação de dados e integridade referencial
 - **JSONB**: Campos flexíveis para configurações e certificações
+- **RLS**: Row Level Security configurado
+- **Auditoria**: Log completo de atividades dos utilizadores
 
 ## Variáveis de Ambiente
 
