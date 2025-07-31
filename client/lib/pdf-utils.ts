@@ -464,6 +464,21 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
 
 export const downloadCleaningFormPDF = async (formData: CleaningFormData, aircraftData?: any) => {
   const pdf = await generateCleaningFormPDF(formData, aircraftData);
+
+  // Try to upload to Supabase Storage if configured
+  try {
+    const { supabaseStorage, dataURLToBlob } = await import('./supabase-storage');
+    const pdfBlob = pdf.output('blob');
+    const uploadedUrl = await supabaseStorage.uploadCleaningFormPDF(formData.code, pdfBlob);
+
+    if (uploadedUrl) {
+      console.log('PDF uploaded to Supabase Storage:', uploadedUrl);
+    }
+  } catch (error) {
+    console.log('Supabase Storage upload skipped:', error);
+  }
+
+  // Download locally
   pdf.save(`folha-limpeza-${formData.code}.pdf`);
 };
 
@@ -471,4 +486,19 @@ export const previewCleaningFormPDF = async (formData: CleaningFormData, aircraf
   const pdf = await generateCleaningFormPDF(formData, aircraftData);
   const pdfDataUri = pdf.output('datauristring');
   window.open(pdfDataUri, '_blank');
+};
+
+export const generateAndUploadPDF = async (formData: CleaningFormData, aircraftData?: any): Promise<string | null> => {
+  try {
+    const pdf = await generateCleaningFormPDF(formData, aircraftData);
+    const pdfBlob = pdf.output('blob');
+
+    const { supabaseStorage } = await import('./supabase-storage');
+    const uploadedUrl = await supabaseStorage.uploadCleaningFormPDF(formData.code, pdfBlob);
+
+    return uploadedUrl;
+  } catch (error) {
+    console.error('Error generating and uploading PDF:', error);
+    return null;
+  }
 };
