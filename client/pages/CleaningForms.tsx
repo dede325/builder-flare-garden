@@ -820,6 +820,13 @@ export default function CleaningForms() {
     }
   };
 
+  const handlePhotoEvidenceUpdate = (photos: PhotoEvidence[]) => {
+    setFormData((prev) => ({
+      ...prev,
+      photoEvidence: photos,
+    }));
+  };
+
   const resetForm = () => {
     setFormData({
       date: format(new Date(), "yyyy-MM-dd"),
@@ -832,6 +839,7 @@ export default function CleaningForms() {
         before: { exterior: [], interior: [], details: [] },
         after: { exterior: [], interior: [], details: [] },
       },
+      photoEvidence: [],
       supervisorSignature: "",
       clientSignature: "",
       clientConfirmedWithoutSignature: false,
