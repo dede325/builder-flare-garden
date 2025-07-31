@@ -456,21 +456,7 @@ export default function CleaningForms() {
     setEditingForm(null);
   };
 
-  const addEmployee = () => {
-    setFormData(prev => ({
-      ...prev,
-      employees: [...prev.employees, {
-        id: crypto.randomUUID(),
-        name: '',
-        task: '',
-        startTime: '',
-        endTime: '',
-        phone: '',
-        idNumber: '',
-        photo: ''
-      }]
-    }));
-  };
+  // Remove manual employee addition - only allow selection from database
 
   const addEmployeeFromDatabase = (employeeFromDb: any) => {
     const newEmployee = {
