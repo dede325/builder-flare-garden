@@ -133,73 +133,43 @@ export default function Index() {
                   Acesse as principais funcionalidades do sistema
                 </CardDescription>
               </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                <Link to="/aircraft-manager">
-                  <Button className="aviation-button justify-start h-16 w-full">
-                    <Plane className="h-6 w-6 mr-3" />
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Link to="/cleaning-forms">
+                  <Button className="aviation-button justify-start h-20 w-full">
+                    <FileText className="h-8 w-8 mr-4" />
                     <div className="text-left">
-                      <p className="font-semibold">Gerenciar Aeronaves</p>
-                      <p className="text-sm opacity-80">Cadastro e manutenção</p>
+                      <p className="font-bold text-lg">Folhas de Limpeza</p>
+                      <p className="text-sm opacity-80">Criar e gerenciar requisições</p>
+                    </div>
+                  </Button>
+                </Link>
+
+                <Link to="/aircraft-manager">
+                  <Button className="aviation-button justify-start h-20 w-full">
+                    <Plane className="h-8 w-8 mr-4" />
+                    <div className="text-left">
+                      <p className="font-bold text-lg">Aeronaves</p>
+                      <p className="text-sm opacity-80">Cadastro e informações</p>
                     </div>
                   </Button>
                 </Link>
 
                 <Link to="/employee-manager">
-                  <Button className="aviation-button justify-start h-16 w-full">
-                    <Users className="h-6 w-6 mr-3" />
+                  <Button className="aviation-button justify-start h-20 w-full">
+                    <Users className="h-8 w-8 mr-4" />
                     <div className="text-left">
-                      <p className="font-semibold">Gerenciar Funcionários</p>
-                      <p className="text-sm opacity-80">Equipe e dados pessoais</p>
+                      <p className="font-bold text-lg">Funcionários</p>
+                      <p className="text-sm opacity-80">Equipe de limpeza</p>
                     </div>
                   </Button>
                 </Link>
 
-                <Link to="/cleaning-forms">
-                  <Button className="aviation-button justify-start h-16 w-full">
-                    <FileText className="h-6 w-6 mr-3" />
+                <Link to="/settings">
+                  <Button className="aviation-button justify-start h-20 w-full">
+                    <Settings className="h-8 w-8 mr-4" />
                     <div className="text-left">
-                      <p className="font-semibold">Folhas de Limpeza</p>
-                      <p className="text-sm opacity-80">Requisições e controle</p>
-                    </div>
-                  </Button>
-                </Link>
-
-                <Link to="/tasks">
-                  <Button className="aviation-button justify-start h-16 w-full">
-                    <CheckSquare className="h-6 w-6 mr-3" />
-                    <div className="text-left">
-                      <p className="font-semibold">Tarefas</p>
-                      <p className="text-sm opacity-80">Acompanhar progresso</p>
-                    </div>
-                  </Button>
-                </Link>
-
-                <Link to="/flight-sheets">
-                  <Button className="aviation-button justify-start h-16 w-full">
-                    <FileText className="h-6 w-6 mr-3" />
-                    <div className="text-left">
-                      <p className="font-semibold">Folhas de Voo</p>
-                      <p className="text-sm opacity-80">Documentação</p>
-                    </div>
-                  </Button>
-                </Link>
-
-                <Link to="/employees">
-                  <Button className="aviation-button justify-start h-16 w-full">
-                    <Users className="h-6 w-6 mr-3" />
-                    <div className="text-left">
-                      <p className="font-semibold">Equipe Simples</p>
-                      <p className="text-sm opacity-80">Visualização básica</p>
-                    </div>
-                  </Button>
-                </Link>
-
-                <Link to="/aircraft">
-                  <Button className="aviation-button justify-start h-16 w-full">
-                    <Plane className="h-6 w-6 mr-3" />
-                    <div className="text-left">
-                      <p className="font-semibold">Aeronaves Simples</p>
-                      <p className="text-sm opacity-80">Visualização básica</p>
+                      <p className="font-bold text-lg">Configurações</p>
+                      <p className="text-sm opacity-80">Sistema e perfil</p>
                     </div>
                   </Button>
                 </Link>
