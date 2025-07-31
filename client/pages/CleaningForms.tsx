@@ -563,7 +563,16 @@ export default function CleaningForms() {
       location: form.location || '',
       interventionTypes: form.interventionTypes || [],
       aircraftId: form.aircraftId || '',
-      employees: form.employees || [],
+      employees: (form.employees || []).map(emp => ({
+        id: emp.id || crypto.randomUUID(),
+        name: emp.name || '',
+        task: emp.task || '',
+        startTime: emp.startTime || '',
+        endTime: emp.endTime || '',
+        phone: emp.phone || '',
+        idNumber: emp.idNumber || '',
+        photo: emp.photo || ''
+      })),
       supervisorSignature: form.supervisorSignature || '',
       clientSignature: form.clientSignature || '',
       clientConfirmedWithoutSignature: form.clientConfirmedWithoutSignature || false
