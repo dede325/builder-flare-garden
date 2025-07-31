@@ -17,6 +17,7 @@ import PhotoUpload from '@/components/PhotoUpload';
 import { downloadCleaningFormPDF, previewCleaningFormPDF, generateAndUploadPDF } from '@/lib/pdf-utils';
 import { supabaseStorage } from '@/lib/supabase-storage';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import QRCode from 'qrcode';
