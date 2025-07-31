@@ -55,6 +55,7 @@ export default function CleaningForms() {
   const [aircraft, setAircraft] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState<string>('all');
   const [showSignatureDialog, setShowSignatureDialog] = useState<'supervisor' | 'client' | null>(null);
   const [showQRDialog, setShowQRDialog] = useState<CleaningForm | null>(null);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
