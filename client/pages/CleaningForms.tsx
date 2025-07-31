@@ -283,24 +283,14 @@ export default function CleaningForms() {
       errors.employees = 'Adicione pelo menos um funcionário';
     }
 
-    // Employee validation
+    // Employee validation - simplified since data comes from system
     formData.employees.forEach((employee, index) => {
       if (!employee.name.trim()) {
-        errors[`employee_${index}_name`] = 'Nome é obrigatório';
+        errors[`employee_${index}_name`] = 'Funcionário inválido - reselecione do sistema';
       }
 
-      if (!employee.task.trim()) {
-        errors[`employee_${index}_task`] = 'Tarefa é obrigatória';
-      }
-
-      if (!employee.phone.trim()) {
-        errors[`employee_${index}_phone`] = 'Telefone é obrigatório';
-      } else if (!/^\(\d{2}\)\s\d{4,5}-\d{4}$/.test(employee.phone)) {
-        errors[`employee_${index}_phone`] = 'Formato inválido. Use (11) 99999-9999';
-      }
-
-      if (!employee.idNumber.trim()) {
-        errors[`employee_${index}_idNumber`] = 'Documento é obrigatório';
+      if (!employee.id) {
+        errors[`employee_${index}_id`] = 'Funcionário deve ser selecionado do sistema';
       }
 
       if (employee.startTime && employee.endTime) {
@@ -856,7 +846,7 @@ export default function CleaningForms() {
                                 <div className="flex items-center space-x-4 text-white/60 text-xs mt-1">
                                   <span>📞 {employee.phone}</span>
                                   <span>🆔 {employee.idNumber}</span>
-                                  <span>⏰ {employee.startTime} - {employee.endTime}</span>
+                                  <span>��� {employee.startTime} - {employee.endTime}</span>
                                 </div>
                               </div>
                             </div>
