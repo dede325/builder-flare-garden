@@ -39,7 +39,7 @@ import {
   ArrowLeft,
   RefreshCw,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { migrationService } from "@/lib/migration-service";
 
 export default function Settings() {
