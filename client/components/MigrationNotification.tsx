@@ -1,16 +1,18 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Database, Upload, X, Settings } from 'lucide-react';
-import { migrationService } from '@/lib/migration-service';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Database, Upload, X, Settings } from "lucide-react";
+import { migrationService } from "@/lib/migration-service";
+import { Link } from "react-router-dom";
 
 interface MigrationNotificationProps {
   className?: string;
 }
 
-export function MigrationNotification({ className }: MigrationNotificationProps) {
+export function MigrationNotification({
+  className,
+}: MigrationNotificationProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [migrationStatus, setMigrationStatus] = useState<{
     isConfigured: boolean;
@@ -25,15 +27,15 @@ export function MigrationNotification({ className }: MigrationNotificationProps)
     try {
       const [isConfigured, dataCounts] = await Promise.all([
         migrationService.isSupabaseConfigured(),
-        migrationService.getOfflineDataCounts()
+        migrationService.getOfflineDataCounts(),
       ]);
 
       setMigrationStatus({ isConfigured, dataCounts });
-      
+
       // Show notification if Supabase is configured and there's offline data
       setIsVisible(isConfigured && dataCounts.total > 0);
     } catch (error) {
-      console.error('Failed to check migration status:', error);
+      console.error("Failed to check migration status:", error);
       setIsVisible(false);
     }
   };
@@ -41,12 +43,12 @@ export function MigrationNotification({ className }: MigrationNotificationProps)
   const handleDismiss = () => {
     setIsVisible(false);
     // Remember dismissal for this session
-    sessionStorage.setItem('migrationNotificationDismissed', 'true');
+    sessionStorage.setItem("migrationNotificationDismissed", "true");
   };
 
   // Check if already dismissed this session
   useEffect(() => {
-    const dismissed = sessionStorage.getItem('migrationNotificationDismissed');
+    const dismissed = sessionStorage.getItem("migrationNotificationDismissed");
     if (dismissed) {
       setIsVisible(false);
     }
@@ -57,7 +59,9 @@ export function MigrationNotification({ className }: MigrationNotificationProps)
   }
 
   return (
-    <Card className={`glass-card border-blue-500/30 bg-blue-500/10 ${className}`}>
+    <Card
+      className={`glass-card border-blue-500/30 bg-blue-500/10 ${className}`}
+    >
       <CardContent className="flex items-center justify-between p-4">
         <div className="flex items-center space-x-3">
           <div className="flex-shrink-0">
@@ -66,16 +70,20 @@ export function MigrationNotification({ className }: MigrationNotificationProps)
           <div className="flex-1">
             <div className="flex items-center space-x-2 mb-1">
               <h4 className="text-white font-medium">Migração Disponível</h4>
-              <Badge variant="outline" className="text-blue-200 border-blue-400/50">
+              <Badge
+                variant="outline"
+                className="text-blue-200 border-blue-400/50"
+              >
                 {migrationStatus.dataCounts.total} registros
               </Badge>
             </div>
             <p className="text-blue-200 text-sm">
-              Supabase configurado! Migre seus dados offline para sincronização na nuvem.
+              Supabase configurado! Migre seus dados offline para sincronização
+              na nuvem.
             </p>
           </div>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <Link to="/settings?tab=data">
             <Button size="sm" className="aviation-button">
@@ -83,10 +91,10 @@ export function MigrationNotification({ className }: MigrationNotificationProps)
               Migrar
             </Button>
           </Link>
-          
-          <Button 
-            size="sm" 
-            variant="ghost" 
+
+          <Button
+            size="sm"
+            variant="ghost"
             onClick={handleDismiss}
             className="text-white/70 hover:text-white hover:bg-white/10"
           >

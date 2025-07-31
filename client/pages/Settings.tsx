@@ -41,7 +41,11 @@ import {
 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { migrationService } from "@/lib/migration-service";
-import { populateDemoData, clearOfflineData, getOfflineDataSummary } from "@/lib/demo-data";
+import {
+  populateDemoData,
+  clearOfflineData,
+  getOfflineDataSummary,
+} from "@/lib/demo-data";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Settings() {
@@ -141,11 +145,11 @@ export default function Settings() {
     try {
       const [isConfigured, dataCounts] = await Promise.all([
         migrationService.isSupabaseConfigured(),
-        migrationService.getOfflineDataCounts()
+        migrationService.getOfflineDataCounts(),
       ]);
       setMigrationStatus({ isConfigured, dataCounts });
     } catch (error) {
-      console.error('Failed to check migration status:', error);
+      console.error("Failed to check migration status:", error);
       setMigrationStatus({ isConfigured: false, dataCounts: null });
     }
   };
@@ -161,13 +165,14 @@ export default function Settings() {
       await checkMigrationStatus();
       toast({
         title: "Dados demo criados",
-        description: "Dados de demonstração foram adicionados ao banco offline."
+        description:
+          "Dados de demonstração foram adicionados ao banco offline.",
       });
     } catch (error) {
       toast({
         title: "Erro",
         description: "Falha ao criar dados demo.",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -178,13 +183,13 @@ export default function Settings() {
       await checkMigrationStatus();
       toast({
         title: "Dados limpos",
-        description: "Todos os dados offline foram removidos."
+        description: "Todos os dados offline foram removidos.",
       });
     } catch (error) {
       toast({
         title: "Erro",
         description: "Falha ao limpar dados.",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -291,7 +296,10 @@ export default function Settings() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Tabs defaultValue={searchParams.get('tab') || "profile"} className="space-y-6">
+        <Tabs
+          defaultValue={searchParams.get("tab") || "profile"}
+          className="space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-4 bg-white/10 backdrop-blur-md">
             <TabsTrigger
               value="profile"
@@ -795,33 +803,57 @@ export default function Settings() {
                     <div className="space-y-3">
                       <div className="p-4 bg-white/5 rounded-lg">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-white font-medium">Supabase</span>
-                          <Badge variant={migrationStatus.isConfigured ? "default" : "secondary"}>
-                            {migrationStatus.isConfigured === null ? "Verificando..." :
-                             migrationStatus.isConfigured ? "Configurado" : "Não configurado"}
+                          <span className="text-white font-medium">
+                            Supabase
+                          </span>
+                          <Badge
+                            variant={
+                              migrationStatus.isConfigured
+                                ? "default"
+                                : "secondary"
+                            }
+                          >
+                            {migrationStatus.isConfigured === null
+                              ? "Verificando..."
+                              : migrationStatus.isConfigured
+                                ? "Configurado"
+                                : "Não configurado"}
                           </Badge>
                         </div>
                         <p className="text-sm text-white/70">
                           {migrationStatus.isConfigured
                             ? "Pronto para migração de dados"
-                            : "Configure as variáveis de ambiente primeiro"
-                          }
+                            : "Configure as variáveis de ambiente primeiro"}
                         </p>
                       </div>
 
                       {migrationStatus.dataCounts && (
                         <div className="p-4 bg-white/5 rounded-lg">
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-white font-medium">Dados Offline</span>
-                            <Badge variant="outline" className="text-white border-white/20">
+                            <span className="text-white font-medium">
+                              Dados Offline
+                            </span>
+                            <Badge
+                              variant="outline"
+                              className="text-white border-white/20"
+                            >
                               {migrationStatus.dataCounts.total} registros
                             </Badge>
                           </div>
                           <div className="grid grid-cols-2 gap-2 text-xs text-white/70">
-                            <span>Aeronaves: {migrationStatus.dataCounts.aircraft}</span>
-                            <span>Funcionários: {migrationStatus.dataCounts.employees}</span>
-                            <span>Tarefas: {migrationStatus.dataCounts.tasks}</span>
-                            <span>Voos: {migrationStatus.dataCounts.flightSheets}</span>
+                            <span>
+                              Aeronaves: {migrationStatus.dataCounts.aircraft}
+                            </span>
+                            <span>
+                              Funcionários:{" "}
+                              {migrationStatus.dataCounts.employees}
+                            </span>
+                            <span>
+                              Tarefas: {migrationStatus.dataCounts.tasks}
+                            </span>
+                            <span>
+                              Voos: {migrationStatus.dataCounts.flightSheets}
+                            </span>
                           </div>
                         </div>
                       )}
@@ -830,7 +862,10 @@ export default function Settings() {
                     <div className="space-y-3">
                       <Button
                         onClick={() => setMigrationDialogOpen(true)}
-                        disabled={!migrationStatus.isConfigured || !migrationStatus.dataCounts?.total}
+                        disabled={
+                          !migrationStatus.isConfigured ||
+                          !migrationStatus.dataCounts?.total
+                        }
                         className="aviation-button w-full"
                       >
                         <Upload className="h-4 w-4 mr-2" />
@@ -847,8 +882,8 @@ export default function Settings() {
                       </Button>
 
                       <p className="text-xs text-white/60 text-center">
-                        A migração transfere todos os dados offline para o Supabase,
-                        permitindo sincronização entre dispositivos.
+                        A migração transfere todos os dados offline para o
+                        Supabase, permitindo sincronização entre dispositivos.
                       </p>
                     </div>
                   </div>
@@ -881,7 +916,8 @@ export default function Settings() {
                     </Button>
                   </div>
                   <p className="text-xs text-white/60">
-                    Use os dados demo para testar a migração. Limpe os dados offline quando necessário.
+                    Use os dados demo para testar a migração. Limpe os dados
+                    offline quando necessário.
                   </p>
                 </div>
 

@@ -3,8 +3,8 @@
  * Migrates offline data to Supabase when it becomes available
  */
 
-import { supabase } from './supabase';
-import { offlineService, offlineDb } from './offline-db';
+import { supabase } from "./supabase";
+import { offlineService, offlineDb } from "./offline-db";
 
 interface MigrationResult {
   success: boolean;
@@ -23,7 +23,7 @@ interface MigrationProgress {
   current: number;
   total: number;
   table: string;
-  status: 'migrating' | 'completed' | 'error';
+  status: "migrating" | "completed" | "error";
 }
 
 class MigrationService {
@@ -42,12 +42,12 @@ class MigrationService {
   async isSupabaseConfigured(): Promise<boolean> {
     try {
       if (!supabase) return false;
-      
+
       // Test connection with a simple query
-      const { error } = await supabase.from('aircraft').select('id').limit(1);
+      const { error } = await supabase.from("aircraft").select("id").limit(1);
       return !error;
     } catch (error) {
-      console.warn('Supabase not configured or not accessible:', error);
+      console.warn("Supabase not configured or not accessible:", error);
       return false;
     }
   }
@@ -60,7 +60,7 @@ class MigrationService {
       offlineService.aircraft.getAll(),
       offlineService.employees.getAll(),
       offlineService.tasks.getAll(),
-      offlineService.flightSheets.getAll()
+      offlineService.flightSheets.getAll(),
     ]);
 
     return {
@@ -68,7 +68,8 @@ class MigrationService {
       employees: employees.length,
       tasks: tasks.length,
       flightSheets: flightSheets.length,
-      total: aircraft.length + employees.length + tasks.length + flightSheets.length
+      total:
+        aircraft.length + employees.length + tasks.length + flightSheets.length,
     };
   }
 
@@ -77,11 +78,12 @@ class MigrationService {
    */
   async migrateAllData(): Promise<MigrationResult> {
     const isConfigured = await this.isSupabaseConfigured();
-    
+
     if (!isConfigured) {
       return {
         success: false,
-        message: 'Supabase não está configurado ou não é acessível. Verifique as variáveis de ambiente.'
+        message:
+          "Supabase não está configurado ou não é acessível. Verifique as variáveis de ambiente.",
       };
     }
 
@@ -94,69 +96,82 @@ class MigrationService {
         offlineService.aircraft.getAll(),
         offlineService.employees.getAll(),
         offlineService.tasks.getAll(),
-        offlineService.flightSheets.getAll()
+        offlineService.flightSheets.getAll(),
       ]);
 
-      const totalRecords = aircraft.length + employees.length + tasks.length + flightSheets.length;
+      const totalRecords =
+        aircraft.length + employees.length + tasks.length + flightSheets.length;
       let currentRecord = 0;
 
       // Migrate aircraft
-      this.reportProgress(currentRecord, totalRecords, 'aircraft', 'migrating');
+      this.reportProgress(currentRecord, totalRecords, "aircraft", "migrating");
       const aircraftResult = await this.migrateAircraft(aircraft);
       totalMigrated += aircraftResult.migrated;
       errors.push(...aircraftResult.errors);
       currentRecord += aircraft.length;
 
       // Migrate employees
-      this.reportProgress(currentRecord, totalRecords, 'employees', 'migrating');
+      this.reportProgress(
+        currentRecord,
+        totalRecords,
+        "employees",
+        "migrating",
+      );
       const employeesResult = await this.migrateEmployees(employees);
       totalMigrated += employeesResult.migrated;
       errors.push(...employeesResult.errors);
       currentRecord += employees.length;
 
       // Migrate tasks
-      this.reportProgress(currentRecord, totalRecords, 'tasks', 'migrating');
+      this.reportProgress(currentRecord, totalRecords, "tasks", "migrating");
       const tasksResult = await this.migrateTasks(tasks);
       totalMigrated += tasksResult.migrated;
       errors.push(...tasksResult.errors);
       currentRecord += tasks.length;
 
       // Migrate flight sheets
-      this.reportProgress(currentRecord, totalRecords, 'flight_sheets', 'migrating');
+      this.reportProgress(
+        currentRecord,
+        totalRecords,
+        "flight_sheets",
+        "migrating",
+      );
       const flightSheetsResult = await this.migrateFlightSheets(flightSheets);
       totalMigrated += flightSheetsResult.migrated;
       errors.push(...flightSheetsResult.errors);
 
-      this.reportProgress(totalRecords, totalRecords, 'completed', 'completed');
+      this.reportProgress(totalRecords, totalRecords, "completed", "completed");
 
       return {
         success: errors.length === 0,
-        message: errors.length === 0 
-          ? `Migração concluída com sucesso! ${totalMigrated} registros migrados.`
-          : `Migração parcialmente concluída. ${totalMigrated} registros migrados com ${errors.length} erros.`,
+        message:
+          errors.length === 0
+            ? `Migração concluída com sucesso! ${totalMigrated} registros migrados.`
+            : `Migração parcialmente concluída. ${totalMigrated} registros migrados com ${errors.length} erros.`,
         details: {
           aircraft: aircraftResult.migrated,
           employees: employeesResult.migrated,
           tasks: tasksResult.migrated,
           flightSheets: flightSheetsResult.migrated,
           total: totalMigrated,
-          errors
-        }
+          errors,
+        },
       };
-
     } catch (error) {
-      console.error('Migration failed:', error);
+      console.error("Migration failed:", error);
       return {
         success: false,
-        message: `Erro na migração: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
+        message: `Erro na migração: ${error instanceof Error ? error.message : "Erro desconhecido"}`,
         details: {
           aircraft: 0,
           employees: 0,
           tasks: 0,
           flightSheets: 0,
           total: 0,
-          errors: [error instanceof Error ? error.message : 'Erro desconhecido']
-        }
+          errors: [
+            error instanceof Error ? error.message : "Erro desconhecido",
+          ],
+        },
       };
     }
   }
@@ -164,7 +179,9 @@ class MigrationService {
   /**
    * Migrate aircraft data
    */
-  private async migrateAircraft(aircraft: any[]): Promise<{migrated: number, errors: string[]}> {
+  private async migrateAircraft(
+    aircraft: any[],
+  ): Promise<{ migrated: number; errors: string[] }> {
     const errors: string[] = [];
     let migrated = 0;
 
@@ -172,9 +189,9 @@ class MigrationService {
       try {
         // Check if already exists
         const { data: existing } = await supabase
-          .from('aircraft')
-          .select('id')
-          .eq('id', item.id)
+          .from("aircraft")
+          .select("id")
+          .eq("id", item.id)
           .single();
 
         const aircraftData = {
@@ -186,21 +203,21 @@ class MigrationService {
           last_inspection: item.last_inspection,
           flight_hours: item.flight_hours,
           created_at: item.created_at,
-          updated_at: item.updated_at
+          updated_at: item.updated_at,
         };
 
         if (existing) {
           // Update existing
           const { error } = await supabase
-            .from('aircraft')
+            .from("aircraft")
             .update(aircraftData)
-            .eq('id', item.id);
+            .eq("id", item.id);
 
           if (error) throw error;
         } else {
           // Insert new
           const { error } = await supabase
-            .from('aircraft')
+            .from("aircraft")
             .insert(aircraftData);
 
           if (error) throw error;
@@ -208,7 +225,9 @@ class MigrationService {
 
         migrated++;
       } catch (error) {
-        errors.push(`Aircraft ${item.registration}: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+        errors.push(
+          `Aircraft ${item.registration}: ${error instanceof Error ? error.message : "Erro desconhecido"}`,
+        );
       }
     }
 
@@ -218,16 +237,18 @@ class MigrationService {
   /**
    * Migrate employees data
    */
-  private async migrateEmployees(employees: any[]): Promise<{migrated: number, errors: string[]}> {
+  private async migrateEmployees(
+    employees: any[],
+  ): Promise<{ migrated: number; errors: string[] }> {
     const errors: string[] = [];
     let migrated = 0;
 
     for (const item of employees) {
       try {
         const { data: existing } = await supabase
-          .from('employees')
-          .select('id')
-          .eq('id', item.id)
+          .from("employees")
+          .select("id")
+          .eq("id", item.id)
           .single();
 
         const employeeData = {
@@ -239,19 +260,19 @@ class MigrationService {
           hire_date: item.hire_date,
           status: item.status,
           created_at: item.created_at,
-          updated_at: item.updated_at
+          updated_at: item.updated_at,
         };
 
         if (existing) {
           const { error } = await supabase
-            .from('employees')
+            .from("employees")
             .update(employeeData)
-            .eq('id', item.id);
+            .eq("id", item.id);
 
           if (error) throw error;
         } else {
           const { error } = await supabase
-            .from('employees')
+            .from("employees")
             .insert(employeeData);
 
           if (error) throw error;
@@ -259,7 +280,9 @@ class MigrationService {
 
         migrated++;
       } catch (error) {
-        errors.push(`Employee ${item.name}: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+        errors.push(
+          `Employee ${item.name}: ${error instanceof Error ? error.message : "Erro desconhecido"}`,
+        );
       }
     }
 
@@ -269,16 +292,18 @@ class MigrationService {
   /**
    * Migrate tasks data
    */
-  private async migrateTasks(tasks: any[]): Promise<{migrated: number, errors: string[]}> {
+  private async migrateTasks(
+    tasks: any[],
+  ): Promise<{ migrated: number; errors: string[] }> {
     const errors: string[] = [];
     let migrated = 0;
 
     for (const item of tasks) {
       try {
         const { data: existing } = await supabase
-          .from('tasks')
-          .select('id')
-          .eq('id', item.id)
+          .from("tasks")
+          .select("id")
+          .eq("id", item.id)
           .single();
 
         const taskData = {
@@ -291,27 +316,27 @@ class MigrationService {
           status: item.status,
           due_date: item.due_date,
           created_at: item.created_at,
-          updated_at: item.updated_at
+          updated_at: item.updated_at,
         };
 
         if (existing) {
           const { error } = await supabase
-            .from('tasks')
+            .from("tasks")
             .update(taskData)
-            .eq('id', item.id);
+            .eq("id", item.id);
 
           if (error) throw error;
         } else {
-          const { error } = await supabase
-            .from('tasks')
-            .insert(taskData);
+          const { error } = await supabase.from("tasks").insert(taskData);
 
           if (error) throw error;
         }
 
         migrated++;
       } catch (error) {
-        errors.push(`Task ${item.title}: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+        errors.push(
+          `Task ${item.title}: ${error instanceof Error ? error.message : "Erro desconhecido"}`,
+        );
       }
     }
 
@@ -321,16 +346,18 @@ class MigrationService {
   /**
    * Migrate flight sheets data
    */
-  private async migrateFlightSheets(flightSheets: any[]): Promise<{migrated: number, errors: string[]}> {
+  private async migrateFlightSheets(
+    flightSheets: any[],
+  ): Promise<{ migrated: number; errors: string[] }> {
     const errors: string[] = [];
     let migrated = 0;
 
     for (const item of flightSheets) {
       try {
         const { data: existing } = await supabase
-          .from('flight_sheets')
-          .select('id')
-          .eq('id', item.id)
+          .from("flight_sheets")
+          .select("id")
+          .eq("id", item.id)
           .single();
 
         const flightSheetData = {
@@ -348,19 +375,19 @@ class MigrationService {
           notes: item.notes,
           status: item.status,
           created_at: item.created_at,
-          updated_at: item.updated_at
+          updated_at: item.updated_at,
         };
 
         if (existing) {
           const { error } = await supabase
-            .from('flight_sheets')
+            .from("flight_sheets")
             .update(flightSheetData)
-            .eq('id', item.id);
+            .eq("id", item.id);
 
           if (error) throw error;
         } else {
           const { error } = await supabase
-            .from('flight_sheets')
+            .from("flight_sheets")
             .insert(flightSheetData);
 
           if (error) throw error;
@@ -368,7 +395,9 @@ class MigrationService {
 
         migrated++;
       } catch (error) {
-        errors.push(`Flight ${item.flight_number}: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+        errors.push(
+          `Flight ${item.flight_number}: ${error instanceof Error ? error.message : "Erro desconhecido"}`,
+        );
       }
     }
 
@@ -378,13 +407,18 @@ class MigrationService {
   /**
    * Report migration progress
    */
-  private reportProgress(current: number, total: number, table: string, status: 'migrating' | 'completed' | 'error') {
+  private reportProgress(
+    current: number,
+    total: number,
+    table: string,
+    status: "migrating" | "completed" | "error",
+  ) {
     if (this.onProgress) {
       this.onProgress({
         current,
         total,
         table,
-        status
+        status,
       });
     }
   }
@@ -395,9 +429,9 @@ class MigrationService {
   async clearSyncQueue(): Promise<void> {
     try {
       await offlineDb.syncQueue.clear();
-      console.log('Sync queue cleared after successful migration');
+      console.log("Sync queue cleared after successful migration");
     } catch (error) {
-      console.error('Failed to clear sync queue:', error);
+      console.error("Failed to clear sync queue:", error);
     }
   }
 
@@ -407,23 +441,28 @@ class MigrationService {
   async markAllAsSynced(): Promise<void> {
     try {
       // Update all records to mark as synced
-      const tables = ['aircraft', 'employees', 'tasks', 'flightSheets'] as const;
-      
+      const tables = [
+        "aircraft",
+        "employees",
+        "tasks",
+        "flightSheets",
+      ] as const;
+
       for (const tableName of tables) {
         const table = offlineDb[tableName];
         const records = await table.toArray();
-        
+
         for (const record of records) {
           await table.update(record.id, {
             synced: true,
-            lastModified: new Date()
+            lastModified: new Date(),
           });
         }
       }
 
-      console.log('All offline data marked as synced');
+      console.log("All offline data marked as synced");
     } catch (error) {
-      console.error('Failed to mark data as synced:', error);
+      console.error("Failed to mark data as synced:", error);
     }
   }
 }

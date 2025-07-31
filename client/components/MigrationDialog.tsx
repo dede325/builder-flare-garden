@@ -1,15 +1,21 @@
-import { useState, useEffect } from 'react';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle 
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { CheckCircle, XCircle, Database, Upload, AlertTriangle } from 'lucide-react';
-import { migrationService } from '@/lib/migration-service';
+import { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import {
+  CheckCircle,
+  XCircle,
+  Database,
+  Upload,
+  AlertTriangle,
+} from "lucide-react";
+import { migrationService } from "@/lib/migration-service";
 
 interface MigrationDialogProps {
   open: boolean;
@@ -21,10 +27,14 @@ interface MigrationProgress {
   current: number;
   total: number;
   table: string;
-  status: 'migrating' | 'completed' | 'error';
+  status: "migrating" | "completed" | "error";
 }
 
-export function MigrationDialog({ open, onOpenChange, onComplete }: MigrationDialogProps) {
+export function MigrationDialog({
+  open,
+  onOpenChange,
+  onComplete,
+}: MigrationDialogProps) {
   const [isConfigured, setIsConfigured] = useState<boolean | null>(null);
   const [dataCounts, setDataCounts] = useState<any>(null);
   const [migrating, setMigrating] = useState(false);
@@ -51,7 +61,7 @@ export function MigrationDialog({ open, onOpenChange, onComplete }: MigrationDia
   const handleMigrate = async () => {
     setMigrating(true);
     setResult(null);
-    
+
     // Set up progress callback
     migrationService.setProgressCallback((progressData) => {
       setProgress(progressData);
@@ -65,7 +75,7 @@ export function MigrationDialog({ open, onOpenChange, onComplete }: MigrationDia
         // Clear sync queue and mark as synced
         await migrationService.clearSyncQueue();
         await migrationService.markAllAsSynced();
-        
+
         if (onComplete) {
           onComplete();
         }
@@ -73,7 +83,7 @@ export function MigrationDialog({ open, onOpenChange, onComplete }: MigrationDia
     } catch (error) {
       setResult({
         success: false,
-        message: `Erro durante a migração: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
+        message: `Erro durante a migração: ${error instanceof Error ? error.message : "Erro desconhecido"}`,
       });
     } finally {
       setMigrating(false);
@@ -117,12 +127,11 @@ export function MigrationDialog({ open, onOpenChange, onComplete }: MigrationDia
               <XCircle className="h-4 w-4 text-red-400" />
             )}
             <span className="text-white text-sm">
-              {isConfigured === null 
-                ? 'Verificando configuração...'
-                : isConfigured 
-                ? 'Supabase configurado'
-                : 'Supabase não configurado'
-              }
+              {isConfigured === null
+                ? "Verificando configuração..."
+                : isConfigured
+                  ? "Supabase configurado"
+                  : "Supabase não configurado"}
             </span>
           </div>
 
@@ -163,7 +172,8 @@ export function MigrationDialog({ open, onOpenChange, onComplete }: MigrationDia
               <div className="flex items-center gap-2 text-white">
                 <Upload className="h-4 w-4 animate-pulse" />
                 <span className="text-sm">
-                  Migrando {progress.table}... ({progress.current}/{progress.total})
+                  Migrando {progress.table}... ({progress.current}/
+                  {progress.total})
                 </span>
               </div>
               <Progress value={getProgressPercentage()} className="w-full" />
@@ -175,11 +185,13 @@ export function MigrationDialog({ open, onOpenChange, onComplete }: MigrationDia
 
           {/* Migration Result */}
           {result && (
-            <div className={`p-3 rounded-lg border ${
-              result.success 
-                ? 'bg-green-500/20 border-green-500/30' 
-                : 'bg-red-500/20 border-red-500/30'
-            }`}>
+            <div
+              className={`p-3 rounded-lg border ${
+                result.success
+                  ? "bg-green-500/20 border-green-500/30"
+                  : "bg-red-500/20 border-red-500/30"
+              }`}
+            >
               <div className="flex items-start gap-2">
                 {result.success ? (
                   <CheckCircle className="h-4 w-4 text-green-400 mt-0.5 flex-shrink-0" />
@@ -187,9 +199,11 @@ export function MigrationDialog({ open, onOpenChange, onComplete }: MigrationDia
                   <AlertTriangle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
                 )}
                 <div className="space-y-1">
-                  <p className={`text-sm font-medium ${
-                    result.success ? 'text-green-200' : 'text-red-200'
-                  }`}>
+                  <p
+                    className={`text-sm font-medium ${
+                      result.success ? "text-green-200" : "text-red-200"
+                    }`}
+                  >
                     {result.message}
                   </p>
                   {result.details && (
@@ -201,11 +215,18 @@ export function MigrationDialog({ open, onOpenChange, onComplete }: MigrationDia
                       {result.details.errors?.length > 0 && (
                         <div className="mt-2">
                           <p className="text-red-300 font-medium">Erros:</p>
-                          {result.details.errors.slice(0, 3).map((error: string, index: number) => (
-                            <p key={index} className="text-red-200 text-xs">• {error}</p>
-                          ))}
+                          {result.details.errors
+                            .slice(0, 3)
+                            .map((error: string, index: number) => (
+                              <p key={index} className="text-red-200 text-xs">
+                                • {error}
+                              </p>
+                            ))}
                           {result.details.errors.length > 3 && (
-                            <p className="text-red-200 text-xs">... e mais {result.details.errors.length - 3} erros</p>
+                            <p className="text-red-200 text-xs">
+                              ... e mais {result.details.errors.length - 3}{" "}
+                              erros
+                            </p>
                           )}
                         </div>
                       )}
@@ -219,31 +240,30 @@ export function MigrationDialog({ open, onOpenChange, onComplete }: MigrationDia
           {/* Actions */}
           <div className="flex gap-2 pt-2">
             {!migrating && !result && isConfigured && dataCounts?.total > 0 && (
-              <Button 
-                onClick={handleMigrate} 
+              <Button
+                onClick={handleMigrate}
                 className="aviation-button flex-1"
               >
                 <Upload className="h-4 w-4 mr-2" />
                 Iniciar Migração
               </Button>
             )}
-            
+
             {!migrating && (!isConfigured || dataCounts?.total === 0) && (
               <div className="text-center text-white/70 text-sm py-4">
-                {!isConfigured 
-                  ? 'Configure o Supabase primeiro'
-                  : 'Nenhum dado offline para migrar'
-                }
+                {!isConfigured
+                  ? "Configure o Supabase primeiro"
+                  : "Nenhum dado offline para migrar"}
               </div>
             )}
 
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={handleClose}
               disabled={migrating}
               className="border-white/20 text-white hover:bg-white/10"
             >
-              {result?.success ? 'Concluir' : 'Cancelar'}
+              {result?.success ? "Concluir" : "Cancelar"}
             </Button>
           </div>
         </div>
