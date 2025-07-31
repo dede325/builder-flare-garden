@@ -1885,87 +1885,35 @@ export default function CleaningForms() {
       </Dialog>
 
       {/* QR Code Dialog */}
-      <Dialog open={!!showQRDialog} onOpenChange={() => setShowQRDialog(null)}>
-        <DialogContent className="max-w-md bg-aviation-gray-800 border-white/20">
-          <DialogHeader>
-            <DialogTitle className="text-white">
-              QR Code - {showQRDialog?.code}
-            </DialogTitle>
-            <DialogDescription className="text-white/70">
-              Escaneie para acessar a folha online ou compartilhar
-            </DialogDescription>
-          </DialogHeader>
+      {showQRDialog && (
+        <Dialog open={!!showQRDialog} onOpenChange={() => setShowQRDialog(null)}>
+          <DialogContent className="max-w-2xl bg-aviation-gray-800 border-white/20">
+            <DialogHeader>
+              <DialogTitle className="text-white flex items-center">
+                <QrCode className="h-5 w-5 mr-2" />
+                QR Code da Folha
+              </DialogTitle>
+              <DialogDescription className="text-white/70">
+                Código único e QR code para acesso digital à folha
+              </DialogDescription>
+            </DialogHeader>
 
-          {showQRDialog && (
-            <div className="flex flex-col items-center space-y-4">
-              <div className="bg-white p-4 rounded-lg">
-                <img
-                  src={showQRDialog.qrCode}
-                  alt="QR Code"
-                  className="w-48 h-48"
-                />
-              </div>
-
-              <div className="text-center">
-                <p className="text-white/80 text-sm mb-2">Link para acesso:</p>
-                <p className="text-aviation-blue-300 text-xs break-all mb-4">
-                  {`${window.location.origin}/cleaning-forms/${showQRDialog.code}`}
-                </p>
-
-                {import.meta.env.VITE_SUPABASE_URL && (
-                  <>
-                    <p className="text-white/80 text-sm mb-2">
-                      Link do PDF (Supabase Storage):
-                    </p>
-                    <p className="text-aviation-blue-300 text-xs break-all">
-                      {`${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/documents/cleaning-forms/${showQRDialog.code}.pdf`}
-                    </p>
-                  </>
-                )}
-              </div>
-
-              <div className="flex flex-col space-y-2 w-full">
-                <div className="flex space-x-2 w-full">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      const formUrl = `${window.location.origin}/cleaning-forms/${showQRDialog.code}`;
-                      navigator.clipboard.writeText(formUrl);
-                    }}
-                    className="flex-1 border-white/30 text-white hover:bg-white/20"
-                  >
-                    Copiar Link
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      const link = document.createElement("a");
-                      link.download = `qr-code-${showQRDialog.code}.png`;
-                      link.href = showQRDialog.qrCode;
-                      link.click();
-                    }}
-                    className="flex-1 aviation-button"
-                  >
-                    Baixar QR
-                  </Button>
-                </div>
-
-                {import.meta.env.VITE_SUPABASE_URL && (
-                  <Button
-                    onClick={() => {
-                      const pdfUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/documents/cleaning-forms/${showQRDialog.code}.pdf`;
-                      window.open(pdfUrl, "_blank");
-                    }}
-                    className="w-full aviation-button"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Abrir PDF do Storage
-                  </Button>
-                )}
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+            <QRCodeDisplay
+              formCode={showQRDialog.code}
+              formId={showQRDialog.id}
+              formData={{
+                date: showQRDialog.date,
+                location: showQRDialog.location,
+                shift: showQRDialog.shift,
+                status: showQRDialog.status
+              }}
+              size="large"
+              showDetails={true}
+              showActions={true}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
