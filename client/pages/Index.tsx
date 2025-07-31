@@ -1,62 +1,208 @@
-import { DemoResponse } from "@shared/api";
-import { useEffect, useState } from "react";
+import { useState } from 'react';
+import { Plane, Users, CheckSquare, FileText, Activity, Shield, Cloud, Wifi, WifiOff } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 export default function Index() {
-  const [exampleFromServer, setExampleFromServer] = useState("");
-  // Fetch users on component mount
-  useEffect(() => {
-    fetchDemo();
-  }, []);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [user] = useState({ name: 'João Silva', role: 'Gestor de Operações' });
 
-  // Example of how to fetch data from the server (if needed)
-  const fetchDemo = async () => {
-    try {
-      const response = await fetch("/api/demo");
-      const data = (await response.json()) as DemoResponse;
-      setExampleFromServer(data.message);
-    } catch (error) {
-      console.error("Error fetching hello:", error);
-    }
-  };
+  // Mock data for demonstration
+  const stats = [
+    { title: 'Aeronaves Ativas', value: '12', icon: Plane, change: '+2' },
+    { title: 'Funcionários', value: '48', icon: Users, change: '+3' },
+    { title: 'Tarefas Pendentes', value: '23', icon: CheckSquare, change: '-5' },
+    { title: 'Folhas Abertas', value: '8', icon: FileText, change: '+1' },
+  ];
+
+  const recentActivities = [
+    { id: 1, action: 'Aeronave PT-ABC inspecionada', time: '2 min atrás', type: 'aircraft' },
+    { id: 2, action: 'Nova tarefa atribuída a Maria Santos', time: '15 min atrás', type: 'task' },
+    { id: 3, action: 'Folha de voo #2024-001 finalizada', time: '1h atrás', type: 'sheet' },
+    { id: 4, action: 'Funcionário Carlos Lima adicionado', time: '2h atrás', type: 'employee' },
+  ];
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
-      <div className="text-center">
-        {/* TODO: FUSION_GENERATION_APP_PLACEHOLDER replace everything here with the actual app! */}
-        <h1 className="text-2xl font-semibold text-slate-800 flex items-center justify-center gap-3">
-          <svg
-            className="animate-spin h-8 w-8 text-slate-400"
-            viewBox="0 0 50 50"
-          >
-            <circle
-              className="opacity-30"
-              cx="25"
-              cy="25"
-              r="20"
-              stroke="currentColor"
-              strokeWidth="5"
-              fill="none"
-            />
-            <circle
-              className="text-slate-600"
-              cx="25"
-              cy="25"
-              r="20"
-              stroke="currentColor"
-              strokeWidth="5"
-              fill="none"
-              strokeDasharray="100"
-              strokeDashoffset="75"
-            />
-          </svg>
-          Generating your app...
-        </h1>
-        <p className="mt-4 text-slate-600 max-w-md">
-          Watch the chat on the left for updates that might need your attention
-          to finish generating
-        </p>
-        <p className="mt-4 hidden max-w-md">{exampleFromServer}</p>
-      </div>
+    <div className="min-h-screen bg-aviation-gradient">
+      {/* Header */}
+      <header className="bg-white/10 backdrop-blur-md border-b border-white/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-3">
+              <Plane className="h-8 w-8 text-white" />
+              <h1 className="text-2xl font-bold text-white">AviationOps</h1>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                {isOnline ? (
+                  <Wifi className="h-5 w-5 text-green-400" />
+                ) : (
+                  <WifiOff className="h-5 w-5 text-red-400" />
+                )}
+                <Badge variant={isOnline ? "default" : "destructive"}>
+                  {isOnline ? 'Online' : 'Offline'}
+                </Badge>
+              </div>
+              
+              <div className="text-right">
+                <p className="text-sm text-white font-medium">{user.name}</p>
+                <p className="text-xs text-white/70">{user.role}</p>
+              </div>
+              
+              <div className="h-10 w-10 bg-aviation-blue-600 rounded-full flex items-center justify-center">
+                <span className="text-white font-semibold">
+                  {user.name.split(' ').map(n => n[0]).join('')}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Welcome Section */}
+        <div className="mb-8">
+          <h2 className="text-4xl font-bold text-white mb-2">
+            Bem-vindo ao Sistema de Gestão
+          </h2>
+          <p className="text-xl text-white/80">
+            Gerencie aeronaves, funcionários e operações em um só lugar
+          </p>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {stats.map((stat, index) => (
+            <Card key={index} className="glass-card border-white/20 hover:bg-white/20 transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-white/70 text-sm font-medium">{stat.title}</p>
+                    <p className="text-3xl font-bold text-white">{stat.value}</p>
+                    <p className="text-aviation-blue-300 text-sm">
+                      {stat.change} esta semana
+                    </p>
+                  </div>
+                  <div className="h-12 w-12 bg-aviation-blue-600/30 rounded-lg flex items-center justify-center">
+                    <stat.icon className="h-6 w-6 text-aviation-blue-300" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          <div className="lg:col-span-2">
+            <Card className="glass-card border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center space-x-2">
+                  <Activity className="h-5 w-5" />
+                  <span>Ações Rápidas</span>
+                </CardTitle>
+                <CardDescription className="text-white/70">
+                  Acesse as principais funcionalidades do sistema
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Button className="aviation-button justify-start h-16">
+                  <Plane className="h-6 w-6 mr-3" />
+                  <div className="text-left">
+                    <p className="font-semibold">Gerenciar Aeronaves</p>
+                    <p className="text-sm opacity-80">Cadastro e manutenção</p>
+                  </div>
+                </Button>
+                
+                <Button className="aviation-button justify-start h-16">
+                  <Users className="h-6 w-6 mr-3" />
+                  <div className="text-left">
+                    <p className="font-semibold">Funcionários</p>
+                    <p className="text-sm opacity-80">Equipe e atribuições</p>
+                  </div>
+                </Button>
+                
+                <Button className="aviation-button justify-start h-16">
+                  <CheckSquare className="h-6 w-6 mr-3" />
+                  <div className="text-left">
+                    <p className="font-semibold">Tarefas</p>
+                    <p className="text-sm opacity-80">Acompanhar progresso</p>
+                  </div>
+                </Button>
+                
+                <Button className="aviation-button justify-start h-16">
+                  <FileText className="h-6 w-6 mr-3" />
+                  <div className="text-left">
+                    <p className="font-semibold">Folhas de Voo</p>
+                    <p className="text-sm opacity-80">Documentação</p>
+                  </div>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Recent Activities */}
+          <Card className="glass-card border-white/20">
+            <CardHeader>
+              <CardTitle className="text-white">Atividades Recentes</CardTitle>
+              <CardDescription className="text-white/70">
+                Últimas atualizações do sistema
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {recentActivities.map((activity) => (
+                <div key={activity.id} className="flex items-start space-x-3">
+                  <div className="h-2 w-2 bg-aviation-blue-400 rounded-full mt-2"></div>
+                  <div className="flex-1">
+                    <p className="text-white text-sm">{activity.action}</p>
+                    <p className="text-white/60 text-xs">{activity.time}</p>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* System Status */}
+        <Card className="glass-card border-white/20">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center space-x-2">
+              <Shield className="h-5 w-5" />
+              <span>Status do Sistema</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="flex items-center space-x-3">
+                <div className="h-3 w-3 bg-green-400 rounded-full animate-pulse"></div>
+                <div>
+                  <p className="text-white font-medium">Banco de Dados</p>
+                  <p className="text-white/70 text-sm">Conectado</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-3">
+                <div className="h-3 w-3 bg-green-400 rounded-full animate-pulse"></div>
+                <div>
+                  <p className="text-white font-medium">Supabase</p>
+                  <p className="text-white/70 text-sm">Online</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-3">
+                <Cloud className="h-5 w-5 text-aviation-blue-300" />
+                <div>
+                  <p className="text-white font-medium">Sincronização</p>
+                  <p className="text-white/70 text-sm">Ativa</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </main>
     </div>
   );
 }
