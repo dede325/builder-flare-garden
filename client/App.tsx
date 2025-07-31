@@ -132,10 +132,7 @@ const App = () => (
   </ErrorBoundary>
 );
 
-// Prevent multiple root creation in development
+// Create root and render app
 const rootElement = document.getElementById("root")!;
-if (!rootElement._reactRootContainer) {
-  const root = createRoot(rootElement);
-  (rootElement as any)._reactRootContainer = root;
-  root.render(<App />);
-}
+const root = createRoot(rootElement);
+root.render(<App />);
