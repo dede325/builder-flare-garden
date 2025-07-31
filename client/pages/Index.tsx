@@ -397,13 +397,55 @@ export default function Index() {
         {activeTab === "history" && (
           <div className="px-4 space-y-6">
             <div className="text-center py-6">
-              <h2 className="text-2xl font-bold text-white mb-2">Histórico</h2>
+              <h2 className="text-2xl font-bold text-white mb-2">Histórico e Exportação</h2>
               <p className="text-blue-200 text-sm">
-                Atividades recentes do sistema
+                Visualize e exporte dados de limpeza
               </p>
             </div>
 
+            {/* Quick Access to History Export Panel */}
+            <Link to="/history-export">
+              <Card className="bg-gradient-to-br from-purple-500/20 to-purple-600/30 backdrop-blur-xl border border-purple-400/50 hover:scale-105 transition-all duration-300 touch-manipulation">
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg">
+                      <History className="h-8 w-8 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-white mb-1">
+                        Painel de Histórico
+                      </h3>
+                      <p className="text-sm text-purple-300">
+                        Acesse o painel completo de histórico e exportação
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Export Options Quick Access */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20">
+                <CardContent className="p-4 text-center">
+                  <Download className="h-6 w-6 text-green-400 mx-auto mb-2" />
+                  <p className="text-lg font-bold text-white">Exportar</p>
+                  <p className="text-xs text-green-200">CSV e ZIP disponíveis</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20">
+                <CardContent className="p-4 text-center">
+                  <FileText className="h-6 w-6 text-blue-400 mx-auto mb-2" />
+                  <p className="text-lg font-bold text-white">Filtros</p>
+                  <p className="text-xs text-blue-200">Data, local, funcionário</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Recent Activities */}
             <div className="space-y-3">
+              <h3 className="text-lg font-semibold text-white">Atividades Recentes</h3>
               {recentActivities.map((activity) => (
                 <Card key={activity.id} className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20">
                   <CardContent className="p-4">
