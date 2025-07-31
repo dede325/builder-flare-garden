@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plane, Users, CheckSquare, FileText, Activity, Shield, Cloud, Wifi, WifiOff } from 'lucide-react';
+import { Plane, Users, CheckSquare, FileText, Activity, Shield, Cloud, Wifi, WifiOff, LogOut } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
