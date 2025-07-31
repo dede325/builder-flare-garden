@@ -44,6 +44,7 @@ import { migrationService } from "@/lib/migration-service";
 
 export default function Settings() {
   const { user: authUser, signOut } = useAuth();
+  const [searchParams] = useSearchParams();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [migrationDialogOpen, setMigrationDialogOpen] = useState(false);
   const [migrationStatus, setMigrationStatus] = useState<{
