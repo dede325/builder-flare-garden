@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MigrationNotification } from "@/components/MigrationNotification";
+import SyncStatusIndicator from "@/components/SyncStatusIndicator";
 
 export default function Index() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
