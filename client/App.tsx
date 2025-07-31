@@ -1,6 +1,6 @@
 import "./global.css";
 
-import { Component, ErrorInfo, ReactNode } from "react";
+import { Component, ErrorInfo, ReactNode, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { createRoot } from "react-dom/client";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -17,6 +17,7 @@ import AircraftManager from "./pages/AircraftManager";
 import UserManagement from "./pages/UserManagement";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import { setupPhotoAutoSync } from "@/lib/photo-evidence-service";
 
 // Error Boundary Component
 class ErrorBoundary extends Component<
