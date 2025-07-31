@@ -368,9 +368,8 @@ export default function AircraftManager() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return 'bg-green-500';
-      case 'maintenance': return 'bg-yellow-500';
       case 'inactive': return 'bg-gray-500';
-      case 'grounded': return 'bg-red-500';
+      case 'out_of_service': return 'bg-red-500';
       default: return 'bg-gray-500';
     }
   };
