@@ -101,6 +101,63 @@ export default function CleaningForms() {
     loadData();
   }, []);
 
+  // Auto-save effect
+  useEffect(() => {
+    if (formData.location || formData.employees.length > 0 || formData.interventionTypes.length > 0) {
+      setAutoSaveStatus('saving');
+
+      // Clear existing timeout
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+
+      // Set new timeout for auto-save
+      autoSaveTimeoutRef.current = setTimeout(() => {
+        autoSave();
+      }, 2000); // Auto-save after 2 seconds of inactivity
+    }
+
+    return () => {
+      if (autoSaveTimeoutRef.current) {
+        clearTimeout(autoSaveTimeoutRef.current);
+      }
+    };
+  }, [formData]);
+
+  const autoSave = () => {
+    try {
+      const draftKey = `cleaning_form_draft_${Date.now()}`;
+      const existingDrafts = JSON.parse(localStorage.getItem('cleaning_form_drafts') || '[]');
+
+      // Keep only the latest 5 drafts
+      const updatedDrafts = [
+        {
+          key: draftKey,
+          data: formData,
+          timestamp: new Date().toISOString(),
+          description: `${formData.location || 'Sem local'} - ${format(new Date(), 'dd/MM HH:mm')}`
+        },
+        ...existingDrafts.slice(0, 4)
+      ];
+
+      localStorage.setItem('cleaning_form_drafts', JSON.stringify(updatedDrafts));
+      localStorage.setItem(draftKey, JSON.stringify(formData));
+
+      setAutoSaveStatus('saved');
+
+      // Reset status after 3 seconds
+      setTimeout(() => {
+        setAutoSaveStatus('idle');
+      }, 3000);
+    } catch (error) {
+      console.error('Auto-save failed:', error);
+      setAutoSaveStatus('error');
+      setTimeout(() => {
+        setAutoSaveStatus('idle');
+      }, 3000);
+    }
+  };
+
   const loadData = async () => {
     try {
       const [aircraftResult, employeesResult] = await Promise.all([
