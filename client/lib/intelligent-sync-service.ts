@@ -999,7 +999,15 @@ export const intelligentSyncService = new IntelligentSyncService();
 
 // Auto-initialize and setup
 export const setupIntelligentSync = () => {
-  return intelligentSyncService;
+  // Start any background processes if needed
+  intelligentSyncService.startBackgroundSync();
+
+  return {
+    destroy: () => {
+      // Clean up any background processes
+      intelligentSyncService.stopBackgroundSync();
+    }
+  };
 };
 
 export type { SyncStats, ConnectionStatus, SyncLog };
