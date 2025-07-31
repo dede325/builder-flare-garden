@@ -385,19 +385,19 @@ export default function AircraftManager() {
     }
   };
 
-  const getInspectionStatus = (nextInspection: string) => {
-    if (!nextInspection) return null;
-    
-    const nextDate = new Date(nextInspection);
+  const getCleaningStatus = (lastCleaningDate: string) => {
+    if (!lastCleaningDate) return { text: 'Nunca', color: 'bg-gray-500', urgent: false };
+
+    const lastDate = new Date(lastCleaningDate);
     const now = new Date();
-    const diffDays = Math.ceil((nextDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (diffDays < 0) {
-      return { text: 'Vencida', color: 'text-red-400' };
-    } else if (diffDays <= 30) {
-      return { text: `${diffDays} dias`, color: 'text-yellow-400' };
+    const diffDays = Math.ceil((now.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (diffDays > 30) {
+      return { text: `${diffDays}d atrás`, color: 'bg-red-500', urgent: true };
+    } else if (diffDays > 14) {
+      return { text: `${diffDays}d atrás`, color: 'bg-yellow-500', urgent: false };
     } else {
-      return { text: `${diffDays} dias`, color: 'text-green-400' };
+      return { text: `${diffDays}d atrás`, color: 'bg-green-500', urgent: false };
     }
   };
 
