@@ -858,6 +858,37 @@ export default function Settings() {
 
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-white flex items-center">
+                    <Database className="h-5 w-5 mr-2" />
+                    Dados de Teste
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Button
+                      onClick={handlePopulateDemoData}
+                      variant="outline"
+                      className="border-white/20 text-white hover:bg-white/10"
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      Criar Dados Demo
+                    </Button>
+
+                    <Button
+                      onClick={handleClearOfflineData}
+                      variant="outline"
+                      className="border-red-500/50 text-red-200 hover:bg-red-500/20"
+                    >
+                      <Database className="h-4 w-4 mr-2" />
+                      Limpar Dados Offline
+                    </Button>
+                  </div>
+                  <p className="text-xs text-white/60">
+                    Use os dados demo para testar a migração. Limpe os dados offline quando necessário.
+                  </p>
+                </div>
+
+                <Separator className="bg-white/20" />
+
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-white flex items-center">
                     <Plane className="h-5 w-5 mr-2" />
                     Status da Sincronização
                   </h3>
