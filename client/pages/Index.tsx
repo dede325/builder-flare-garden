@@ -379,33 +379,8 @@ export default function Index() {
               </div>
             </div>
 
-            {/* Offline Status & Sync */}
-            <Card className="bg-gradient-to-br from-slate-800/50 to-slate-700/50 backdrop-blur-xl border border-white/20">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <Cloud className={`h-5 w-5 ${isOnline ? "text-green-400" : "text-orange-400"}`} />
-                    <div>
-                      <p className="text-white font-medium">
-                        Modo {isOnline ? "Online" : "Offline"}
-                      </p>
-                      <p className="text-xs text-blue-200">
-                        {isOnline ? "Dados sincronizados" : "Trabalhando offline"}
-                      </p>
-                    </div>
-                  </div>
-                  <Button
-                    onClick={handleSync}
-                    variant="outline"
-                    size="sm"
-                    className="border-blue-400/50 text-blue-300 hover:bg-blue-500/20 touch-manipulation"
-                  >
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Sincronizar agora
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Intelligent Sync Status */}
+            <SyncStatusIndicator showManualSync={true} />
           </div>
         )}
 
