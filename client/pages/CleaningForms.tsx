@@ -1165,6 +1165,239 @@ export default function CleaningForms() {
                   </div>
                 </TabsContent>
 
+                <TabsContent value="photos" className="space-y-6 mt-6">
+                  <div className="space-y-6">
+                    <div className="text-center">
+                      <h3 className="text-lg font-semibold text-white mb-2">Fotografias da Intervenção</h3>
+                      <p className="text-white/70 text-sm">Documente o estado da aeronave antes e depois da limpeza</p>
+                    </div>
+
+                    {/* Before Photos */}
+                    <Card className="glass-card border-white/20">
+                      <CardHeader>
+                        <CardTitle className="text-white flex items-center">
+                          <Camera className="h-5 w-5 mr-2" />
+                          Antes da Intervenção
+                        </CardTitle>
+                        <CardDescription className="text-white/70">
+                          Capture o estado inicial da aeronave
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-6">
+                        {/* Exterior Before */}
+                        <div className="space-y-3">
+                          <Label className="text-white font-medium">Exterior</Label>
+                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {formData.interventionPhotos.before.exterior?.map((photo, index) => (
+                              <div key={index} className="relative group">
+                                <img
+                                  src={photo}
+                                  alt={`Exterior antes ${index + 1}`}
+                                  className="w-full h-20 object-cover rounded-lg border border-white/30"
+                                />
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                  onClick={() => removeInterventionPhoto('before', 'exterior', index)}
+                                >
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            ))}
+                            <PhotoUpload
+                              currentPhoto=""
+                              onPhotoChange={(photo) => addInterventionPhoto('before', 'exterior', photo)}
+                              employeeName="Exterior Antes"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Interior Before */}
+                        <div className="space-y-3">
+                          <Label className="text-white font-medium">Interior</Label>
+                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {formData.interventionPhotos.before.interior?.map((photo, index) => (
+                              <div key={index} className="relative group">
+                                <img
+                                  src={photo}
+                                  alt={`Interior antes ${index + 1}`}
+                                  className="w-full h-20 object-cover rounded-lg border border-white/30"
+                                />
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                  onClick={() => removeInterventionPhoto('before', 'interior', index)}
+                                >
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            ))}
+                            <PhotoUpload
+                              currentPhoto=""
+                              onPhotoChange={(photo) => addInterventionPhoto('before', 'interior', photo)}
+                              employeeName="Interior Antes"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Details Before */}
+                        <div className="space-y-3">
+                          <Label className="text-white font-medium">Detalhes Específicos</Label>
+                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {formData.interventionPhotos.before.details?.map((photo, index) => (
+                              <div key={index} className="relative group">
+                                <img
+                                  src={photo}
+                                  alt={`Detalhes antes ${index + 1}`}
+                                  className="w-full h-20 object-cover rounded-lg border border-white/30"
+                                />
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                  onClick={() => removeInterventionPhoto('before', 'details', index)}
+                                >
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            ))}
+                            <PhotoUpload
+                              currentPhoto=""
+                              onPhotoChange={(photo) => addInterventionPhoto('before', 'details', photo)}
+                              employeeName="Detalhes Antes"
+                            />
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* After Photos */}
+                    <Card className="glass-card border-white/20">
+                      <CardHeader>
+                        <CardTitle className="text-white flex items-center">
+                          <Camera className="h-5 w-5 mr-2" />
+                          Depois da Intervenção
+                        </CardTitle>
+                        <CardDescription className="text-white/70">
+                          Documente o resultado da limpeza
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-6">
+                        {/* Exterior After */}
+                        <div className="space-y-3">
+                          <Label className="text-white font-medium">Exterior</Label>
+                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {formData.interventionPhotos.after.exterior?.map((photo, index) => (
+                              <div key={index} className="relative group">
+                                <img
+                                  src={photo}
+                                  alt={`Exterior depois ${index + 1}`}
+                                  className="w-full h-20 object-cover rounded-lg border border-white/30"
+                                />
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                  onClick={() => removeInterventionPhoto('after', 'exterior', index)}
+                                >
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            ))}
+                            <PhotoUpload
+                              currentPhoto=""
+                              onPhotoChange={(photo) => addInterventionPhoto('after', 'exterior', photo)}
+                              employeeName="Exterior Depois"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Interior After */}
+                        <div className="space-y-3">
+                          <Label className="text-white font-medium">Interior</Label>
+                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {formData.interventionPhotos.after.interior?.map((photo, index) => (
+                              <div key={index} className="relative group">
+                                <img
+                                  src={photo}
+                                  alt={`Interior depois ${index + 1}`}
+                                  className="w-full h-20 object-cover rounded-lg border border-white/30"
+                                />
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                  onClick={() => removeInterventionPhoto('after', 'interior', index)}
+                                >
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            ))}
+                            <PhotoUpload
+                              currentPhoto=""
+                              onPhotoChange={(photo) => addInterventionPhoto('after', 'interior', photo)}
+                              employeeName="Interior Depois"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Details After */}
+                        <div className="space-y-3">
+                          <Label className="text-white font-medium">Detalhes Específicos</Label>
+                          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {formData.interventionPhotos.after.details?.map((photo, index) => (
+                              <div key={index} className="relative group">
+                                <img
+                                  src={photo}
+                                  alt={`Detalhes depois ${index + 1}`}
+                                  className="w-full h-20 object-cover rounded-lg border border-white/30"
+                                />
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                  onClick={() => removeInterventionPhoto('after', 'details', index)}
+                                >
+                                  <X className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            ))}
+                            <PhotoUpload
+                              currentPhoto=""
+                              onPhotoChange={(photo) => addInterventionPhoto('after', 'details', photo)}
+                              employeeName="Detalhes Depois"
+                            />
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Photo Summary */}
+                    <div className="bg-white/5 rounded-lg p-4 border border-white/20">
+                      <div className="grid grid-cols-2 gap-4 text-center">
+                        <div>
+                          <h4 className="text-white font-medium mb-2">Antes da Intervenção</h4>
+                          <div className="text-white/70 text-sm space-y-1">
+                            <div>Exterior: {formData.interventionPhotos.before.exterior?.length || 0} fotos</div>
+                            <div>Interior: {formData.interventionPhotos.before.interior?.length || 0} fotos</div>
+                            <div>Detalhes: {formData.interventionPhotos.before.details?.length || 0} fotos</div>
+                          </div>
+                        </div>
+                        <div>
+                          <h4 className="text-white font-medium mb-2">Depois da Intervenção</h4>
+                          <div className="text-white/70 text-sm space-y-1">
+                            <div>Exterior: {formData.interventionPhotos.after.exterior?.length || 0} fotos</div>
+                            <div>Interior: {formData.interventionPhotos.after.interior?.length || 0} fotos</div>
+                            <div>Detalhes: {formData.interventionPhotos.after.details?.length || 0} fotos</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+
                 <TabsContent value="signatures" className="space-y-6 mt-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Card className="glass-card border-white/20">
