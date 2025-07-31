@@ -271,18 +271,20 @@ class SecureSyncService {
           console.error("Failed to sync item:", item.id, error);
 
           // Check if it's a Supabase configuration error
-          const isConfigError = error instanceof Error && (
-            error.message.includes('Supabase client not configured') ||
-            error.message.includes('Supabase client not initialized') ||
-            error.message.includes('Cannot read properties of null') ||
-            error.message.includes('from') ||
-            !import.meta.env.VITE_SUPABASE_URL
-          );
+          const isConfigError =
+            error instanceof Error &&
+            (error.message.includes("Supabase client not configured") ||
+              error.message.includes("Supabase client not initialized") ||
+              error.message.includes("Cannot read properties of null") ||
+              error.message.includes("from") ||
+              !import.meta.env.VITE_SUPABASE_URL);
 
           if (isConfigError) {
-            console.warn('Supabase not configured - forms will be stored locally only');
+            console.warn(
+              "Supabase not configured - forms will be stored locally only",
+            );
             // Don't increment retry count for config issues, just mark as pending
-            item.lastError = 'Supabase not configured - local storage only';
+            item.lastError = "Supabase not configured - local storage only";
             item.retryCount = 0; // Reset retry count
             await this.db.put("sync_queue", item);
           } else {
@@ -348,8 +350,10 @@ class SecureSyncService {
     try {
       // Check if supabase client is properly initialized
       if (!supabase) {
-        console.warn('Supabase client not configured - skipping sync. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.');
-        throw new Error('Supabase client not configured');
+        console.warn(
+          "Supabase client not configured - skipping sync. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.",
+        );
+        throw new Error("Supabase client not configured");
       }
 
       // Insert form data into Supabase
@@ -365,18 +369,18 @@ class SecureSyncService {
         });
 
       if (insertError) {
-        console.error('Supabase insert error:', insertError);
+        console.error("Supabase insert error:", insertError);
         throw insertError;
       }
 
-      console.log('Successfully synced form to Supabase:', metadata.id);
+      console.log("Successfully synced form to Supabase:", metadata.id);
 
       // Generate and upload PDF (if data exists)
       if (formData.aircraftId && formData.employees?.length > 0) {
         await this.generateAndUploadPDF(formData, metadata.id);
       }
     } catch (error) {
-      console.error('Upload to Supabase failed:', error);
+      console.error("Upload to Supabase failed:", error);
       throw error;
     }
   }
@@ -449,7 +453,8 @@ class SecureSyncService {
     ]);
 
     // Check if Supabase is configured
-    const isSupabaseConfigured = !!supabase && !!import.meta.env.VITE_SUPABASE_URL;
+    const isSupabaseConfigured =
+      !!supabase && !!import.meta.env.VITE_SUPABASE_URL;
 
     // If Supabase is not configured, don't count pending items as errors
     let errors = 0;
@@ -467,7 +472,7 @@ class SecureSyncService {
     return {
       totalItems: allForms.length,
       pendingSync: actualPending,
-      lastSync: isSupabaseConfigured ? (lastSync || null) : 'Local storage only',
+      lastSync: isSupabaseConfigured ? lastSync || null : "Local storage only",
       errors,
     };
   }

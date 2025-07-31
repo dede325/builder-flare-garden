@@ -32,7 +32,7 @@ class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Error Boundary caught an error:', error, errorInfo);
+    console.error("Error Boundary caught an error:", error, errorInfo);
   }
 
   render() {
@@ -40,7 +40,9 @@ class ErrorBoundary extends Component<
       return (
         <div className="min-h-screen bg-aviation-gradient flex items-center justify-center px-4">
           <div className="bg-white/10 backdrop-blur-md rounded-lg p-8 max-w-lg text-center">
-            <h2 className="text-2xl font-bold text-white mb-4">Algo deu errado</h2>
+            <h2 className="text-2xl font-bold text-white mb-4">
+              Algo deu errado
+            </h2>
             <p className="text-white/80 mb-4">
               Ocorreu um erro inesperado. Por favor, recarregue a página.
             </p>

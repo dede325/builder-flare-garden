@@ -296,15 +296,17 @@ export default function CleaningForms() {
             exterior: formData.interventionPhotos.after.exterior?.length || 0,
             interior: formData.interventionPhotos.after.interior?.length || 0,
             details: formData.interventionPhotos.after.details?.length || 0,
-          }
+          },
         },
         // Remove large data like employee photos and signatures for auto-save
-        employees: formData.employees.map(emp => ({
+        employees: formData.employees.map((emp) => ({
           ...emp,
-          photo: emp.photo ? '[PHOTO_EXISTS]' : undefined
+          photo: emp.photo ? "[PHOTO_EXISTS]" : undefined,
         })),
-        supervisorSignature: formData.supervisorSignature ? '[SIGNATURE_EXISTS]' : '',
-        clientSignature: formData.clientSignature ? '[SIGNATURE_EXISTS]' : ''
+        supervisorSignature: formData.supervisorSignature
+          ? "[SIGNATURE_EXISTS]"
+          : "",
+        clientSignature: formData.clientSignature ? "[SIGNATURE_EXISTS]" : "",
       };
 
       const draftKey = `cleaning_form_draft_${Date.now()}`;
@@ -347,7 +349,10 @@ export default function CleaningForms() {
     } catch (error) {
       console.error("Auto-save failed:", error);
       // Try to clear old drafts if quota exceeded
-      if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+      if (
+        error instanceof DOMException &&
+        error.name === "QuotaExceededError"
+      ) {
         try {
           const existingDrafts = JSON.parse(
             localStorage.getItem("cleaning_form_drafts") || "[]",
@@ -360,9 +365,12 @@ export default function CleaningForms() {
               // Ignore cleanup errors
             }
           });
-          localStorage.setItem("cleaning_form_drafts", JSON.stringify(existingDrafts.slice(0, 1)));
+          localStorage.setItem(
+            "cleaning_form_drafts",
+            JSON.stringify(existingDrafts.slice(0, 1)),
+          );
         } catch (cleanupError) {
-          console.warn('Failed to cleanup drafts:', cleanupError);
+          console.warn("Failed to cleanup drafts:", cleanupError);
         }
       }
       setAutoSaveStatus("error");
