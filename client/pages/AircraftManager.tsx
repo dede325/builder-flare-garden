@@ -811,7 +811,7 @@ export default function AircraftManager() {
                 <div>
                   <p className="text-white/70 text-sm font-medium">Manutenção</p>
                   <p className="text-3xl font-bold text-white">
-                    {aircraft.filter(ac => ac.status === 'maintenance').length}
+                    {aircraft.filter(ac => ac.status === 'out_of_service').length}
                   </p>
                 </div>
                 <Wrench className="h-8 w-8 text-yellow-400" />
