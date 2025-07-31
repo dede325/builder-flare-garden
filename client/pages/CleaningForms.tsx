@@ -231,7 +231,13 @@ export default function CleaningForms() {
       // Load saved forms from localStorage for demo
       const savedForms = localStorage.getItem('cleaningForms');
       if (savedForms) {
-        setForms(JSON.parse(savedForms));
+        const parsedForms = JSON.parse(savedForms);
+        // Ensure all forms have proper changeHistory array
+        const normalizedForms = parsedForms.map((form: any) => ({
+          ...form,
+          changeHistory: form.changeHistory || []
+        }));
+        setForms(normalizedForms);
       }
     } catch (error) {
       console.error('Error loading data:', error);
