@@ -864,6 +864,13 @@ export default function Settings() {
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* Migration Dialog */}
+      <MigrationDialog
+        open={migrationDialogOpen}
+        onOpenChange={setMigrationDialogOpen}
+        onComplete={handleMigrationComplete}
+      />
     </div>
   );
 }
