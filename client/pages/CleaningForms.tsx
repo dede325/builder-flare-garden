@@ -446,9 +446,9 @@ export default function CleaningForms() {
 
                     {/* Location */}
                     <div className="space-y-2">
-                      <Label className="text-white">Local da Intervenção</Label>
+                      <Label className="text-white">Local da Intervenção *</Label>
                       <Select value={formData.location} onValueChange={(value) => setFormData(prev => ({ ...prev, location: value }))}>
-                        <SelectTrigger className="aviation-input">
+                        <SelectTrigger className={`aviation-input ${formErrors.location ? 'border-red-500' : ''}`}>
                           <SelectValue placeholder="Selecione o local" />
                         </SelectTrigger>
                         <SelectContent className="bg-aviation-gray-800 border-white/20">
@@ -457,6 +457,7 @@ export default function CleaningForms() {
                           ))}
                         </SelectContent>
                       </Select>
+                      {formErrors.location && <p className="text-red-400 text-sm">{formErrors.location}</p>}
                     </div>
 
                     {/* Aircraft Selection */}
