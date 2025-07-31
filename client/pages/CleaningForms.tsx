@@ -642,9 +642,14 @@ export default function CleaningForms() {
               <DialogHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <DialogTitle className="text-white">Nova Folha de Limpeza</DialogTitle>
+                    <DialogTitle className="text-white">
+                      {editingForm ? 'Editar Folha de Limpeza' : 'Nova Folha de Limpeza'}
+                    </DialogTitle>
                     <DialogDescription className="text-white/70">
-                      Preencha os dados para criar uma nova folha de requisição de limpeza
+                      {editingForm
+                        ? `Editando folha ${editingForm.code} - Status: ${editingForm.status === 'draft' ? 'Rascunho' : 'Finalizada'}`
+                        : 'Preencha os dados para criar uma nova folha de requisição de limpeza'
+                      }
                     </DialogDescription>
                   </div>
 
