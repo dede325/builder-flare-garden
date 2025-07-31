@@ -462,9 +462,9 @@ export default function CleaningForms() {
 
                     {/* Aircraft Selection */}
                     <div className="space-y-2">
-                      <Label className="text-white">Aeronave</Label>
+                      <Label className="text-white">Aeronave *</Label>
                       <Select value={formData.aircraftId} onValueChange={(value) => setFormData(prev => ({ ...prev, aircraftId: value }))}>
-                        <SelectTrigger className="aviation-input">
+                        <SelectTrigger className={`aviation-input ${formErrors.aircraftId ? 'border-red-500' : ''}`}>
                           <SelectValue placeholder="Selecione a aeronave" />
                         </SelectTrigger>
                         <SelectContent className="bg-aviation-gray-800 border-white/20">
@@ -475,6 +475,7 @@ export default function CleaningForms() {
                           ))}
                         </SelectContent>
                       </Select>
+                      {formErrors.aircraftId && <p className="text-red-400 text-sm">{formErrors.aircraftId}</p>}
                     </div>
                   </div>
 
