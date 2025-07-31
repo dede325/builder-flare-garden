@@ -1262,8 +1262,8 @@ export default function CleaningForms() {
                   <TabsTrigger value="employees" className="text-white">
                     Funcionários
                   </TabsTrigger>
-                  <TabsTrigger value="photos" className="text-white">
-                    Fotografias
+                  <TabsTrigger value="evidence" className="text-white">
+                    Evidências
                   </TabsTrigger>
                   <TabsTrigger value="signatures" className="text-white">
                     Assinaturas
