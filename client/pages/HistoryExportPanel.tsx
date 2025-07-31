@@ -283,70 +283,18 @@ export default function HistoryExportPanel() {
   };
 
   const exportToCSV = async (formsToExport: CleaningForm[]) => {
-    const csvHeader = [
-      "Código",
-      "Data",
-      "Turno",
-      "Local",
-      "Aeronave",
-      "Funcionários",
-      "Tipos de Intervenção",
-      "Status",
-      "Status de Sincronização",
-      "Criado em",
-      "Atualizado em",
-      ...(exportOptions.includePDFs ? ["Link PDF"] : []),
-    ];
-
-    const csvRows = await Promise.all(
-      formsToExport.map(async (form) => {
-        const aircraftData = aircraft.find((ac) => ac.id === form.aircraftId);
-        const employeeNames = form.employees.map((emp) => emp.name).join("; ");
-        const interventionTypes = form.interventionTypes.join("; ");
-        
-        const row = [
-          form.code,
-          format(parseISO(form.date), "dd/MM/yyyy"),
-          form.shift === "morning" ? "Manhã" : form.shift === "afternoon" ? "Tarde" : "Noite",
-          form.location,
-          aircraftData ? `${aircraftData.registration} - ${aircraftData.model}` : "N/A",
-          employeeNames,
-          interventionTypes,
-          form.status === "draft" ? "Rascunho" : form.status === "pending_signatures" ? "Aguardando Assinaturas" : "Concluído",
-          form.syncStatus === "synced" ? "Sincronizado" : form.syncStatus === "pending" ? "Pendente" : "Erro",
-          format(parseISO(form.createdAt), "dd/MM/yyyy HH:mm"),
-          format(parseISO(form.updatedAt), "dd/MM/yyyy HH:mm"),
-        ];
-
-        if (exportOptions.includePDFs) {
-          // Generate PDF download link (placeholder - you would implement actual PDF generation)
-          row.push(`PDF_${form.code}.pdf`);
-        }
-
-        return row;
-      })
-    );
-
-    const csvContent = [csvHeader, ...csvRows]
-      .map((row) => row.map((cell) => `"${cell}"`).join(","))
-      .join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", `historico_limpeza_${format(new Date(), "yyyyMMdd_HHmm")}.csv`);
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    await exportService.exportToCSV(formsToExport, aircraft, {
+      includePDFs: exportOptions.includePDFs,
+      includePhotos: false, // CSV doesn't support photos
+      includeEmployeePhotos: false,
+    });
   };
 
   const exportToZIP = async (formsToExport: CleaningForm[]) => {
-    // This would typically use a library like JSZip
-    toast({
-      title: "Exportação ZIP",
-      description: "Funcionalidade de exportação ZIP será implementada em breve.",
+    await exportService.exportToZIP(formsToExport, aircraft, {
+      includePDFs: exportOptions.includePDFs,
+      includePhotos: exportOptions.includePhotos,
+      includeEmployeePhotos: true,
     });
   };
 
