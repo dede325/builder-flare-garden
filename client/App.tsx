@@ -171,7 +171,17 @@ const App = () => (
   </ErrorBoundary>
 );
 
-// Create root and render app
+// Create root and render app - ensure it only happens once
 const rootElement = document.getElementById("root")!;
-const root = createRoot(rootElement);
-root.render(<App />);
+
+// Check if root already exists to prevent multiple createRoot calls
+if (!rootElement._reactRootContainer && !(rootElement as any)._reactRoot) {
+  const root = createRoot(rootElement);
+  root.render(<App />);
+
+  // Store reference to prevent multiple initialization
+  (rootElement as any)._reactRoot = root;
+} else if ((rootElement as any)._reactRoot) {
+  // If root exists, just re-render
+  (rootElement as any)._reactRoot.render(<App />);
+}
