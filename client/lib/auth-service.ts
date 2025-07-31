@@ -76,7 +76,8 @@ class AuthService {
     try {
       // Check if we have real Supabase connection
       if (!supabase) {
-        this.setDemoState();
+        console.log('Supabase not configured, using demo mode');
+        setTimeout(() => this.setDemoState(), 100); // Defer to avoid race condition
         return;
       }
 
@@ -142,7 +143,7 @@ class AuthService {
       created_at: new Date().toISOString(),
       profile: {
         id: "demo-user",
-        display_name: "João Silva (Demo)",
+        display_name: "Jo��o Silva (Demo)",
         department: "Operações",
         is_active: true,
         certifications: [],
