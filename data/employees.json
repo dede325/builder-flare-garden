@@ -1,0 +1,68 @@
+[
+  {
+    "id": "01234567-89ab-cdef-0123-456789abcd01",
+    "name": "Maria Santos",
+    "email": "maria@aviation.com",
+    "role": "Piloto Comercial",
+    "certifications": ["ANAC", "IFR"],
+    "hire_date": "2023-06-01",
+    "status": "active",
+    "created_at": "2023-06-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "01234567-89ab-cdef-0123-456789abcd02",
+    "name": "Carlos Lima",
+    "email": "carlos@aviation.com",
+    "role": "Mecânico",
+    "certifications": ["ANAC Manutenção"],
+    "hire_date": "2023-08-15",
+    "status": "active",
+    "created_at": "2023-08-15T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "01234567-89ab-cdef-0123-456789abcd03",
+    "name": "Ana Rodrigues",
+    "email": "ana@aviation.com",
+    "role": "Supervisor de Limpeza",
+    "certifications": ["Mercadorias Perigosas"],
+    "hire_date": "2023-05-10",
+    "status": "active",
+    "created_at": "2023-05-10T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "01234567-89ab-cdef-0123-456789abcd04",
+    "name": "João Silva",
+    "email": "joao@aviation.com",
+    "role": "Gestor de Operações",
+    "certifications": ["ANAC", "VFR", "Inglês Técnico"],
+    "hire_date": "2023-03-20",
+    "status": "active",
+    "created_at": "2023-03-20T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "01234567-89ab-cdef-0123-456789abcd05",
+    "name": "Pedro Oliveira",
+    "email": "pedro@aviation.com",
+    "role": "Copiloto",
+    "certifications": ["ANAC", "IFR", "Tipo Boeing 737"],
+    "hire_date": "2023-09-01",
+    "status": "active",
+    "created_at": "2023-09-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "01234567-89ab-cdef-0123-456789abcd06",
+    "name": "Lucia Costa",
+    "email": "lucia@aviation.com",
+    "role": "Técnico de Limpeza",
+    "certifications": [],
+    "hire_date": "2023-11-15",
+    "status": "active",
+    "created_at": "2023-11-15T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  }
+]
