@@ -79,6 +79,7 @@ import { intelligentSyncService } from "@/lib/intelligent-sync-service";
 import { cacheService } from "@/lib/cache-service";
 import { codeGenerationService } from "@/lib/code-generation-service";
 import SyncStatusIndicator from "@/components/SyncStatusIndicator";
+import QRCodeDisplay from "@/components/QRCodeDisplay";
 
 interface CleaningForm {
   id: string;
