@@ -52,19 +52,18 @@ const defaultAircraft: Omit<Aircraft, 'id' | 'createdAt' | 'updatedAt'> = {
     cargo: 0
   },
   specifications: {
-    maxTakeoffWeight: 0,
     wingspan: 0,
     length: 0,
-    engines: ''
+    height: 0,
+    exteriorArea: 0
   },
   status: 'active',
-  lastInspection: '',
-  nextInspection: '',
-  flightHours: 0,
   location: '',
-  maintenanceNotes: '',
-  certifications: [],
-  insuranceExpiry: ''
+  hangar: '',
+  lastCleaningDate: '',
+  lastCleaningType: '',
+  cleaningNotes: '',
+  cleaningRequirements: []
 };
 
 export default function AircraftManager() {
