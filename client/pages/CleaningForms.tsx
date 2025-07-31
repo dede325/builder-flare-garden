@@ -794,17 +794,38 @@ export default function CleaningForms() {
                       <Label className="text-white">Aeronave *</Label>
                       <Select value={formData.aircraftId} onValueChange={(value) => setFormData(prev => ({ ...prev, aircraftId: value }))}>
                         <SelectTrigger className={`aviation-input ${formErrors.aircraftId ? 'border-red-500' : ''}`}>
-                          <SelectValue placeholder="Selecione a aeronave" />
+                          <SelectValue placeholder="Selecione a aeronave cadastrada" />
                         </SelectTrigger>
-                        <SelectContent className="bg-aviation-gray-800 border-white/20">
+                        <SelectContent className="bg-aviation-gray-800 border-white/20 max-h-60">
+                          {aircraft.length === 0 && (
+                            <div className="px-4 py-3 text-white/70 text-sm">
+                              Nenhuma aeronave cadastrada no sistema.
+                              <br />
+                              <Link to="/aircraft-manager" className="text-aviation-blue-300 underline">
+                                Cadastrar aeronave
+                              </Link>
+                            </div>
+                          )}
                           {aircraft.map((ac: any) => (
-                            <SelectItem key={ac.id} value={ac.id} className="text-white">
-                              {ac.registration} - {ac.model}
+                            <SelectItem key={ac.id} value={ac.id} className="text-white hover:bg-white/10">
+                              <div className="flex flex-col py-1">
+                                <div className="font-semibold">{ac.registration}</div>
+                                <div className="text-sm opacity-80">{ac.model} - {ac.manufacturer}</div>
+                                <div className="text-xs opacity-60">
+                                  {ac.location ? `📍 ${ac.location}` : ''}
+                                  {ac.status && ` • Status: ${ac.status === 'active' ? 'Ativa' : ac.status === 'maintenance' ? 'Manutenção' : 'Inativa'}`}
+                                </div>
+                              </div>
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                       {formErrors.aircraftId && <p className="text-red-400 text-sm">{formErrors.aircraftId}</p>}
+                      {aircraft.length > 0 && (
+                        <p className="text-white/60 text-xs">
+                          {aircraft.length} aeronave{aircraft.length !== 1 ? 's' : ''} ativa{aircraft.length !== 1 ? 's' : ''} disponível{aircraft.length !== 1 ? 'eis' : ''}
+                        </p>
+                      )}
                     </div>
                   </div>
 
