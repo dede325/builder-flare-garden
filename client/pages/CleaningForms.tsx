@@ -182,16 +182,7 @@ export default function CleaningForms() {
     string[]
   >([]);
 
-  const locationOptions = [
-    "Hangar Principal",
-    "Pátio de Aeronaves",
-    "Terminal de Passageiros",
-    "Área de Manutenção",
-    "Rampa Norte",
-    "Rampa Sul",
-    "Hangar de Manutenção",
-    "Estacionamento VIP",
-  ];
+  const [locationOptions, setLocationOptions] = useState<string[]>([]);
 
   useEffect(() => {
     initializeSecureSystem();
