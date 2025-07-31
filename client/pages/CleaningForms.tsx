@@ -1286,10 +1286,26 @@ export default function CleaningForms() {
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-white text-lg">{form.code}</CardTitle>
+                    <div className="flex items-center space-x-2">
+                      <CardTitle className="text-white text-lg">{form.code}</CardTitle>
+                      {/* Security indicator - check if ID follows secure format */}
+                      {form.code.startsWith('AP-PS-SNR') && (
+                        <Shield className="h-4 w-4 text-green-400" title="Folha Segura" />
+                      )}
+                      {/* Sync status indicator */}
+                      {form.syncStatus === 'pending' && (
+                        <Sync className="h-3 w-3 text-yellow-400 animate-spin" title="Sincronização Pendente" />
+                      )}
+                      {form.syncStatus === 'synced' && (
+                        <Wifi className="h-3 w-3 text-green-400" title="Sincronizado" />
+                      )}
+                      {form.syncStatus === 'error' && (
+                        <AlertTriangle className="h-3 w-3 text-red-400" title="Erro de Sincronização" />
+                      )}
+                    </div>
                     <CardDescription className="text-white/70">
                       {format(new Date(form.date), 'dd/MM/yyyy', { locale: ptBR })} - {
-                        form.shift === 'morning' ? 'Manhã' : 
+                        form.shift === 'morning' ? 'Manhã' :
                         form.shift === 'afternoon' ? 'Tarde' : 'Noite'
                       }
                     </CardDescription>
