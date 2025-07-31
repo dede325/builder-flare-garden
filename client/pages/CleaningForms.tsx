@@ -1058,7 +1058,7 @@ export default function CleaningForms() {
                       <span>Criando...</span>
                     </div>
                   ) : (
-                    'Criar Folha de Limpeza'
+                    editingForm ? 'Atualizar Folha de Limpeza' : 'Criar Folha de Limpeza'
                   )}
                 </Button>
               </div>
