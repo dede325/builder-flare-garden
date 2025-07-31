@@ -45,6 +45,11 @@ import { migrationService } from "@/lib/migration-service";
 export default function Settings() {
   const { user: authUser, signOut } = useAuth();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [migrationDialogOpen, setMigrationDialogOpen] = useState(false);
+  const [migrationStatus, setMigrationStatus] = useState<{
+    isConfigured: boolean | null;
+    dataCounts: any;
+  }>({ isConfigured: null, dataCounts: null });
   const [profileData, setProfileData] = useState({
     name: "",
     email: "",
