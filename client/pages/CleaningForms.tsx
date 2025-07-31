@@ -549,20 +549,48 @@ export default function CleaningForms() {
 
         newForm.qrCode = qrCode;
 
-        try {
-          await supabaseStorage.saveFormMetadata(newForm);
-        } catch (error) {
-          console.log('Supabase metadata save skipped:', error);
+        // Save using secure system or fallback to localStorage
+        if (isSecureMode) {
+          try {
+            await secureSyncService.saveFormSecurely(newForm);
+            const updatedForms = await secureSyncService.getAllForms();
+            setForms(updatedForms);
+            await updateSyncStatus();
+
+            toast({
+              title: "Folha criada com segurança",
+              description: `Nova folha criada e criptografada. ID: ${formCode}`,
+            });
+          } catch (error) {
+            console.error('Secure save failed, falling back to localStorage:', error);
+            // Fallback to localStorage
+            const updatedForms = [...forms, newForm];
+            setForms(updatedForms);
+            localStorage.setItem('cleaningForms', JSON.stringify(updatedForms));
+
+            toast({
+              title: "Folha criada (modo local)",
+              description: "Salva localmente. Sincronização pendente.",
+              variant: "default"
+            });
+          }
+        } else {
+          // Regular localStorage save
+          try {
+            await supabaseStorage.saveFormMetadata(newForm);
+          } catch (error) {
+            console.log('Supabase metadata save skipped:', error);
+          }
+
+          const updatedForms = [...forms, newForm];
+          setForms(updatedForms);
+          localStorage.setItem('cleaningForms', JSON.stringify(updatedForms));
+
+          toast({
+            title: "Folha criada",
+            description: "Nova folha de limpeza criada com sucesso.",
+          });
         }
-
-        const updatedForms = [...forms, newForm];
-        setForms(updatedForms);
-        localStorage.setItem('cleaningForms', JSON.stringify(updatedForms));
-
-        toast({
-          title: "Folha criada",
-          description: "Nova folha de limpeza criada com sucesso.",
-        });
       }
 
       setIsCreateDialogOpen(false);
