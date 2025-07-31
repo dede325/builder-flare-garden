@@ -441,9 +441,8 @@ export default function AircraftManager() {
                 <SelectContent className="bg-aviation-gray-800 border-white/20">
                   <SelectItem value="all" className="text-white">Todos</SelectItem>
                   <SelectItem value="active" className="text-white">Operacional</SelectItem>
-                  <SelectItem value="maintenance" className="text-white">Manutenção</SelectItem>
                   <SelectItem value="inactive" className="text-white">Inativa</SelectItem>
-                  <SelectItem value="grounded" className="text-white">Retida</SelectItem>
+                  <SelectItem value="out_of_service" className="text-white">Fora de Serviço</SelectItem>
                 </SelectContent>
               </Select>
 
