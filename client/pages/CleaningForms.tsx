@@ -707,6 +707,28 @@ export default function CleaningForms() {
           )}
         </div>
       </main>
+
+      {/* Signature Dialog */}
+      <Dialog open={!!showSignatureDialog} onOpenChange={() => setShowSignatureDialog(null)}>
+        <DialogContent className="max-w-2xl bg-aviation-gray-800 border-white/20">
+          <DialogHeader>
+            <DialogTitle className="text-white">
+              {showSignatureDialog === 'supervisor' ? 'Assinatura do Supervisor' : 'Assinatura do Cliente'}
+            </DialogTitle>
+            <DialogDescription className="text-white/70">
+              Use o mouse ou toque na tela para desenhar sua assinatura
+            </DialogDescription>
+          </DialogHeader>
+
+          {showSignatureDialog && (
+            <SignatureCanvas
+              title={showSignatureDialog === 'supervisor' ? 'Supervisor' : 'Cliente'}
+              onSave={handleSignature}
+              onCancel={() => setShowSignatureDialog(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
