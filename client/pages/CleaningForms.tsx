@@ -448,6 +448,7 @@ export default function CleaningForms() {
       clientConfirmedWithoutSignature: false
     });
     setFormErrors({});
+    setEditingForm(null);
   };
 
   const addEmployee = () => {
