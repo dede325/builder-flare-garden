@@ -1629,7 +1629,7 @@ export default function CleaningForms() {
                       {form.code.startsWith("AP-PS-SNR") && (
                         <Shield
                           className="h-4 w-4 text-green-400"
-                          title="Folha Segura"
+                          title="Código Único Verificado - AP-PS-SNR"
                         />
                       )}
                       {/* Sync status indicator */}
