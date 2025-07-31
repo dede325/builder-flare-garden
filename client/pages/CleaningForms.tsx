@@ -843,6 +843,35 @@ export default function CleaningForms() {
                 className="aviation-input pl-10 w-full"
               />
             </div>
+
+            {/* Sync Controls */}
+            {isSecureMode && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  try {
+                    await secureSyncService.forceSyncAll();
+                    await updateSyncStatus();
+                    toast({
+                      title: "Sincronização forçada",
+                      description: "Tentativa de sincronização concluída.",
+                    });
+                  } catch (error) {
+                    toast({
+                      title: "Erro na sincronização",
+                      description: "Falha ao sincronizar dados.",
+                      variant: "destructive"
+                    });
+                  }
+                }}
+                className="border-white/30 text-white hover:bg-white/20"
+                disabled={syncStatus === 'pending'}
+              >
+                <Sync className={`h-4 w-4 mr-2 ${syncStatus === 'pending' ? 'animate-spin' : ''}`} />
+                Sincronizar
+              </Button>
+            )}
           </div>
           
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
