@@ -32,284 +32,432 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
   const pdf = new jsPDF('p', 'mm', 'a4');
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
-  const margin = 15;
+  const margin = 12;
   const contentWidth = pageWidth - (margin * 2);
-  const primaryColor = [30, 64, 175]; // Aviation blue
-  const secondaryColor = [71, 85, 105]; // Aviation gray
+  const primaryColor = [37, 99, 235]; // Aviation blue #2563eb
+  const gradientColor = [59, 130, 246]; // Lighter blue #3b82f6
+  const accentColor = [71, 85, 105]; // Aviation gray #475569
 
   let yPosition = margin;
+  const hasPhotos = formData.employees.some(emp => emp.photo);
 
   // Helper functions
-  const addHeaderBox = (title: string, y: number) => {
+  const addModernHeader = () => {
+    // Modern gradient header
     pdf.setFillColor(...primaryColor);
-    pdf.rect(margin, y, contentWidth, 8, 'F');
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(11);
+    pdf.rect(0, 0, pageWidth, 35, 'F');
+
+    // Light gradient overlay
+    pdf.setFillColor(255, 255, 255, 0.1);
+    pdf.rect(0, 0, pageWidth, 35, 'F');
+
+    // Company branding section
+    pdf.setFillColor(255, 255, 255);
+    pdf.roundedRect(margin, 8, 25, 20, 3, 3, 'F');
+
+    // Logo placeholder with modern styling
+    pdf.setFillColor(...primaryColor);
+    pdf.setFontSize(14);
     pdf.setFont('helvetica', 'bold');
-    pdf.text(title, margin + 3, y + 5.5);
-    pdf.setTextColor(0, 0, 0);
-    return y + 8;
+    pdf.text('AO', margin + 8, 20);
+
+    // Main title with modern typography
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(22);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('AVIATIONOPS', margin + 35, 16);
+
+    pdf.setFontSize(11);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text('FOLHA DE REQUISIÇÃO DE LIMPEZA', margin + 35, 23);
+
+    // Modern info box on the right
+    const infoBoxWidth = 60;
+    pdf.setFillColor(255, 255, 255, 0.2);
+    pdf.roundedRect(pageWidth - margin - infoBoxWidth, 8, infoBoxWidth, 20, 2, 2, 'F');
+
+    pdf.setFontSize(8);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('CÓDIGO:', pageWidth - margin - infoBoxWidth + 3, 15);
+    pdf.setFont('helvetica', 'normal');
+    pdf.text(formData.code, pageWidth - margin - infoBoxWidth + 3, 19);
+
+    pdf.setFont('helvetica', 'bold');
+    pdf.text('STATUS:', pageWidth - margin - infoBoxWidth + 3, 23);
+    pdf.setFont('helvetica', 'normal');
+    const statusText = formData.status === 'completed' ? 'CONCLUÍDA' : 'EM ANDAMENTO';
+    pdf.text(statusText, pageWidth - margin - infoBoxWidth + 3, 27);
+
+    return 40;
   };
 
-  const addInfoRow = (label: string, value: string, y: number, isEven: boolean = false) => {
-    if (isEven) {
-      pdf.setFillColor(248, 250, 252);
-      pdf.rect(margin, y - 1, contentWidth, 6, 'F');
+  const addSectionHeader = (title: string, y: number, icon?: string) => {
+    // Modern section header with subtle background
+    pdf.setFillColor(248, 250, 252);
+    pdf.rect(margin, y, contentWidth, 10, 'F');
+
+    // Left accent bar
+    pdf.setFillColor(...primaryColor);
+    pdf.rect(margin, y, 3, 10, 'F');
+
+    // Title
+    pdf.setTextColor(51, 65, 85);
+    pdf.setFontSize(12);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text(title, margin + 8, y + 7);
+
+    // Subtle border
+    pdf.setDrawColor(226, 232, 240);
+    pdf.setLineWidth(0.5);
+    pdf.line(margin, y + 10, pageWidth - margin, y + 10);
+
+    return y + 15;
+  };
+
+  const addInfoGrid = (data: Array<{label: string, value: string}>, y: number) => {
+    const colWidth = contentWidth / 2;
+    let currentY = y;
+
+    for (let i = 0; i < data.length; i += 2) {
+      // Row background
+      if (Math.floor(i / 2) % 2 === 0) {
+        pdf.setFillColor(249, 250, 251);
+        pdf.rect(margin, currentY - 2, contentWidth, 8, 'F');
+      }
+
+      // Left column
+      pdf.setTextColor(71, 85, 105);
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(data[i].label + ':', margin + 3, currentY + 3);
+
+      pdf.setTextColor(15, 23, 42);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(data[i].value, margin + 3, currentY + 6);
+
+      // Right column (if exists)
+      if (data[i + 1]) {
+        pdf.setTextColor(71, 85, 105);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(data[i + 1].label + ':', margin + colWidth + 3, currentY + 3);
+
+        pdf.setTextColor(15, 23, 42);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(data[i + 1].value, margin + colWidth + 3, currentY + 6);
+      }
+
+      currentY += 10;
     }
 
-    pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(9);
-    pdf.text(label + ':', margin + 2, y + 3);
-
-    pdf.setFont('helvetica', 'normal');
-    const labelWidth = pdf.getTextWidth(label + ': ') + 5;
-    pdf.text(value, margin + 2 + labelWidth, y + 3);
-
-    return y + 6;
+    return currentY + 5;
   };
 
-  const addSeparator = (y: number) => {
-    pdf.setDrawColor(...secondaryColor);
-    pdf.line(margin, y, pageWidth - margin, y);
-    return y + 3;
-  };
+  // PAGE 1 - MAIN FORM
+  yPosition = addModernHeader();
 
-  // HEADER SECTION
-  pdf.setFillColor(...primaryColor);
-  pdf.rect(0, 0, pageWidth, 25, 'F');
-
-  // Company logo placeholder
-  pdf.setFillColor(255, 255, 255);
-  pdf.rect(margin, 5, 15, 15, 'F');
-  pdf.setTextColor(...primaryColor);
-  pdf.setFontSize(8);
-  pdf.text('LOGO', margin + 5, 13);
-
-  // Main title
-  pdf.setTextColor(255, 255, 255);
-  pdf.setFontSize(18);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('AVIATIONOPS', margin + 20, 13);
-
-  pdf.setFontSize(12);
-  pdf.text('FOLHA DE REQUISIÇÃO DE LIMPEZA', margin + 20, 18);
-
-  // Form code (top right)
-  pdf.setFontSize(10);
-  pdf.text(`Código: ${formData.code}`, pageWidth - margin - 50, 13);
-  pdf.text(`Página 1 de 1`, pageWidth - margin - 50, 18);
-
-  yPosition = 30;
-
-  // BASIC INFORMATION SECTION
-  yPosition = addHeaderBox('INFORMAÇÕES BÁSICAS', yPosition);
-  yPosition += 2;
+  // Basic Information Section
+  yPosition = addSectionHeader('INFORMAÇÕES BÁSICAS', yPosition);
 
   const formattedDate = format(new Date(formData.date), 'dd/MM/yyyy', { locale: ptBR });
   const shiftText = formData.shift === 'morning' ? 'Manhã (06:00-14:00)' :
                    formData.shift === 'afternoon' ? 'Tarde (14:00-22:00)' : 'Noite (22:00-06:00)';
 
-  yPosition = addInfoRow('Data da Intervenção', formattedDate, yPosition, false);
-  yPosition = addInfoRow('Turno', shiftText, yPosition, true);
-  yPosition = addInfoRow('Local da Intervenção', formData.location, yPosition, false);
+  const basicInfo = [
+    { label: 'Data da Intervenção', value: formattedDate },
+    { label: 'Turno', value: shiftText },
+    { label: 'Local', value: formData.location },
+    { label: 'Aeronave', value: aircraftData ? `${aircraftData.registration} - ${aircraftData.model}` : 'Não especificada' }
+  ];
 
-  if (aircraftData) {
-    yPosition = addInfoRow('Aeronave', `${aircraftData.registration} - ${aircraftData.model} (${aircraftData.manufacturer})`, yPosition, true);
-  }
+  yPosition = addInfoGrid(basicInfo, yPosition);
 
-  yPosition = addInfoRow('Status da Folha', formData.status === 'completed' ? 'Concluída' : 'Em Andamento', yPosition, false);
-  yPosition += 5;
-
-  // INTERVENTION TYPES SECTION
-  yPosition = addHeaderBox('TIPOS DE INTERVENÇÃO', yPosition);
-  yPosition += 2;
+  // Intervention Types Section
+  yPosition = addSectionHeader('TIPOS DE INTERVENÇÃO', yPosition);
 
   if (formData.interventionTypes.length > 0) {
-    const types = formData.interventionTypes;
-    const itemsPerRow = 2;
-    const colWidth = contentWidth / itemsPerRow;
+    const itemsPerCol = Math.ceil(formData.interventionTypes.length / 2);
+    const colWidth = contentWidth / 2;
 
-    for (let i = 0; i < types.length; i += itemsPerRow) {
-      for (let j = 0; j < itemsPerRow && i + j < types.length; j++) {
-        const xPos = margin + 2 + (j * colWidth);
-        pdf.setFont('helvetica', 'normal');
-        pdf.setFontSize(9);
-        pdf.text('• ' + types[i + j], xPos, yPosition + 3);
-      }
-      yPosition += 6;
-    }
+    formData.interventionTypes.forEach((type, index) => {
+      const col = Math.floor(index / itemsPerCol);
+      const row = index % itemsPerCol;
+      const xPos = margin + 5 + (col * colWidth);
+      const typeYPos = yPosition + (row * 6);
+
+      // Modern bullet point
+      pdf.setFillColor(...primaryColor);
+      pdf.circle(xPos, typeYPos + 2, 1, 'F');
+
+      pdf.setTextColor(15, 23, 42);
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'normal');
+      pdf.text(type, xPos + 4, typeYPos + 3);
+    });
+
+    yPosition += (itemsPerCol * 6) + 8;
   } else {
+    pdf.setTextColor(107, 114, 128);
     pdf.setFont('helvetica', 'italic');
     pdf.setFontSize(9);
-    pdf.text('Nenhum tipo de intervenção especificado', margin + 2, yPosition + 3);
-    yPosition += 6;
+    pdf.text('Nenhum tipo de intervenção especificado', margin + 5, yPosition + 5);
+    yPosition += 15;
   }
-  yPosition += 3;
 
-  // EMPLOYEES SECTION
+  // Employees Section
   if (formData.employees.length > 0) {
-    yPosition = addHeaderBox('FUNCIONÁRIOS DO TURNO', yPosition);
-    yPosition += 2;
+    yPosition = addSectionHeader('FUNCIONÁRIOS DO TURNO', yPosition);
 
-    // Table headers
-    pdf.setFillColor(...secondaryColor);
-    pdf.rect(margin, yPosition, contentWidth, 7, 'F');
-
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(8);
-
-    const colWidths = [45, 35, 18, 18, 28, 26];
-    const headers = ['Nome Completo', 'Tarefa Designada', 'Início', 'Término', 'Telefone', 'Documento'];
-    let xPos = margin + 1;
-
-    headers.forEach((header, index) => {
-      pdf.text(header, xPos, yPosition + 4.5);
-      xPos += colWidths[index];
-    });
-
-    yPosition += 7;
-    pdf.setTextColor(0, 0, 0);
-
-    // Table rows
     formData.employees.forEach((employee, index) => {
       const isEven = index % 2 === 0;
-      if (isEven) {
-        pdf.setFillColor(248, 250, 252);
-        pdf.rect(margin, yPosition, contentWidth, 8, 'F');
+      const employeeHeight = employee.photo ? 35 : 25;
+
+      // Employee card background
+      pdf.setFillColor(isEven ? 255 : 249, isEven ? 255 : 250, isEven ? 255 : 251);
+      pdf.roundedRect(margin, yPosition, contentWidth, employeeHeight, 2, 2, 'F');
+
+      // Employee photo
+      if (employee.photo) {
+        try {
+          pdf.addImage(employee.photo, 'JPEG', margin + 5, yPosition + 3, 20, 20);
+          // Photo border
+          pdf.setDrawColor(226, 232, 240);
+          pdf.setLineWidth(0.5);
+          pdf.rect(margin + 5, yPosition + 3, 20, 20);
+        } catch (error) {
+          // Photo placeholder
+          pdf.setFillColor(229, 231, 235);
+          pdf.rect(margin + 5, yPosition + 3, 20, 20, 'F');
+          pdf.setTextColor(107, 114, 128);
+          pdf.setFontSize(8);
+          pdf.text('FOTO', margin + 12, yPosition + 15);
+        }
       }
 
+      // Employee details
+      const detailsX = employee.photo ? margin + 30 : margin + 5;
+
+      // Name
+      pdf.setTextColor(15, 23, 42);
+      pdf.setFontSize(11);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(employee.name || 'Nome não informado', detailsX, yPosition + 8);
+
+      // Task
+      pdf.setTextColor(71, 85, 105);
+      pdf.setFontSize(9);
       pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(8);
+      pdf.text(`Tarefa: ${employee.task || 'Não especificada'}`, detailsX, yPosition + 13);
 
-      const values = [
-        employee.name || 'Não informado',
-        employee.task || 'Não especificada',
-        employee.startTime || '--:--',
-        employee.endTime || '--:--',
-        employee.phone || 'Não informado',
-        employee.idNumber || 'Não informado'
-      ];
+      // Contact info
+      const contactInfo = `Tel: ${employee.phone || 'N/A'} | ID: ${employee.idNumber || 'N/A'}`;
+      pdf.text(contactInfo, detailsX, yPosition + 17);
 
-      xPos = margin + 1;
-      values.forEach((value, colIndex) => {
-        const maxWidth = colWidths[colIndex] - 2;
-        const lines = pdf.splitTextToSize(value, maxWidth);
-        pdf.text(lines, xPos, yPosition + 4);
-        xPos += colWidths[colIndex];
-      });
+      // Time info
+      const timeInfo = `Horário: ${employee.startTime || '--:--'} às ${employee.endTime || '--:--'}`;
+      pdf.text(timeInfo, detailsX, yPosition + 21);
 
-      yPosition += 8;
+      yPosition += employeeHeight + 5;
     });
-
-    yPosition += 5;
   }
 
-  // QR CODE AND TRACKING
+  // QR Code and Document Info
+  const qrSize = 30;
+  const qrY = yPosition + 10;
+
   if (formData.qrCode) {
-    const qrSize = 25;
-    const qrX = pageWidth - margin - qrSize;
-    const qrY = yPosition;
-
     try {
-      pdf.addImage(formData.qrCode, 'PNG', qrX, qrY, qrSize, qrSize);
+      // QR Code with modern styling
+      pdf.setFillColor(255, 255, 255);
+      pdf.roundedRect(pageWidth - margin - qrSize - 4, qrY - 2, qrSize + 8, qrSize + 8, 2, 2, 'F');
 
-      pdf.setFontSize(8);
+      pdf.addImage(formData.qrCode, 'PNG', pageWidth - margin - qrSize, qrY, qrSize, qrSize);
+
+      // QR Code info
+      pdf.setTextColor(71, 85, 105);
+      pdf.setFontSize(7);
       pdf.setFont('helvetica', 'normal');
-      pdf.text('Escaneie para', qrX - 2, qrY + qrSize + 4);
-      pdf.text('acessar online', qrX - 2, qrY + qrSize + 8);
-
-      // Form details on the left
-      pdf.text(`Gerado em: ${format(new Date(), 'dd/MM/yyyy HH:mm', { locale: ptBR })}`, margin, qrY + 5);
-      pdf.text(`Código de rastreamento: ${formData.code}`, margin, qrY + 10);
+      pdf.text('Escaneie para acessar', pageWidth - margin - qrSize - 2, qrY + qrSize + 10);
+      pdf.text('a versão digital', pageWidth - margin - qrSize - 2, qrY + qrSize + 14);
 
     } catch (error) {
       console.error('Error adding QR code to PDF:', error);
     }
-
-    yPosition += Math.max(qrSize + 15, 20);
   }
 
-  // Check if we need a new page for signatures
-  const spaceNeeded = 80;
-  if (yPosition + spaceNeeded > pageHeight - 25) {
+  // Document generation info
+  pdf.setTextColor(107, 114, 128);
+  pdf.setFontSize(8);
+  pdf.text(`Gerado em: ${format(new Date(), 'dd/MM/yyyy HH:mm', { locale: ptBR })}`, margin, qrY + 10);
+  pdf.text(`Código de rastreamento: ${formData.code}`, margin, qrY + 15);
+
+  // Signatures Section
+  const signaturesY = Math.max(qrY + qrSize + 20, yPosition + 30);
+  let sigY = signaturesY;
+
+  if (sigY + 70 > pageHeight - 20) {
     pdf.addPage();
-    yPosition = margin;
+    sigY = addModernHeader();
   }
 
-  // SIGNATURES SECTION
-  yPosition = addHeaderBox('ASSINATURAS E APROVAÇÕES', yPosition);
-  yPosition += 5;
+  sigY = addSectionHeader('ASSINATURAS E APROVAÇÕES', sigY);
 
-  const signatureWidth = (contentWidth - 10) / 2;
-  const signatureHeight = 25;
+  const signatureWidth = (contentWidth - 15) / 2;
+  const signatureHeight = 30;
 
-  // Supervisor signature
-  pdf.setFont('helvetica', 'bold');
+  // Supervisor signature (left)
+  pdf.setTextColor(15, 23, 42);
   pdf.setFontSize(10);
-  pdf.text('SUPERVISOR RESPONSÁVEL', margin, yPosition);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('SUPERVISOR', margin, sigY);
 
-  pdf.setDrawColor(150, 150, 150);
-  pdf.rect(margin, yPosition + 3, signatureWidth, signatureHeight);
+  pdf.setFillColor(255, 255, 255);
+  pdf.roundedRect(margin, sigY + 5, signatureWidth, signatureHeight, 2, 2, 'F');
+  pdf.setDrawColor(226, 232, 240);
+  pdf.setLineWidth(0.5);
+  pdf.roundedRect(margin, sigY + 5, signatureWidth, signatureHeight, 2, 2);
 
   if (formData.supervisorSignature) {
     try {
-      pdf.addImage(formData.supervisorSignature, 'PNG', margin + 2, yPosition + 4, signatureWidth - 4, signatureHeight - 2);
+      pdf.addImage(formData.supervisorSignature, 'PNG', margin + 2, sigY + 7, signatureWidth - 4, signatureHeight - 4);
     } catch (error) {
       console.error('Error adding supervisor signature:', error);
     }
   }
 
-  pdf.setFont('helvetica', 'normal');
-  pdf.setFontSize(8);
-  pdf.text('Nome: _________________________________', margin, yPosition + signatureHeight + 8);
-  pdf.text('Data: ____/____/_______ Hora: ____:____', margin, yPosition + signatureHeight + 13);
-
-  // Client signature
-  const clientX = margin + signatureWidth + 10;
+  // Client signature (right)
+  const clientX = margin + signatureWidth + 15;
+  pdf.setTextColor(15, 23, 42);
   pdf.setFont('helvetica', 'bold');
-  pdf.setFontSize(10);
-  pdf.text('CLIENTE/SOLICITANTE', clientX, yPosition);
+  pdf.text('CLIENTE', clientX, sigY);
 
-  pdf.rect(clientX, yPosition + 3, signatureWidth, signatureHeight);
+  pdf.setFillColor(255, 255, 255);
+  pdf.roundedRect(clientX, sigY + 5, signatureWidth, signatureHeight, 2, 2, 'F');
+  pdf.setDrawColor(226, 232, 240);
+  pdf.roundedRect(clientX, sigY + 5, signatureWidth, signatureHeight, 2, 2);
 
   if (formData.clientConfirmedWithoutSignature) {
+    pdf.setTextColor(185, 28, 28);
     pdf.setFont('helvetica', 'italic');
     pdf.setFontSize(9);
-    pdf.text('CONFIRMADO SEM ASSINATURA', clientX + 5, yPosition + 15);
-    pdf.text('CONFORME AUTORIZAÇÃO', clientX + 5, yPosition + 19);
+    pdf.text('CONFIRMADO SEM', clientX + 10, sigY + 18);
+    pdf.text('ASSINATURA', clientX + 10, sigY + 23);
   } else if (formData.clientSignature) {
     try {
-      pdf.addImage(formData.clientSignature, 'PNG', clientX + 2, yPosition + 4, signatureWidth - 4, signatureHeight - 2);
+      pdf.addImage(formData.clientSignature, 'PNG', clientX + 2, sigY + 7, signatureWidth - 4, signatureHeight - 4);
     } catch (error) {
       console.error('Error adding client signature:', error);
     }
   }
 
+  // Signature lines
+  pdf.setTextColor(107, 114, 128);
   pdf.setFont('helvetica', 'normal');
   pdf.setFontSize(8);
-  pdf.text('Nome: _________________________________', clientX, yPosition + signatureHeight + 8);
-  pdf.text('Data: ____/____/_______ Hora: ____:____', clientX, yPosition + signatureHeight + 13);
+  pdf.text('Nome: ________________________', margin, sigY + signatureHeight + 10);
+  pdf.text('Data: ___/___/___ Hora: ___:___', margin, sigY + signatureHeight + 15);
 
-  yPosition += signatureHeight + 20;
+  pdf.text('Nome: ________________________', clientX, sigY + signatureHeight + 10);
+  pdf.text('Data: ___/___/___ Hora: ___:___', clientX, sigY + signatureHeight + 15);
 
-  // FOOTER
-  const footerY = pageHeight - 15;
-  pdf.setDrawColor(...secondaryColor);
-  pdf.line(margin, footerY - 5, pageWidth - margin, footerY - 5);
-
+  // Modern footer
+  const footerY = pageHeight - 20;
   pdf.setFillColor(...primaryColor);
-  pdf.rect(0, footerY - 3, pageWidth, 18, 'F');
+  pdf.rect(0, footerY - 2, pageWidth, 22, 'F');
 
   pdf.setTextColor(255, 255, 255);
   pdf.setFont('helvetica', 'normal');
   pdf.setFontSize(8);
-  pdf.text('AviationOps - Sistema de Gestão Aeronáutica', margin, footerY + 2);
-  pdf.text('Documento gerado automaticamente - Validade sujeita à verificação digital', margin, footerY + 6);
-  pdf.text(`URL de verificação: ${window.location.origin}/cleaning-forms/${formData.code}`, margin, footerY + 10);
+  pdf.text('AviationOps - Sistema de Gestão Aeronáutica', margin, footerY + 3);
+  pdf.text('Documento gerado automaticamente | Verificação digital disponível', margin, footerY + 8);
 
   const currentDateTime = format(new Date(), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR });
-  pdf.text(`Impresso em: ${currentDateTime}`, pageWidth - margin - 50, footerY + 6);
+  pdf.text(`Impresso: ${currentDateTime}`, pageWidth - margin - 45, footerY + 3);
+  pdf.text(`Página 1 de ${hasPhotos ? '2' : '1'}`, pageWidth - margin - 25, footerY + 8);
+
+  // PAGE 2 - PHOTOGRAPHIC EVIDENCE (if photos exist)
+  if (hasPhotos) {
+    pdf.addPage();
+    let evidenceY = addModernHeader();
+
+    evidenceY = addSectionHeader('EVIDÊNCIAS FOTOGRÁFICAS', evidenceY);
+
+    const photosWithEvidence = formData.employees.filter(emp => emp.photo);
+    const photosPerRow = 2;
+    const photoWidth = (contentWidth - 20) / photosPerRow;
+    const photoHeight = photoWidth * 0.75;
+
+    photosWithEvidence.forEach((employee, index) => {
+      const col = index % photosPerRow;
+      const row = Math.floor(index / photosPerRow);
+      const photoX = margin + 5 + (col * (photoWidth + 10));
+      const photoY = evidenceY + (row * (photoHeight + 40));
+
+      // Check if we need a new page
+      if (photoY + photoHeight + 40 > pageHeight - 30) {
+        pdf.addPage();
+        evidenceY = addModernHeader();
+        evidenceY = addSectionHeader('EVIDÊNCIAS FOTOGRÁFICAS (CONT.)', evidenceY);
+        const newRow = 0;
+        const newPhotoY = evidenceY + (newRow * (photoHeight + 40));
+
+        // Recalculate position
+        const newCol = index % photosPerRow;
+        const newPhotoX = margin + 5 + (newCol * (photoWidth + 10));
+
+        addPhotoEvidence(employee, newPhotoX, newPhotoY, photoWidth, photoHeight, index + 1);
+      } else {
+        addPhotoEvidence(employee, photoX, photoY, photoWidth, photoHeight, index + 1);
+      }
+    });
+
+    function addPhotoEvidence(employee: any, x: number, y: number, width: number, height: number, photoNum: number) {
+      // Photo background
+      pdf.setFillColor(255, 255, 255);
+      pdf.roundedRect(x, y, width, height + 30, 3, 3, 'F');
+      pdf.setDrawColor(226, 232, 240);
+      pdf.setLineWidth(0.5);
+      pdf.roundedRect(x, y, width, height + 30, 3, 3);
+
+      // Photo
+      if (employee.photo) {
+        try {
+          pdf.addImage(employee.photo, 'JPEG', x + 2, y + 2, width - 4, height - 4);
+        } catch (error) {
+          // Error placeholder
+          pdf.setFillColor(229, 231, 235);
+          pdf.rect(x + 2, y + 2, width - 4, height - 4, 'F');
+          pdf.setTextColor(107, 114, 128);
+          pdf.setFontSize(10);
+          pdf.text('ERRO AO CARREGAR FOTO', x + 10, y + height/2);
+        }
+      }
+
+      // Caption
+      pdf.setTextColor(15, 23, 42);
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'bold');
+      pdf.text(`FOTO ${photoNum}: ${employee.name}`, x + 2, y + height + 8);
+
+      pdf.setTextColor(71, 85, 105);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(8);
+      pdf.text(`Função: ${employee.task || 'Não especificada'}`, x + 2, y + height + 13);
+      pdf.text(`Horário: ${employee.startTime || '--:--'} às ${employee.endTime || '--:--'}`, x + 2, y + height + 18);
+      pdf.text(`Timestamp: ${format(new Date(), 'dd/MM/yyyy HH:mm', { locale: ptBR })}`, x + 2, y + height + 23);
+    }
+
+    // Footer for evidence page
+    const evidenceFooterY = pageHeight - 20;
+    pdf.setFillColor(...primaryColor);
+    pdf.rect(0, evidenceFooterY - 2, pageWidth, 22, 'F');
+
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(8);
+    pdf.text('AviationOps - Evidências Fotográficas', margin, evidenceFooterY + 3);
+    pdf.text('Fotos capturadas durante a execução dos serviços', margin, evidenceFooterY + 8);
+    pdf.text(`Página 2 de 2`, pageWidth - margin - 25, evidenceFooterY + 8);
+  }
 
   return pdf;
 };
