@@ -21,8 +21,20 @@ export default function Login() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { user, signIn, signUp } = useAuth();
+  const { user, loading: authLoading, initialized, signIn, signUp } = useAuth();
   const { toast } = useToast();
+
+  // Show loading while auth is initializing
+  if (!initialized && authLoading) {
+    return (
+      <div className="min-h-screen bg-aviation-gradient flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white text-lg">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Redirect if already logged in
   if (user) {
