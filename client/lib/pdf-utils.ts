@@ -171,10 +171,10 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
 
   yPosition = addInfoGrid(basicInfo, yPosition);
 
-  // Intervention Types Section
-  yPosition = addSectionHeader('TIPOS DE INTERVENÇÃO', yPosition);
-
+  // Intervention Types Section - Only show if types are selected
   if (formData.interventionTypes.length > 0) {
+    yPosition = addSectionHeader('TIPOS DE INTERVENÇÃO REALIZADOS', yPosition);
+
     const itemsPerCol = Math.ceil(formData.interventionTypes.length / 2);
     const colWidth = contentWidth / 2;
 
@@ -195,12 +195,6 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
     });
 
     yPosition += (itemsPerCol * 6) + 8;
-  } else {
-    pdf.setTextColor(107, 114, 128);
-    pdf.setFont('helvetica', 'italic');
-    pdf.setFontSize(9);
-    pdf.text('Nenhum tipo de intervenção especificado', margin + 5, yPosition + 5);
-    yPosition += 15;
   }
 
   // Employees Section
