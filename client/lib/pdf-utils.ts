@@ -390,7 +390,12 @@ export const generateCleaningFormPDF = async (
   if (formData.code.startsWith("AP-PS-SNR")) {
     pdf.setFontSize(7);
     pdf.setTextColor(34, 197, 94); // Green color for secure ID
-    pdf.text(`✓ ID Seguro Verificado: ${formData.code}`, margin, qrY + 20);
+    pdf.text(`✓ Código Único Verificado: ${formData.code}`, margin, qrY + 20);
+
+    // Add code format explanation
+    pdf.setFontSize(6);
+    pdf.setTextColor(107, 114, 128);
+    pdf.text(`Formato: AP-PS-SNR##-DDMMAAHHMMSS`, margin, qrY + 24);
   }
 
   // Signatures Section
