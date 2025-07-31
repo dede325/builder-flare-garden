@@ -587,7 +587,7 @@ export default function CleaningForms() {
                   {/* Intervention Types */}
                   <div className="space-y-2">
                     <Label className="text-white">Tipos de Intervenção *</Label>
-                    <div className={`grid grid-cols-2 md:grid-cols-3 gap-3 p-3 rounded-lg border ${formErrors.interventionTypes ? 'border-red-500' : 'border-white/30'}`}>
+                    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-3 rounded-lg border ${formErrors.interventionTypes ? 'border-red-500' : 'border-white/30'}`}>
                       {interventionTypeOptions.map(type => (
                         <div key={type} className="flex items-center space-x-2">
                           <Checkbox
