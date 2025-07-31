@@ -924,8 +924,8 @@ export const generateCleaningFormPDF = async (
       // Security verification stamp for secure IDs
       if (formData.code.startsWith("AP-PS-SNR")) {
         pdf.setTextColor(34, 197, 94);
-        pdf.setFontSize(7);
-        pdf.text(`✓ ${formData.code}`, x + 2, y + height + 30);
+        pdf.setFontSize(6);
+        pdf.text(`✓ Código: ${formData.code}`, x + 2, y + height + 30);
       }
 
       // Tags if available
