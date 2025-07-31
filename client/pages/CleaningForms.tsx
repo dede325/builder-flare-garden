@@ -759,49 +759,30 @@ export default function CleaningForms() {
 
         newForm.qrCode = qrCode;
 
-        // Save using secure system or fallback to localStorage
-        if (isSecureMode) {
-          try {
-            await secureSyncService.saveFormSecurely(newForm);
-            const updatedForms = await secureSyncService.getAllForms();
-            setForms(updatedForms);
-            await updateSyncStatus();
+        // Save using intelligent sync service
+        try {
+          await intelligentSyncService.saveForm(newForm);
 
-            toast({
-              title: "Folha criada com segurança",
-              description: `Nova folha criada e criptografada. ID: ${formCode}`,
-            });
-          } catch (error) {
-            console.error(
-              "Secure save failed, falling back to localStorage:",
-              error,
-            );
-            // Fallback to localStorage
-            const updatedForms = [...forms, newForm];
-            setForms(updatedForms);
-            localStorage.setItem("cleaningForms", JSON.stringify(updatedForms));
+          // Update local forms list
+          const updatedForms = await intelligentSyncService.getAllForms();
+          setForms(updatedForms);
 
-            toast({
-              title: "Folha criada (modo local)",
-              description: "Salva localmente. Sincronização pendente.",
-              variant: "default",
-            });
-          }
-        } else {
-          // Regular localStorage save
-          try {
-            await supabaseStorage.saveFormMetadata(newForm);
-          } catch (error) {
-            console.log("Supabase metadata save skipped:", error);
-          }
+          toast({
+            title: "Folha criada",
+            description: `Nova folha criada. ID: ${formCode}. ${navigator.onLine ? 'Sincronizando...' : 'Será sincronizada quando voltar online.'}`,
+          });
+        } catch (error) {
+          console.error("Failed to save form:", error);
 
+          // Fallback to localStorage for critical data preservation
           const updatedForms = [...forms, newForm];
           setForms(updatedForms);
           localStorage.setItem("cleaningForms", JSON.stringify(updatedForms));
 
           toast({
-            title: "Folha criada",
-            description: "Nova folha de limpeza criada com sucesso.",
+            title: "Folha salva localmente",
+            description: "Folha salva em modo de emergência. Será sincronizada posteriormente.",
+            variant: "default",
           });
         }
       }
@@ -1360,7 +1341,7 @@ export default function CleaningForms() {
 
                   {/* Intervention Types */}
                   <div className="space-y-2">
-                    <Label className="text-white">Tipos de Intervenção *</Label>
+                    <Label className="text-white">Tipos de Intervenç��o *</Label>
                     <div
                       className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-3 rounded-lg border ${formErrors.interventionTypes ? "border-red-500" : "border-white/30"}`}
                     >
