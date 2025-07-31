@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { db } from '@/lib/supabase';
 import SignatureCanvas from '@/components/SignatureCanvas';
+import PhotoUpload from '@/components/PhotoUpload';
 import { downloadCleaningFormPDF, previewCleaningFormPDF } from '@/lib/pdf-utils';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
