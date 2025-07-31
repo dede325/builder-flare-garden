@@ -750,6 +750,76 @@ export default function Settings() {
 
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-white flex items-center">
+                    <Upload className="h-5 w-5 mr-2" />
+                    Migração de Dados
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <div className="p-4 bg-white/5 rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-white font-medium">Supabase</span>
+                          <Badge variant={migrationStatus.isConfigured ? "default" : "secondary"}>
+                            {migrationStatus.isConfigured === null ? "Verificando..." :
+                             migrationStatus.isConfigured ? "Configurado" : "Não configurado"}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-white/70">
+                          {migrationStatus.isConfigured
+                            ? "Pronto para migração de dados"
+                            : "Configure as variáveis de ambiente primeiro"
+                          }
+                        </p>
+                      </div>
+
+                      {migrationStatus.dataCounts && (
+                        <div className="p-4 bg-white/5 rounded-lg">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-white font-medium">Dados Offline</span>
+                            <Badge variant="outline" className="text-white border-white/20">
+                              {migrationStatus.dataCounts.total} registros
+                            </Badge>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 text-xs text-white/70">
+                            <span>Aeronaves: {migrationStatus.dataCounts.aircraft}</span>
+                            <span>Funcionários: {migrationStatus.dataCounts.employees}</span>
+                            <span>Tarefas: {migrationStatus.dataCounts.tasks}</span>
+                            <span>Voos: {migrationStatus.dataCounts.flightSheets}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-3">
+                      <Button
+                        onClick={() => setMigrationDialogOpen(true)}
+                        disabled={!migrationStatus.isConfigured || !migrationStatus.dataCounts?.total}
+                        className="aviation-button w-full"
+                      >
+                        <Upload className="h-4 w-4 mr-2" />
+                        Migrar Dados para Supabase
+                      </Button>
+
+                      <Button
+                        onClick={checkMigrationStatus}
+                        variant="outline"
+                        className="w-full border-white/20 text-white hover:bg-white/10"
+                      >
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Atualizar Status
+                      </Button>
+
+                      <p className="text-xs text-white/60 text-center">
+                        A migração transfere todos os dados offline para o Supabase,
+                        permitindo sincronização entre dispositivos.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <Separator className="bg-white/20" />
+
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-white flex items-center">
                     <Plane className="h-5 w-5 mr-2" />
                     Status da Sincronização
                   </h3>
