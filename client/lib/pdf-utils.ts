@@ -675,91 +675,177 @@ export const generateCleaningFormPDF = async (
       interventionY,
     );
 
-    const photoCategories = [
+    // Try to load photos from the new photo evidence service
+    let photoEvidenceData = null;
+    try {
+      const { photoEvidenceService } = await import('./photo-evidence-service');
+      photoEvidenceData = await photoEvidenceService.getPhotosForPDF(formData.id);
+    } catch (error) {
+      console.log('Photo evidence service not available, using legacy format');
+    }
+
+    // Use new photo evidence format if available, otherwise fall back to legacy
+    const photoCategories = photoEvidenceData ? [
       {
         key: "before",
         title: "ANTES DA INTERVENÇÃO",
-        data: formData.interventionPhotos?.before,
+        photos: [
+          ...photoEvidenceData.before.exterior.map(p => ({
+            photo: p.photoDataURL,
+            type: "Exterior",
+            description: p.description,
+            capturedBy: p.capturedBy,
+            timestamp: p.timestamp,
+            tags: p.tags,
+            gpsCoordinates: p.gpsCoordinates
+          })),
+          ...photoEvidenceData.before.interior.map(p => ({
+            photo: p.photoDataURL,
+            type: "Interior",
+            description: p.description,
+            capturedBy: p.capturedBy,
+            timestamp: p.timestamp,
+            tags: p.tags,
+            gpsCoordinates: p.gpsCoordinates
+          })),
+          ...photoEvidenceData.before.details.map(p => ({
+            photo: p.photoDataURL,
+            type: "Detalhes",
+            description: p.description,
+            capturedBy: p.capturedBy,
+            timestamp: p.timestamp,
+            tags: p.tags,
+            gpsCoordinates: p.gpsCoordinates
+          }))
+        ]
       },
       {
         key: "after",
         title: "DEPOIS DA INTERVENÇÃO",
-        data: formData.interventionPhotos?.after,
-      },
-    ];
-
-    photoCategories.forEach((category) => {
-      if (category.data) {
-        const allPhotos = [
-          ...(category.data.exterior || []).map((photo) => ({
+        photos: [
+          ...photoEvidenceData.after.exterior.map(p => ({
+            photo: p.photoDataURL,
+            type: "Exterior",
+            description: p.description,
+            capturedBy: p.capturedBy,
+            timestamp: p.timestamp,
+            tags: p.tags,
+            gpsCoordinates: p.gpsCoordinates
+          })),
+          ...photoEvidenceData.after.interior.map(p => ({
+            photo: p.photoDataURL,
+            type: "Interior",
+            description: p.description,
+            capturedBy: p.capturedBy,
+            timestamp: p.timestamp,
+            tags: p.tags,
+            gpsCoordinates: p.gpsCoordinates
+          })),
+          ...photoEvidenceData.after.details.map(p => ({
+            photo: p.photoDataURL,
+            type: "Detalhes",
+            description: p.description,
+            capturedBy: p.capturedBy,
+            timestamp: p.timestamp,
+            tags: p.tags,
+            gpsCoordinates: p.gpsCoordinates
+          }))
+        ]
+      }
+    ] : [
+      {
+        key: "before",
+        title: "ANTES DA INTERVENÇÃO",
+        photos: [
+          ...(formData.interventionPhotos?.before.exterior || []).map((photo) => ({
             photo,
             type: "Exterior",
           })),
-          ...(category.data.interior || []).map((photo) => ({
+          ...(formData.interventionPhotos?.before.interior || []).map((photo) => ({
             photo,
             type: "Interior",
           })),
-          ...(category.data.details || []).map((photo) => ({
+          ...(formData.interventionPhotos?.before.details || []).map((photo) => ({
             photo,
             type: "Detalhes",
           })),
-        ];
+        ]
+      },
+      {
+        key: "after",
+        title: "DEPOIS DA INTERVENÇÃO",
+        photos: [
+          ...(formData.interventionPhotos?.after.exterior || []).map((photo) => ({
+            photo,
+            type: "Exterior",
+          })),
+          ...(formData.interventionPhotos?.after.interior || []).map((photo) => ({
+            photo,
+            type: "Interior",
+          })),
+          ...(formData.interventionPhotos?.after.details || []).map((photo) => ({
+            photo,
+            type: "Detalhes",
+          })),
+        ]
+      }
+    ];
 
-        if (allPhotos.length > 0) {
-          // Section header
-          pdf.setTextColor(15, 23, 42);
-          pdf.setFontSize(11);
-          pdf.setFont("helvetica", "bold");
-          pdf.text(category.title, margin, interventionY + 5);
-          interventionY += 15;
+    photoCategories.forEach((category) => {
+      if (category.photos && category.photos.length > 0) {
+        // Section header
+        pdf.setTextColor(15, 23, 42);
+        pdf.setFontSize(11);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(category.title, margin, interventionY + 5);
+        interventionY += 15;
 
-          const photosPerRow = 2;
-          const photoWidth = (contentWidth - 20) / photosPerRow;
-          const photoHeight = photoWidth * 0.6;
+        const photosPerRow = 2;
+        const photoWidth = (contentWidth - 20) / photosPerRow;
+        const photoHeight = photoWidth * 0.6;
 
-          allPhotos.forEach((item, index) => {
-            const col = index % photosPerRow;
-            const row = Math.floor(index / photosPerRow);
-            const photoX = margin + 5 + col * (photoWidth + 10);
-            const photoY = interventionY + row * (photoHeight + 35);
+        category.photos.forEach((item, index) => {
+          const col = index % photosPerRow;
+          const row = Math.floor(index / photosPerRow);
+          const photoX = margin + 5 + col * (photoWidth + 10);
+          const photoY = interventionY + row * (photoHeight + 45);
 
-            // Check if we need a new page
-            if (photoY + photoHeight + 35 > pageHeight - 30) {
-              pdf.addPage();
-              interventionY = addModernHeader();
-              interventionY = addSectionHeader(
-                `${category.title} (CONT.)`,
-                interventionY,
-              );
-              const newRow = 0;
-              const newPhotoY = interventionY + newRow * (photoHeight + 35);
-              const newCol = index % photosPerRow;
-              const newPhotoX = margin + 5 + newCol * (photoWidth + 10);
+          // Check if we need a new page
+          if (photoY + photoHeight + 45 > pageHeight - 30) {
+            pdf.addPage();
+            interventionY = addModernHeader();
+            interventionY = addSectionHeader(
+              `${category.title} (CONT.)`,
+              interventionY,
+            );
+            const newRow = 0;
+            const newPhotoY = interventionY + newRow * (photoHeight + 45);
+            const newCol = index % photosPerRow;
+            const newPhotoX = margin + 5 + newCol * (photoWidth + 10);
 
-              addInterventionPhotoEvidence(
-                item,
-                newPhotoX,
-                newPhotoY,
-                photoWidth,
-                photoHeight,
-                index + 1,
-              );
-            } else {
-              addInterventionPhotoEvidence(
-                item,
-                photoX,
-                photoY,
-                photoWidth,
-                photoHeight,
-                index + 1,
-              );
-            }
-          });
+            addInterventionPhotoEvidence(
+              item,
+              newPhotoX,
+              newPhotoY,
+              photoWidth,
+              photoHeight,
+              index + 1,
+            );
+          } else {
+            addInterventionPhotoEvidence(
+              item,
+              photoX,
+              photoY,
+              photoWidth,
+              photoHeight,
+              index + 1,
+            );
+          }
+        });
 
-          interventionY +=
-            Math.ceil(allPhotos.length / photosPerRow) * (photoHeight + 35) +
-            10;
-        }
+        interventionY +=
+          Math.ceil(category.photos.length / photosPerRow) * (photoHeight + 45) +
+          10;
       }
     });
 
@@ -773,10 +859,10 @@ export const generateCleaningFormPDF = async (
     ) {
       // Photo background
       pdf.setFillColor(255, 255, 255);
-      pdf.roundedRect(x, y, width, height + 25, 3, 3, "F");
+      pdf.roundedRect(x, y, width, height + 35, 3, 3, "F");
       pdf.setDrawColor(226, 232, 240);
       pdf.setLineWidth(0.5);
-      pdf.roundedRect(x, y, width, height + 25, 3, 3);
+      pdf.roundedRect(x, y, width, height + 35, 3, 3);
 
       // Photo
       if (item.photo) {
@@ -792,26 +878,57 @@ export const generateCleaningFormPDF = async (
         }
       }
 
-      // Caption
+      // Enhanced caption with metadata
       pdf.setTextColor(15, 23, 42);
       pdf.setFontSize(9);
       pdf.setFont("helvetica", "bold");
       pdf.text(`${item.type.toUpperCase()} ${photoNum}`, x + 2, y + height + 8);
 
+      // Description if available
+      if (item.description && item.description !== `${item.type}`) {
+        pdf.setTextColor(71, 85, 105);
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(7);
+        const descText = item.description.length > 40 ?
+          item.description.substring(0, 37) + "..." :
+          item.description;
+        pdf.text(descText, x + 2, y + height + 12);
+      }
+
+      // Timestamp and captured by
       pdf.setTextColor(71, 85, 105);
       pdf.setFont("helvetica", "normal");
       pdf.setFontSize(8);
-      pdf.text(
-        `Timestamp: ${format(new Date(), "dd/MM/yyyy HH:mm", { locale: ptBR })}`,
-        x + 2,
-        y + height + 15,
-      );
+      const timestamp = item.timestamp ?
+        format(new Date(item.timestamp), "dd/MM/yyyy HH:mm", { locale: ptBR }) :
+        format(new Date(), "dd/MM/yyyy HH:mm", { locale: ptBR });
+      pdf.text(`${timestamp}`, x + 2, y + height + 18);
+
+      if (item.capturedBy) {
+        pdf.setFontSize(7);
+        pdf.text(`Por: ${item.capturedBy}`, x + 2, y + height + 22);
+      }
+
+      // GPS coordinates if available
+      if (item.gpsCoordinates) {
+        pdf.setTextColor(34, 197, 94);
+        pdf.setFontSize(6);
+        pdf.text(`GPS: ${item.gpsCoordinates.lat.toFixed(6)}, ${item.gpsCoordinates.lng.toFixed(6)}`, x + 2, y + height + 26);
+      }
 
       // Security verification stamp for secure IDs
       if (formData.code.startsWith("AP-PS-SNR")) {
         pdf.setTextColor(34, 197, 94);
         pdf.setFontSize(7);
-        pdf.text(`✓ ${formData.code}`, x + 2, y + height + 20);
+        pdf.text(`✓ ${formData.code}`, x + 2, y + height + 30);
+      }
+
+      // Tags if available
+      if (item.tags && item.tags.length > 0) {
+        pdf.setTextColor(147, 51, 234);
+        pdf.setFontSize(6);
+        const tagsText = item.tags.slice(0, 3).join(", ");
+        pdf.text(`Tags: ${tagsText}`, x + width - 60, y + height + 8);
       }
     }
 
@@ -829,7 +946,7 @@ export const generateCleaningFormPDF = async (
       interventionFooterY + 3,
     );
     pdf.text(
-      "Fotos capturadas durante e após a execução dos serviços",
+      "Fotos capturadas durante e após a execução dos serviços com metadados completos",
       margin,
       interventionFooterY + 8,
     );
