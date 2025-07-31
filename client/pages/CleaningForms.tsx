@@ -459,12 +459,24 @@ export default function CleaningForms() {
   // Remove manual employee addition - only allow selection from database
 
   const addEmployeeFromDatabase = (employeeFromDb: any) => {
+    // Get default working hours based on shift
+    const getShiftTimes = (shift: string) => {
+      switch (shift) {
+        case 'morning': return { start: '06:00', end: '14:00' };
+        case 'afternoon': return { start: '14:00', end: '22:00' };
+        case 'night': return { start: '22:00', end: '06:00' };
+        default: return { start: '08:00', end: '17:00' };
+      }
+    };
+
+    const shiftTimes = getShiftTimes(formData.shift);
+
     const newEmployee = {
-      id: crypto.randomUUID(),
+      id: employeeFromDb.id, // Use the actual employee ID from database
       name: employeeFromDb.name || '',
       task: employeeFromDb.role || '', // Use role as default task
-      startTime: '',
-      endTime: '',
+      startTime: shiftTimes.start,
+      endTime: shiftTimes.end,
       phone: employeeFromDb.phone || '',
       idNumber: employeeFromDb.idNumber || '',
       photo: employeeFromDb.photo || ''
