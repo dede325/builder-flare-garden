@@ -736,17 +736,40 @@ export default function CleaningForms() {
               </Tabs>
 
               <div className="flex justify-end space-x-4 pt-6">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setIsCreateDialogOpen(false)}
                   className="border-white/30 text-white hover:bg-white/20"
+                  disabled={isSubmitting}
                 >
                   Cancelar
                 </Button>
-                <Button onClick={handleCreateForm} className="aviation-button">
-                  Criar Folha de Limpeza
+                <Button
+                  onClick={handleCreateForm}
+                  className="aviation-button"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <div className="flex items-center space-x-2">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <span>Criando...</span>
+                    </div>
+                  ) : (
+                    'Criar Folha de Limpeza'
+                  )}
                 </Button>
               </div>
+
+              {Object.keys(formErrors).length > 0 && (
+                <div className="mt-4 p-4 bg-red-500/20 border border-red-500/30 rounded-lg">
+                  <p className="text-red-400 text-sm font-medium mb-2">Corrija os seguintes erros:</p>
+                  <ul className="text-red-400 text-sm space-y-1">
+                    {Object.values(formErrors).map((error, index) => (
+                      <li key={index}>• {error}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </DialogContent>
           </Dialog>
         </div>
