@@ -487,6 +487,35 @@ export default function CleaningForms() {
     }
   };
 
+  const handleEditForm = (form: CleaningForm) => {
+    // Only allow editing of draft forms
+    if (form.status !== 'draft') {
+      toast({
+        title: "Edição não permitida",
+        description: "Apenas folhas em rascunho podem ser editadas.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Load form data into the form
+    setFormData({
+      date: form.date,
+      shift: form.shift,
+      location: form.location,
+      interventionTypes: form.interventionTypes,
+      aircraftId: form.aircraftId,
+      employees: form.employees,
+      supervisorSignature: form.supervisorSignature || '',
+      clientSignature: form.clientSignature || '',
+      clientConfirmedWithoutSignature: form.clientConfirmedWithoutSignature
+    });
+
+    // Set editing mode
+    setEditingForm(form);
+    setIsCreateDialogOpen(true);
+  };
+
   const filteredForms = forms.filter(form => 
     form.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
     form.location.toLowerCase().includes(searchTerm.toLowerCase())
@@ -726,7 +755,7 @@ export default function CleaningForms() {
                       </div>
                       {employees.filter(emp => !formData.employees.some(formEmp => formEmp.name === emp.name)).length > 6 && (
                         <p className="text-white/60 text-sm mt-2">
-                          E mais {employees.filter(emp => !formData.employees.some(formEmp => formEmp.name === emp.name)).length - 6} funcionários disponíveis
+                          E mais {employees.filter(emp => !formData.employees.some(formEmp => formEmp.name === emp.name)).length - 6} funcion��rios disponíveis
                         </p>
                       )}
                     </Card>
