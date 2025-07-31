@@ -299,10 +299,11 @@ export default function CleaningForms() {
 
     try {
       const formCode = generateFormCode(formData.date, formData.shift, formData.location);
-      const qrCode = await generateQRCode(formCode);
+      const formId = crypto.randomUUID();
 
+      // Create initial form object
       const newForm: CleaningForm = {
-        id: crypto.randomUUID(),
+        id: formId,
         code: formCode,
         date: formData.date,
         shift: formData.shift,
@@ -313,11 +314,37 @@ export default function CleaningForms() {
         supervisorSignature: formData.supervisorSignature,
         clientSignature: formData.clientSignature,
         clientConfirmedWithoutSignature: formData.clientConfirmedWithoutSignature,
-        qrCode,
+        qrCode: '', // Will be updated after PDF generation
         status: formData.supervisorSignature && (formData.clientSignature || formData.clientConfirmedWithoutSignature) ? 'completed' : 'draft',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
+
+      // Generate and upload PDF to get the storage URL
+      const aircraftData = aircraft.find((ac: any) => ac.id === formData.aircraftId);
+      const pdfStorageUrl = await generateAndUploadPDF(newForm, aircraftData);
+
+      // Generate QR code with the PDF storage URL or form view URL
+      const qrCodeUrl = pdfStorageUrl || `${window.location.origin}/cleaning-forms/${formCode}`;
+      const qrCode = await QRCode.toDataURL(qrCodeUrl, {
+        width: 250,
+        margin: 2,
+        color: {
+          dark: '#1e293b',
+          light: '#ffffff'
+        },
+        errorCorrectionLevel: 'M'
+      });
+
+      // Update form with QR code
+      newForm.qrCode = qrCode;
+
+      // Save to Supabase if configured
+      try {
+        await supabaseStorage.saveFormMetadata(newForm);
+      } catch (error) {
+        console.log('Supabase metadata save skipped:', error);
+      }
 
       const updatedForms = [...forms, newForm];
       setForms(updatedForms);
