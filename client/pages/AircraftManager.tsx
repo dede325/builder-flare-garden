@@ -377,9 +377,8 @@ export default function AircraftManager() {
   const getStatusText = (status: string) => {
     switch (status) {
       case 'active': return 'Operacional';
-      case 'maintenance': return 'Manutenção';
       case 'inactive': return 'Inativa';
-      case 'grounded': return 'Retida';
+      case 'out_of_service': return 'Fora de Serviço';
       default: return 'Desconhecido';
     }
   };
