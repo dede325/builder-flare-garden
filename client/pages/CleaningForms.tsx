@@ -445,28 +445,15 @@ export default function CleaningForms() {
     }
   };
 
-  const generateFormCode = (date: string, shift: string, location: string) => {
-    // Use the new secure ID format: AP-PS-SNR01-DDMMAAHHMMSS
-    const now = new Date();
-    const day = String(now.getDate()).padStart(2, "0");
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const year = String(now.getFullYear()).slice(-2);
-    const hours = String(now.getHours()).padStart(2, "0");
-    const minutes = String(now.getMinutes()).padStart(2, "0");
-    const seconds = String(now.getSeconds()).padStart(2, "0");
-
-    // Generate unique serial number based on location and shift
-    const locationCode = location
-      .replace(/\s+/g, "")
-      .substring(0, 2)
-      .toUpperCase();
-    const shiftCode =
-      shift === "morning" ? "01" : shift === "afternoon" ? "02" : "03";
-    const serialNumber = `${locationCode}${shiftCode}`;
-
-    const timestamp = `${day}${month}${year}${hours}${minutes}${seconds}`;
-
-    return `AP-PS-SNR${serialNumber}-${timestamp}`;
+  // Form code generation using the new service
+  const generateFormCode = async (date: string, shift: string, location: string) => {
+    try {
+      return await codeGenerationService.generateUniqueFormCode(location, shift);
+    } catch (error) {
+      console.error('Failed to generate unique form code:', error);
+      // Fallback to basic generation
+      return codeGenerationService.generateFormCode(location, shift);
+    }
   };
 
   const generateQRCode = async (formCode: string) => {
@@ -909,7 +896,7 @@ export default function CleaningForms() {
     // Only allow editing of draft forms
     if (form.status !== "draft") {
       toast({
-        title: "Edição não permitida",
+        title: "Edição n��o permitida",
         description: "Apenas folhas em rascunho podem ser editadas.",
         variant: "destructive",
       });
