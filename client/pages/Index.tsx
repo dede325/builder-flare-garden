@@ -22,6 +22,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { MigrationNotification } from "@/components/MigrationNotification";
 
 export default function Index() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
