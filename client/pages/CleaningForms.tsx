@@ -929,46 +929,7 @@ export default function CleaningForms() {
     }
   };
 
-  const addInterventionPhoto = (
-    timing: "before" | "after",
-    category: "exterior" | "interior" | "details",
-    photoDataURL: string | null,
-  ) => {
-    if (!photoDataURL) return;
 
-    setFormData((prev) => ({
-      ...prev,
-      interventionPhotos: {
-        ...prev.interventionPhotos,
-        [timing]: {
-          ...prev.interventionPhotos[timing],
-          [category]: [
-            ...(prev.interventionPhotos[timing][category] || []),
-            photoDataURL,
-          ],
-        },
-      },
-    }));
-  };
-
-  const removeInterventionPhoto = (
-    timing: "before" | "after",
-    category: "exterior" | "interior" | "details",
-    index: number,
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      interventionPhotos: {
-        ...prev.interventionPhotos,
-        [timing]: {
-          ...prev.interventionPhotos[timing],
-          [category]: (prev.interventionPhotos[timing][category] || []).filter(
-            (_, i) => i !== index,
-          ),
-        },
-      },
-    }));
-  };
 
   const handleDownloadPDF = async (form: CleaningForm) => {
     try {
