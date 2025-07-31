@@ -231,16 +231,7 @@ redirect_uri = ""
 # or any other third-party OIDC providers.
 url = ""
 
-[edge]
-enabled = false
-# Port to use for the Functions URL.
-port = 54324
-# How many requests can be made concurrently to a single function.
-runtime_requests_concurrency = 1
-# Request timeout for functions (in seconds).
-runtime_request_timeout = 10
-# Time a function may be idle before being terminated.
-runtime_idle_timeout = 176
+# Edge Functions configuration removed - not supported in this CLI version
 
 [analytics]
 enabled = false
