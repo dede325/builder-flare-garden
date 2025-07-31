@@ -339,6 +339,82 @@ export default function HistoryExportPanel() {
     }
   };
 
+  const handleBatchPrint = async () => {
+    if (selectedForms.length === 0) return;
+
+    try {
+      const formsToExport = forms.filter((form) =>
+        selectedForms.includes(form.id)
+      );
+
+      const result = await batchOperationsService.batchPrint(
+        formsToExport,
+        aircraft,
+        (current, total) => {
+          console.log(`Imprimindo ${current} de ${total}`);
+        }
+      );
+
+      if (result.failed > 0) {
+        toast({
+          title: "Impressão parcialmente concluída",
+          description: `${result.successful} impressas com sucesso, ${result.failed} falharam.`,
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Impressão concluída",
+          description: `${result.successful} folha(s) enviada(s) para impressão.`,
+        });
+      }
+    } catch (error) {
+      console.error("Error batch printing:", error);
+      toast({
+        title: "Erro na impressão em lote",
+        description: "Não foi possível imprimir as folhas selecionadas.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleBatchDownload = async () => {
+    if (selectedForms.length === 0) return;
+
+    try {
+      const formsToExport = forms.filter((form) =>
+        selectedForms.includes(form.id)
+      );
+
+      const result = await batchOperationsService.batchDownload(
+        formsToExport,
+        aircraft,
+        (current, total) => {
+          console.log(`Baixando ${current} de ${total}`);
+        }
+      );
+
+      if (result.failed > 0) {
+        toast({
+          title: "Download parcialmente concluído",
+          description: `${result.successful} baixadas com sucesso, ${result.failed} falharam.`,
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Download concluído",
+          description: `${result.successful} folha(s) baixada(s) com sucesso.`,
+        });
+      }
+    } catch (error) {
+      console.error("Error batch downloading:", error);
+      toast({
+        title: "Erro no download em lote",
+        description: "Não foi possível baixar as folhas selecionadas.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handlePrintForm = async (form: CleaningForm) => {
     try {
       const aircraftData = aircraft.find((ac) => ac.id === form.aircraftId);
