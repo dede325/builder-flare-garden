@@ -329,21 +329,20 @@ export default function AircraftManager() {
   const handleEdit = (aircraftItem: Aircraft) => {
     setEditingAircraft(aircraftItem);
     setFormData({
-      registration: aircraftItem.registration,
-      model: aircraftItem.model,
-      manufacturer: aircraftItem.manufacturer,
-      owner: aircraftItem.owner,
-      type: aircraftItem.type,
-      capacity: aircraftItem.capacity,
-      specifications: aircraftItem.specifications,
-      status: aircraftItem.status,
-      lastInspection: aircraftItem.lastInspection,
-      nextInspection: aircraftItem.nextInspection,
-      flightHours: aircraftItem.flightHours,
-      location: aircraftItem.location,
-      maintenanceNotes: aircraftItem.maintenanceNotes || '',
-      certifications: aircraftItem.certifications,
-      insuranceExpiry: aircraftItem.insuranceExpiry
+      registration: aircraftItem.registration || '',
+      model: aircraftItem.model || '',
+      manufacturer: aircraftItem.manufacturer || '',
+      owner: aircraftItem.owner || '',
+      type: aircraftItem.type || 'commercial',
+      capacity: aircraftItem.capacity || { passengers: 0, cargo: 0 },
+      specifications: aircraftItem.specifications || { wingspan: 0, length: 0, height: 0, exteriorArea: 0 },
+      status: aircraftItem.status || 'active',
+      location: aircraftItem.location || '',
+      hangar: aircraftItem.hangar || '',
+      lastCleaningDate: aircraftItem.lastCleaningDate || '',
+      lastCleaningType: aircraftItem.lastCleaningType || '',
+      cleaningNotes: aircraftItem.cleaningNotes || '',
+      cleaningRequirements: aircraftItem.cleaningRequirements || []
     });
     setIsCreateDialogOpen(true);
   };
