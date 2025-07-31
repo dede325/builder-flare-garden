@@ -644,7 +644,7 @@ export default function CleaningForms() {
         // Create new form with secure ID
         const formCode = isSecureMode
           ? generateSecureFormId()
-          : generateFormCode(formData.date, formData.shift, formData.location);
+          : await generateFormCode(formData.date, formData.shift, formData.location);
         const formId = isSecureMode ? formCode : crypto.randomUUID();
 
         const now = new Date().toISOString();
