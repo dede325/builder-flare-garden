@@ -27,10 +27,6 @@ const App = () => (
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-            <Route path="/aircraft" element={<ProtectedRoute><Aircraft /></ProtectedRoute>} />
-            <Route path="/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
-            <Route path="/tasks" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />
-            <Route path="/flight-sheets" element={<ProtectedRoute><FlightSheets /></ProtectedRoute>} />
             <Route path="/cleaning-forms" element={<ProtectedRoute><CleaningForms /></ProtectedRoute>} />
             <Route path="/employee-manager" element={<ProtectedRoute><EmployeeManager /></ProtectedRoute>} />
             <Route path="/aircraft-manager" element={<ProtectedRoute><AircraftManager /></ProtectedRoute>} />
