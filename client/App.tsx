@@ -94,15 +94,46 @@ const queryClient = new QueryClient();
 
 const AppContent = () => {
   useEffect(() => {
-    // Setup intelligent sync service
-    const syncService = setupIntelligentSync();
+    let isMounted = true;
+    let syncService: any = null;
+    let photoCleanup: (() => void) | null = null;
 
-    // Setup photo evidence auto-sync
-    const photoCleanup = setupPhotoAutoSync();
+    // Setup services asynchronously with error handling
+    const initializeServices = async () => {
+      try {
+        if (isMounted) {
+          // Setup intelligent sync service
+          syncService = setupIntelligentSync();
+
+          // Setup photo evidence auto-sync
+          photoCleanup = setupPhotoAutoSync();
+        }
+      } catch (error) {
+        console.error("Error initializing services:", error);
+      }
+    };
+
+    initializeServices();
 
     return () => {
-      photoCleanup();
-      syncService.destroy();
+      isMounted = false;
+
+      // Clean up services with error handling
+      try {
+        if (photoCleanup && typeof photoCleanup === 'function') {
+          photoCleanup();
+        }
+      } catch (error) {
+        console.warn("Error during photo cleanup:", error);
+      }
+
+      try {
+        if (syncService && typeof syncService.destroy === 'function') {
+          syncService.destroy();
+        }
+      } catch (error) {
+        console.warn("Error during sync service cleanup:", error);
+      }
     };
   }, []);
 
