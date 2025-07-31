@@ -580,10 +580,14 @@ export default function CleaningForms() {
     setIsCreateDialogOpen(true);
   };
 
-  const filteredForms = forms.filter(form => 
-    form.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    form.location.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredForms = forms.filter(form => {
+    const matchesSearch = form.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      form.location.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus = filterStatus === 'all' || form.status === filterStatus;
+
+    return matchesSearch && matchesStatus;
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
