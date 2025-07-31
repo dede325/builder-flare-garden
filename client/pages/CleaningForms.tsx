@@ -885,13 +885,18 @@ export default function CleaningForms() {
               <DialogHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <DialogTitle className="text-white">
-                      {editingForm ? 'Editar Folha de Limpeza' : 'Nova Folha de Limpeza'}
+                    <DialogTitle className="text-white flex items-center space-x-2">
+                      <span>{editingForm ? 'Editar Folha de Limpeza' : 'Nova Folha de Limpeza'}</span>
+                      {isSecureMode && (
+                        <Shield className="h-4 w-4 text-green-400" title="Modo Seguro Ativo" />
+                      )}
                     </DialogTitle>
                     <DialogDescription className="text-white/70">
                       {editingForm
                         ? `Editando folha ${editingForm.code} - Status: ${editingForm.status === 'draft' ? 'Rascunho' : 'Finalizada'}`
-                        : 'Preencha os dados para criar uma nova folha de requisição de limpeza'
+                        : isSecureMode
+                          ? 'Crie uma nova folha criptografada com ID único seguro (AP-PS-SNR##-DDMMAAHHMMSS)'
+                          : 'Preencha os dados para criar uma nova folha de requisição de limpeza'
                       }
                     </DialogDescription>
                   </div>
