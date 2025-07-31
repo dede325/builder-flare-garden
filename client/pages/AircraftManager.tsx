@@ -843,12 +843,12 @@ export default function AircraftManager() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-white/70 text-sm font-medium">Inspeções Próximas</p>
+                  <p className="text-white/70 text-sm font-medium">Precisam Limpeza</p>
                   <p className="text-3xl font-bold text-white">
                     {aircraft.filter(ac => {
-                      if (!ac.nextInspection) return false;
-                      const diffDays = Math.ceil((new Date(ac.nextInspection).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-                      return diffDays <= 30 && diffDays >= 0;
+                      if (!ac.lastCleaningDate) return true;
+                      const diffDays = Math.ceil((new Date().getTime() - new Date(ac.lastCleaningDate).getTime()) / (1000 * 60 * 60 * 24));
+                      return diffDays > 14;
                     }).length}
                   </p>
                 </div>
