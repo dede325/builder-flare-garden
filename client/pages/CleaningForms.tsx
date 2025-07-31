@@ -281,16 +281,37 @@ export default function CleaningForms() {
         if (employeesResult.data) setEmployees(employeesResult.data);
       }
 
-      // Load saved forms from localStorage for demo
-      const savedForms = localStorage.getItem('cleaningForms');
-      if (savedForms) {
-        const parsedForms = JSON.parse(savedForms);
-        // Ensure all forms have proper changeHistory array
-        const normalizedForms = parsedForms.map((form: any) => ({
-          ...form,
-          changeHistory: form.changeHistory || []
-        }));
-        setForms(normalizedForms);
+      // Load forms using secure sync service if available, fallback to localStorage
+      try {
+        if (isSecureMode) {
+          const secureForms = await secureSyncService.getAllForms();
+          setForms(secureForms);
+          console.log('Loaded forms from secure storage:', secureForms.length);
+        } else {
+          // Fallback to localStorage
+          const savedForms = localStorage.getItem('cleaningForms');
+          if (savedForms) {
+            const parsedForms = JSON.parse(savedForms);
+            // Ensure all forms have proper changeHistory array
+            const normalizedForms = parsedForms.map((form: any) => ({
+              ...form,
+              changeHistory: form.changeHistory || []
+            }));
+            setForms(normalizedForms);
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to load from secure storage, falling back to localStorage:', error);
+        // Fallback to localStorage
+        const savedForms = localStorage.getItem('cleaningForms');
+        if (savedForms) {
+          const parsedForms = JSON.parse(savedForms);
+          const normalizedForms = parsedForms.map((form: any) => ({
+            ...form,
+            changeHistory: form.changeHistory || []
+          }));
+          setForms(normalizedForms);
+        }
       }
     } catch (error) {
       console.error('Error loading data:', error);
