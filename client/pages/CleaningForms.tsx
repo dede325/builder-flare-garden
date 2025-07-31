@@ -326,6 +326,18 @@ export default function CleaningForms() {
 
     try {
       if (editingForm) {
+        // Track changes for version history
+        const changes: string[] = [];
+        if (editingForm.date !== formData.date) changes.push(`Data alterada de ${editingForm.date} para ${formData.date}`);
+        if (editingForm.shift !== formData.shift) changes.push(`Turno alterado de ${editingForm.shift} para ${formData.shift}`);
+        if (editingForm.location !== formData.location) changes.push(`Local alterado de ${editingForm.location} para ${formData.location}`);
+        if (JSON.stringify(editingForm.interventionTypes) !== JSON.stringify(formData.interventionTypes)) {
+          changes.push(`Tipos de intervenção alterados`);
+        }
+        if (editingForm.employees.length !== formData.employees.length) {
+          changes.push(`Funcionários alterados (${editingForm.employees.length} → ${formData.employees.length})`);
+        }
+
         // Update existing form
         const updatedForm: CleaningForm = {
           ...editingForm,
@@ -339,7 +351,25 @@ export default function CleaningForms() {
           clientSignature: formData.clientSignature,
           clientConfirmedWithoutSignature: formData.clientConfirmedWithoutSignature,
           status: formData.supervisorSignature && (formData.clientSignature || formData.clientConfirmedWithoutSignature) ? 'completed' : 'draft',
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
+          version: editingForm.version + 1,
+          changeHistory: [
+            ...editingForm.changeHistory,
+            {
+              version: editingForm.version + 1,
+              timestamp: new Date().toISOString(),
+              changes,
+              author: user.email || 'Usuário',
+              previousData: {
+                date: editingForm.date,
+                shift: editingForm.shift,
+                location: editingForm.location,
+                interventionTypes: editingForm.interventionTypes,
+                employees: editingForm.employees
+              }
+            }
+          ],
+          syncStatus: 'pending'
         };
 
         // Regenerate PDF and QR code if needed
@@ -556,7 +586,7 @@ export default function CleaningForms() {
     // Only allow editing of draft forms
     if (form.status !== 'draft') {
       toast({
-        title: "Edição n��o permitida",
+        title: "Edição não permitida",
         description: "Apenas folhas em rascunho podem ser editadas.",
         variant: "destructive"
       });
