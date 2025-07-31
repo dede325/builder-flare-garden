@@ -977,15 +977,32 @@ class IntelligentSyncService {
     this.notifyObservers();
   }
 
-  // Cleanup and destroy
-  destroy(): void {
+  // Start background sync processes
+  startBackgroundSync(): void {
+    // Start auto-sync if not already running
+    if (!this.autoSyncInterval && this.connectionStatus.isOnline) {
+      this.autoSyncInterval = setInterval(() => {
+        this.performSync();
+      }, this.syncInterval);
+    }
+  }
+
+  // Stop background sync processes
+  stopBackgroundSync(): void {
     if (this.autoSyncInterval) {
       clearInterval(this.autoSyncInterval);
+      this.autoSyncInterval = null;
     }
 
     if (this.retryTimeout) {
       clearTimeout(this.retryTimeout);
+      this.retryTimeout = null;
     }
+  }
+
+  // Cleanup and destroy
+  destroy(): void {
+    this.stopBackgroundSync();
 
     window.removeEventListener("online", this.onComeOnline);
     window.removeEventListener("offline", this.onGoOffline);
