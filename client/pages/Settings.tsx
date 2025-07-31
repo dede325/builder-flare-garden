@@ -119,6 +119,9 @@ export default function Settings() {
       setCompanySettings(JSON.parse(savedCompanySettings));
     }
 
+    // Check migration status
+    checkMigrationStatus();
+
     // Check online status
     const handleOnlineStatus = () => setIsOnline(navigator.onLine);
     window.addEventListener("online", handleOnlineStatus);
