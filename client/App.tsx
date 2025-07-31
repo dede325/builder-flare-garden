@@ -16,6 +16,7 @@ import EmployeeManager from "./pages/EmployeeManager";
 import AircraftManager from "./pages/AircraftManager";
 import UserManagement from "./pages/UserManagement";
 import Settings from "./pages/Settings";
+import HistoryExportPanel from "./pages/HistoryExportPanel";
 import NotFound from "./pages/NotFound";
 import { setupPhotoAutoSync } from "@/lib/photo-evidence-service";
 import { setupIntelligentSync } from "@/lib/intelligent-sync-service";
