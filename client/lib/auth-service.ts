@@ -66,7 +66,12 @@ class AuthService {
   private listeners: Array<(state: AuthState) => void> = [];
 
   constructor() {
-    this.initialize();
+    // Set initial demo state immediately if Supabase is not configured
+    if (!supabase) {
+      this.setDemoState();
+    } else {
+      this.initialize();
+    }
   }
 
   /**
@@ -143,7 +148,7 @@ class AuthService {
       created_at: new Date().toISOString(),
       profile: {
         id: "demo-user",
-        display_name: "Jo��o Silva (Demo)",
+        display_name: "João Silva (Demo)",
         department: "Operações",
         is_active: true,
         certifications: [],
