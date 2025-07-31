@@ -236,6 +236,24 @@ export default function CleaningForms() {
     }
   };
 
+  const handleDownloadPDF = async (form: CleaningForm) => {
+    try {
+      const aircraftData = aircraft.find((ac: any) => ac.id === form.aircraftId);
+      await downloadCleaningFormPDF(form, aircraftData);
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    }
+  };
+
+  const handlePreviewPDF = async (form: CleaningForm) => {
+    try {
+      const aircraftData = aircraft.find((ac: any) => ac.id === form.aircraftId);
+      await previewCleaningFormPDF(form, aircraftData);
+    } catch (error) {
+      console.error('Error previewing PDF:', error);
+    }
+  };
+
   const filteredForms = forms.filter(form => 
     form.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
     form.location.toLowerCase().includes(searchTerm.toLowerCase())
