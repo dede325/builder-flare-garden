@@ -393,6 +393,14 @@ export default function CleaningForms() {
       const employeesData = await cacheService.loadEmployeesWithCache();
       setEmployees(employeesData);
 
+      // Load dynamic configurations
+      const [interventionTypes, locations] = await Promise.all([
+        configurationService.getInterventionTypeNames(),
+        configurationService.getLocationNames(),
+      ]);
+      setInterventionTypeOptions(interventionTypes);
+      setLocationOptions(locations);
+
       // Load forms using intelligent sync service
       try {
         const syncedForms = await intelligentSyncService.getAllForms();
