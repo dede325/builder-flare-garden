@@ -448,14 +448,26 @@ class SecureSyncService {
       this.getSyncMetadata("lastSync"),
     ]);
 
-    const errors = allForms.filter(
-      (form) => form.syncStatus === "error",
-    ).length;
+    // Check if Supabase is configured
+    const isSupabaseConfigured = !!supabase && !!import.meta.env.VITE_SUPABASE_URL;
+
+    // If Supabase is not configured, don't count pending items as errors
+    let errors = 0;
+    let actualPending = 0;
+
+    if (isSupabaseConfigured) {
+      errors = allForms.filter((form) => form.syncStatus === "error").length;
+      actualPending = pendingQueue.length;
+    } else {
+      // In demo mode, show 0 errors but keep pending count for local storage indication
+      errors = 0;
+      actualPending = 0; // Don't show pending if Supabase isn't configured
+    }
 
     return {
       totalItems: allForms.length,
-      pendingSync: pendingQueue.length,
-      lastSync: lastSync || null,
+      pendingSync: actualPending,
+      lastSync: isSupabaseConfigured ? (lastSync || null) : 'Local storage only',
       errors,
     };
   }
