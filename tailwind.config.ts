@@ -96,8 +96,9 @@ export default {
         xs: '2px',
       },
       backgroundImage: {
-        'aviation-gradient': 'linear-gradient(135deg, #3b82f6 0%, #1e40af 25%, #475569 50%, #334155 75%, #1e293b 100%)',
-        'aviation-glass': 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(30, 64, 175, 0.1) 100%)',
+        'aviation-gradient': 'linear-gradient(135deg, #00b0ea 0%, #009ddf 25%, #0088c7 50%, #0073af 75%, #005e97 100%)',
+        'aviation-glass': 'linear-gradient(135deg, rgba(0, 176, 234, 0.1) 0%, rgba(0, 157, 223, 0.1) 100%)',
+        'aviation-card': 'linear-gradient(145deg, rgba(0, 176, 234, 0.05) 0%, rgba(0, 157, 223, 0.1) 100%)',
       },
       keyframes: {
         "accordion-down": {
