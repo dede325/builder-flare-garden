@@ -217,6 +217,23 @@ export default function CleaningForms() {
     }));
   };
 
+  const handleSignature = (signatureDataURL: string) => {
+    if (showSignatureDialog === 'supervisor') {
+      setFormData(prev => ({ ...prev, supervisorSignature: signatureDataURL }));
+    } else if (showSignatureDialog === 'client') {
+      setFormData(prev => ({ ...prev, clientSignature: signatureDataURL }));
+    }
+    setShowSignatureDialog(null);
+  };
+
+  const clearSignature = (type: 'supervisor' | 'client') => {
+    if (type === 'supervisor') {
+      setFormData(prev => ({ ...prev, supervisorSignature: '' }));
+    } else {
+      setFormData(prev => ({ ...prev, clientSignature: '' }));
+    }
+  };
+
   const filteredForms = forms.filter(form => 
     form.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
     form.location.toLowerCase().includes(searchTerm.toLowerCase())
