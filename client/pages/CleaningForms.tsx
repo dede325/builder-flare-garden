@@ -456,30 +456,19 @@ export default function CleaningForms() {
     }
   };
 
-  const generateQRCode = async (formCode: string) => {
+  const generateQRCode = async (formCode: string, formId: string) => {
     try {
-      let finalUrl: string;
-
-      if (isSecureMode) {
-        // Generate secure QR data with authentication token
-        finalUrl = await generateSecureQRData(formCode);
-      } else {
-        // Fallback to regular URL
-        const supabaseStorageUrl = `${window.location.origin}/storage/v1/object/public/cleaning-forms/${formCode}`;
-        finalUrl = import.meta.env.VITE_SUPABASE_URL
-          ? supabaseStorageUrl
-          : `${window.location.origin}/cleaning-forms/${formCode}`;
-      }
-
-      const qrCodeDataURL = await QRCode.toDataURL(finalUrl, {
-        width: 250,
+      // Use the new code generation service for QR codes
+      const qrCodeDataURL = await codeGenerationService.generateFormQRCode(formCode, formId, {
+        width: 300,
         margin: 2,
-        color: {
-          dark: "#0f172a", // Darker for better security indication
-          light: "#ffffff",
-        },
-        errorCorrectionLevel: "H", // Higher error correction for security
+        errorCorrectionLevel: 'H',
+        darkColor: '#0f172a',
+        lightColor: '#ffffff'
       });
+
+      // Store QR code metadata if Supabase is available
+      await codeGenerationService.storeQRCodeMetadata(formCode, formId, qrCodeDataURL);
 
       return qrCodeDataURL;
     } catch (error) {
@@ -896,7 +885,7 @@ export default function CleaningForms() {
     // Only allow editing of draft forms
     if (form.status !== "draft") {
       toast({
-        title: "Edição n��o permitida",
+        title: "Edição não permitida",
         description: "Apenas folhas em rascunho podem ser editadas.",
         variant: "destructive",
       });
