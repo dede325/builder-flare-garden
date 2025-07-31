@@ -915,23 +915,23 @@ export default function CleaningForms() {
                   {form.employees.length} funcionário(s)
                 </div>
 
-                <div className="flex justify-between items-center pt-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pt-4">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => setShowQRDialog(form)}
-                    className="border-white/30 text-white hover:bg-white/20"
+                    className="border-white/30 text-white hover:bg-white/20 w-full sm:w-auto"
                   >
                     <QrCode className="h-4 w-4 mr-2" />
                     QR Code
                   </Button>
 
-                  <div className="space-x-2">
+                  <div className="flex gap-2 w-full sm:w-auto">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handlePreviewPDF(form)}
-                      className="border-white/30 text-white hover:bg-white/20"
+                      className="border-white/30 text-white hover:bg-white/20 flex-1 sm:flex-none"
                     >
                       Visualizar
                     </Button>
@@ -939,7 +939,7 @@ export default function CleaningForms() {
                       variant="outline"
                       size="sm"
                       onClick={() => handleDownloadPDF(form)}
-                      className="border-white/30 text-white hover:bg-white/20"
+                      className="border-white/30 text-white hover:bg-white/20 flex-1 sm:flex-none"
                     >
                       <Download className="h-4 w-4 mr-2" />
                       PDF
