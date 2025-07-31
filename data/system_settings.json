@@ -1,0 +1,144 @@
+[
+  {
+    "setting_key": "intervention_types",
+    "setting_value": [
+      "Limpeza Exterior",
+      "Limpeza Interior", 
+      "Polimento",
+      "Lavagem Profunda Durante a Manutenção de Base"
+    ],
+    "description": "Available intervention types for cleaning forms",
+    "is_public": true,
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "setting_key": "location_options",
+    "setting_value": [
+      "Hangar 1",
+      "Hangar 2",
+      "Hangar 3",
+      "Rampa A",
+      "Rampa B",
+      "Rampa C",
+      "Terminal",
+      "Zona de Manutenção"
+    ],
+    "description": "Available locations for cleaning operations",
+    "is_public": true,
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "setting_key": "company_settings",
+    "setting_value": {
+      "name": "AviationOps",
+      "logo": "",
+      "primaryColor": "#00b0ea",
+      "secondaryColor": "#009ddf"
+    },
+    "description": "Company branding and configuration",
+    "is_public": true,
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "setting_key": "system_config",
+    "setting_value": {
+      "theme": "aviation-blue",
+      "notifications": true,
+      "autoSync": true,
+      "offlineMode": false,
+      "language": "pt",
+      "timezone": "Atlantic/Azores"
+    },
+    "description": "System configuration defaults",
+    "is_public": false,
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "setting_key": "aircraft_types",
+    "setting_value": [
+      "Avião Comercial",
+      "Avião Privado", 
+      "Jato Executivo",
+      "Avião de Carga",
+      "Helicóptero",
+      "Planador"
+    ],
+    "description": "Available aircraft types",
+    "is_public": true,
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "setting_key": "manufacturers",
+    "setting_value": [
+      "Airbus",
+      "Boeing",
+      "Cessna",
+      "Piper",
+      "Embraer",
+      "Beechcraft",
+      "Cirrus",
+      "Diamond",
+      "Mooney",
+      "Gulfstream"
+    ],
+    "description": "Aircraft manufacturers",
+    "is_public": true,
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "setting_key": "employee_roles",
+    "setting_value": [
+      "Piloto Comercial",
+      "Piloto Privado",
+      "Copiloto",
+      "Mecânico",
+      "Técnico de Manutenção",
+      "Gestor de Operações",
+      "Supervisor de Limpeza",
+      "Técnico de Limpeza"
+    ],
+    "description": "Available employee roles",
+    "is_public": true,
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "setting_key": "certifications",
+    "setting_value": [
+      "ANAC",
+      "IFR",
+      "VFR",
+      "Tipo Boeing 737",
+      "Tipo Airbus A320",
+      "ANAC Manutenção",
+      "Inglês Técnico",
+      "Mercadorias Perigosas"
+    ],
+    "description": "Available certifications",
+    "is_public": true,
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "setting_key": "departments",
+    "setting_value": [
+      "Operações",
+      "Manutenção",
+      "Limpeza",
+      "Administração",
+      "Recursos Humanos",
+      "Qualidade",
+      "Segurança"
+    ],
+    "description": "Company departments",
+    "is_public": true,
+    "created_at": "2024-01-01T00:00:00.000Z",
+    "updated_at": "2024-01-01T00:00:00.000Z"
+  }
+]
