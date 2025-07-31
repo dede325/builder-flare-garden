@@ -992,7 +992,7 @@ export default function CleaningForms() {
     }
   };
 
-  const handleEditForm = (form: CleaningForm) => {
+  const handleEditForm = async (form: CleaningForm) => {
     // Only allow editing of draft forms
     if (form.status !== "draft") {
       toast({
@@ -1001,6 +1001,15 @@ export default function CleaningForms() {
         variant: "destructive",
       });
       return;
+    }
+
+    // Load existing photo evidence
+    let existingPhotos: PhotoEvidence[] = [];
+    try {
+      const { photoEvidenceService } = await import('@/lib/photo-evidence-service');
+      existingPhotos = await photoEvidenceService.getPhotosByForm(form.id);
+    } catch (error) {
+      console.warn('Could not load photo evidence:', error);
     }
 
     // Load form data into the form
@@ -1024,6 +1033,7 @@ export default function CleaningForms() {
         before: { exterior: [], interior: [], details: [] },
         after: { exterior: [], interior: [], details: [] },
       },
+      photoEvidence: existingPhotos,
       supervisorSignature: form.supervisorSignature || "",
       clientSignature: form.clientSignature || "",
       clientConfirmedWithoutSignature:
