@@ -60,6 +60,7 @@ supabase db push --linked
 
 ### Tabelas Principais
 
+**Operacionais:**
 1. **aircraft** - Aeronaves da frota
 2. **employees** - Funcionários e pilotos
 3. **tasks** - Tarefas de manutenção
@@ -69,15 +70,27 @@ supabase db push --linked
 7. **system_settings** - Configurações do sistema
 8. **file_attachments** - Anexos de arquivos
 
+**Autenticação e Autorização:**
+9. **roles** - Roles do sistema (8 roles)
+10. **permissions** - Permissões granulares (40+ permissões)
+11. **role_permissions** - Relacionamento roles/permissões
+12. **user_profiles** - Perfis estendidos de utilizadores
+13. **user_roles** - Atribuição de roles aos utilizadores
+14. **user_activity_log** - Log de atividades
+15. **user_sessions** - Gestão de sessões
+16. **password_reset_tokens** - Tokens de reset de senha
+
 ### Dados Demo
 
 As migrations incluem dados de demonstração para:
-- 4 aeronaves (PT-ABC, PT-XYZ, PT-DEF, PT-GHI)
-- 6 funcionários com diferentes roles
-- Tarefas de manutenção e limpeza
-- Fichas de voo histórico
-- Formulários de limpeza completos
-- Configurações do sistema
+- **4 aeronaves** (PT-ABC, PT-XYZ, PT-DEF, PT-GHI)
+- **14 funcionários específicos** de Angola com dados reais
+- **8 roles** (Super Admin → Viewer) com níveis hierárquicos
+- **40+ permissões** granulares por recurso/ação
+- **Tarefas** de manutenção e limpeza atribuídas
+- **Fichas de voo** histórico
+- **Formulários de limpeza** completos
+- **Configurações** do sistema para Angola
 
 ### Características
 
