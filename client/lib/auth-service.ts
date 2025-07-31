@@ -81,8 +81,7 @@ class AuthService {
     try {
       // Check if we have real Supabase connection
       if (!supabase) {
-        console.log('Supabase not configured, using demo mode');
-        setTimeout(() => this.setDemoState(), 100); // Defer to avoid race condition
+        this.setDemoState();
         return;
       }
 
