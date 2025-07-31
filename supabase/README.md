@@ -68,6 +68,7 @@ supabase db push --linked
 ### Dados Demo
 
 As migrations incluem dados de demonstração para:
+
 - 4 aeronaves (PT-ABC, PT-XYZ, PT-DEF, PT-GHI)
 - 6 funcionários com diferentes roles
 - Tarefas de manutenção e limpeza

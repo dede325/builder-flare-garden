@@ -3,7 +3,7 @@
     "setting_key": "intervention_types",
     "setting_value": [
       "Limpeza Exterior",
-      "Limpeza Interior", 
+      "Limpeza Interior",
       "Polimento",
       "Lavagem Profunda Durante a Manutenção de Base"
     ],
@@ -61,7 +61,7 @@
     "setting_key": "aircraft_types",
     "setting_value": [
       "Avião Comercial",
-      "Avião Privado", 
+      "Avião Privado",
       "Jato Executivo",
       "Avião de Carga",
       "Helicóptero",
