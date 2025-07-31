@@ -407,6 +407,7 @@ export default function CleaningForms() {
         const formCode = generateFormCode(formData.date, formData.shift, formData.location);
         const formId = crypto.randomUUID();
 
+        const now = new Date().toISOString();
         const newForm: CleaningForm = {
           id: formId,
           code: formCode,
@@ -421,8 +422,16 @@ export default function CleaningForms() {
           clientConfirmedWithoutSignature: formData.clientConfirmedWithoutSignature,
           qrCode: '',
           status: formData.supervisorSignature && (formData.clientSignature || formData.clientConfirmedWithoutSignature) ? 'completed' : 'draft',
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
+          createdAt: now,
+          updatedAt: now,
+          version: 1,
+          changeHistory: [{
+            version: 1,
+            timestamp: now,
+            changes: ['Folha criada'],
+            author: user.email || 'Usuário'
+          }],
+          syncStatus: 'pending'
         };
 
         // Generate and upload PDF
