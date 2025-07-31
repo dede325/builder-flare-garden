@@ -155,6 +155,40 @@ export default function Settings() {
     checkMigrationStatus();
   };
 
+  const handlePopulateDemoData = async () => {
+    try {
+      await populateDemoData();
+      await checkMigrationStatus();
+      toast({
+        title: "Dados demo criados",
+        description: "Dados de demonstração foram adicionados ao banco offline."
+      });
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Falha ao criar dados demo.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleClearOfflineData = async () => {
+    try {
+      await clearOfflineData();
+      await checkMigrationStatus();
+      toast({
+        title: "Dados limpos",
+        description: "Todos os dados offline foram removidos."
+      });
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Falha ao limpar dados.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleSaveProfile = () => {
     localStorage.setItem("userProfile", JSON.stringify(profileData));
     // TODO: Sync with Supabase when connected
