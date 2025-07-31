@@ -793,9 +793,37 @@ export default function CleaningForms() {
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 flex-1">
               <FileText className="h-6 w-6 text-white" />
               <h1 className="text-2xl font-bold text-white">Folhas de Limpeza</h1>
+
+              {/* Security and Sync Status Indicators */}
+              <div className="flex items-center space-x-2 ml-4">
+                {/* Security Status */}
+                <div className="flex items-center space-x-1">
+                  <Shield className={`h-4 w-4 ${securityStatus === 'secure' ? 'text-green-400' : 'text-yellow-400'}`} />
+                  <span className={`text-xs ${securityStatus === 'secure' ? 'text-green-400' : 'text-yellow-400'}`}>
+                    {securityStatus === 'secure' ? 'Seguro' : 'Básico'}
+                  </span>
+                </div>
+
+                {/* Sync Status */}
+                <div className="flex items-center space-x-1">
+                  {syncStatus === 'offline' && <WifiOff className="h-4 w-4 text-gray-400" />}
+                  {syncStatus === 'synced' && <Wifi className="h-4 w-4 text-green-400" />}
+                  {syncStatus === 'pending' && <Sync className="h-4 w-4 text-yellow-400 animate-spin" />}
+                  {syncStatus === 'error' && <AlertTriangle className="h-4 w-4 text-red-400" />}
+                  <span className={`text-xs ${
+                    syncStatus === 'synced' ? 'text-green-400' :
+                    syncStatus === 'pending' ? 'text-yellow-400' :
+                    syncStatus === 'error' ? 'text-red-400' : 'text-gray-400'
+                  }`}>
+                    {syncStatus === 'synced' ? 'Sincronizado' :
+                     syncStatus === 'pending' ? 'Sincronizando' :
+                     syncStatus === 'error' ? 'Erro' : 'Offline'}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
