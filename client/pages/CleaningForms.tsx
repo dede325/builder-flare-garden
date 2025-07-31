@@ -1080,40 +1080,8 @@ export default function CleaningForms() {
                   </span>
                 </div>
 
-                {/* Sync Status */}
-                <div className="flex items-center space-x-1">
-                  {syncStatus === "offline" && (
-                    <WifiOff className="h-4 w-4 text-gray-400" />
-                  )}
-                  {syncStatus === "synced" && (
-                    <Wifi className="h-4 w-4 text-green-400" />
-                  )}
-                  {syncStatus === "pending" && (
-                    <RefreshCw className="h-4 w-4 text-yellow-400 animate-spin" />
-                  )}
-                  {syncStatus === "error" && (
-                    <AlertTriangle className="h-4 w-4 text-red-400" />
-                  )}
-                  <span
-                    className={`text-xs ${
-                      syncStatus === "synced"
-                        ? "text-green-400"
-                        : syncStatus === "pending"
-                          ? "text-yellow-400"
-                          : syncStatus === "error"
-                            ? "text-red-400"
-                            : "text-gray-400"
-                    }`}
-                  >
-                    {syncStatus === "synced"
-                      ? "Sincronizado"
-                      : syncStatus === "pending"
-                        ? "Sincronizando"
-                        : syncStatus === "error"
-                          ? "Erro"
-                          : "Offline"}
-                  </span>
-                </div>
+                {/* Intelligent Sync Status */}
+                <SyncStatusIndicator compact={true} />
               </div>
             </div>
           </div>
