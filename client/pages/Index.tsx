@@ -25,10 +25,10 @@ export default function Index() {
 
   // Mock data for demonstration
   const stats = [
-    { title: 'Aeronaves Ativas', value: '12', icon: Plane, change: '+2' },
-    { title: 'Funcionários', value: '48', icon: Users, change: '+3' },
-    { title: 'Tarefas Pendentes', value: '23', icon: CheckSquare, change: '-5' },
-    { title: 'Folhas Abertas', value: '8', icon: FileText, change: '+1' },
+    { title: 'Aeronaves Cadastradas', value: '12', icon: Plane, change: '+2' },
+    { title: 'Funcionários Ativos', value: '48', icon: Users, change: '+3' },
+    { title: 'Folhas de Limpeza Abertas', value: '8', icon: FileText, change: '+1' },
+    { title: 'Limpezas Concluídas (Semana)', value: '15', icon: Activity, change: '+5' },
   ];
 
   const recentActivities = [
