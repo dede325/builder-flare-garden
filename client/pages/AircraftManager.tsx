@@ -888,7 +888,7 @@ export default function AircraftManager() {
                     
                     <div className="flex items-center text-white/80">
                       <Clock className="h-4 w-4 mr-2" />
-                      {aircraftItem.flightHours.toLocaleString()}h
+                      {aircraftItem.lastCleaningType || 'Sem limpeza'}
                     </div>
 
                     {aircraftItem.capacity.passengers && (
