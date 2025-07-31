@@ -118,52 +118,8 @@ export default function EmployeeManager() {
       const parsed = JSON.parse(savedEmployees);
       setEmployees(parsed);
     } else {
-      // Initialize with some demo data
-      const demoEmployees: Employee[] = [
-        {
-          id: '1',
-          name: 'Maria Santos Silva',
-          email: 'maria.santos@aviation.com',
-          phone: '(11) 99999-1234',
-          idNumber: 'RG12345678',
-          role: 'Supervisor de Limpeza',
-          department: 'Limpeza',
-          shift: 'morning',
-          certifications: ['ANAC Básico', 'Segurança Operacional'],
-          hireDate: '2023-01-15',
-          status: 'active',
-          notes: 'Funcionária exemplar com excelente desempenho',
-          emergencyContact: {
-            name: 'José Santos',
-            phone: '(11) 98888-5678',
-            relationship: 'Cônjuge'
-          },
-          createdAt: '2023-01-15T08:00:00Z',
-          updatedAt: '2024-01-15T10:30:00Z'
-        },
-        {
-          id: '2',
-          name: 'Carlos Lima Oliveira',
-          email: 'carlos.lima@aviation.com',
-          phone: '(11) 98888-9876',
-          idNumber: 'RG87654321',
-          role: 'Técnico de Limpeza',
-          department: 'Limpeza',
-          shift: 'afternoon',
-          certifications: ['Manuseio de Produtos Químicos'],
-          hireDate: '2023-03-10',
-          status: 'active',
-          emergencyContact: {
-            name: 'Ana Lima',
-            phone: '(11) 97777-1234',
-            relationship: 'Irmã'
-          },
-          createdAt: '2023-03-10T08:00:00Z',
-          updatedAt: '2024-01-10T14:20:00Z'
-        }
-      ];
-      setEmployees(demoEmployees);
-      localStorage.setItem('aviation_employees', JSON.stringify(demoEmployees));
+      // No demo data - start with empty array
+      setEmployees([]);
     }
   };
 
