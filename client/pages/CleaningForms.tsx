@@ -46,6 +46,16 @@ interface CleaningForm {
   status: 'draft' | 'pending_signatures' | 'completed';
   createdAt: string;
   updatedAt: string;
+  version: number;
+  changeHistory: {
+    version: number;
+    timestamp: string;
+    changes: string[];
+    author: string;
+    previousData?: any;
+  }[];
+  syncStatus?: 'pending' | 'synced' | 'error';
+  lastSyncAt?: string;
 }
 
 export default function CleaningForms() {
@@ -546,7 +556,7 @@ export default function CleaningForms() {
     // Only allow editing of draft forms
     if (form.status !== 'draft') {
       toast({
-        title: "Edição não permitida",
+        title: "Edição n��o permitida",
         description: "Apenas folhas em rascunho podem ser editadas.",
         variant: "destructive"
       });
