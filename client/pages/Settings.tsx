@@ -53,6 +53,7 @@ export default function Settings() {
     isConfigured: boolean | null;
     dataCounts: any;
   }>({ isConfigured: null, dataCounts: null });
+  const { toast } = useToast();
   const [profileData, setProfileData] = useState({
     name: "",
     email: "",
@@ -592,7 +593,7 @@ export default function Settings() {
                   className="aviation-button"
                 >
                   <Save className="h-4 w-4 mr-2" />
-                  Salvar Configura��ões
+                  Salvar Configurações
                 </Button>
               </CardContent>
             </Card>
