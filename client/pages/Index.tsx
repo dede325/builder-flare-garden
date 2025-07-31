@@ -110,37 +110,45 @@ export default function Index() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Button className="aviation-button justify-start h-16">
-                  <Plane className="h-6 w-6 mr-3" />
-                  <div className="text-left">
-                    <p className="font-semibold">Gerenciar Aeronaves</p>
-                    <p className="text-sm opacity-80">Cadastro e manutenção</p>
-                  </div>
-                </Button>
-                
-                <Button className="aviation-button justify-start h-16">
-                  <Users className="h-6 w-6 mr-3" />
-                  <div className="text-left">
-                    <p className="font-semibold">Funcionários</p>
-                    <p className="text-sm opacity-80">Equipe e atribuições</p>
-                  </div>
-                </Button>
-                
-                <Button className="aviation-button justify-start h-16">
-                  <CheckSquare className="h-6 w-6 mr-3" />
-                  <div className="text-left">
-                    <p className="font-semibold">Tarefas</p>
-                    <p className="text-sm opacity-80">Acompanhar progresso</p>
-                  </div>
-                </Button>
-                
-                <Button className="aviation-button justify-start h-16">
-                  <FileText className="h-6 w-6 mr-3" />
-                  <div className="text-left">
-                    <p className="font-semibold">Folhas de Voo</p>
-                    <p className="text-sm opacity-80">Documentação</p>
-                  </div>
-                </Button>
+                <Link to="/aircraft">
+                  <Button className="aviation-button justify-start h-16 w-full">
+                    <Plane className="h-6 w-6 mr-3" />
+                    <div className="text-left">
+                      <p className="font-semibold">Gerenciar Aeronaves</p>
+                      <p className="text-sm opacity-80">Cadastro e manutenção</p>
+                    </div>
+                  </Button>
+                </Link>
+
+                <Link to="/employees">
+                  <Button className="aviation-button justify-start h-16 w-full">
+                    <Users className="h-6 w-6 mr-3" />
+                    <div className="text-left">
+                      <p className="font-semibold">Funcionários</p>
+                      <p className="text-sm opacity-80">Equipe e atribuições</p>
+                    </div>
+                  </Button>
+                </Link>
+
+                <Link to="/tasks">
+                  <Button className="aviation-button justify-start h-16 w-full">
+                    <CheckSquare className="h-6 w-6 mr-3" />
+                    <div className="text-left">
+                      <p className="font-semibold">Tarefas</p>
+                      <p className="text-sm opacity-80">Acompanhar progresso</p>
+                    </div>
+                  </Button>
+                </Link>
+
+                <Link to="/flight-sheets">
+                  <Button className="aviation-button justify-start h-16 w-full">
+                    <FileText className="h-6 w-6 mr-3" />
+                    <div className="text-left">
+                      <p className="font-semibold">Folhas de Voo</p>
+                      <p className="text-sm opacity-80">Documentação</p>
+                    </div>
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </div>
