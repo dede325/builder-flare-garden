@@ -1022,3 +1022,11 @@ export const generateAndUploadPDF = async (
     return null;
   }
 };
+
+export const generateCleaningFormPDFBlob = async (
+  formData: CleaningFormData,
+  aircraftData?: any,
+): Promise<Blob> => {
+  const pdf = await generateCleaningFormPDF(formData, aircraftData);
+  return pdf.output("blob");
+};
