@@ -307,7 +307,7 @@ export default function Index() {
                   Acesse as principais funcionalidades do sistema
                 </CardDescription>
               </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <Link to="/cleaning-forms">
                   <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/30 border border-blue-400/30 hover:border-blue-400/50 transition-all duration-300 h-32">
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
