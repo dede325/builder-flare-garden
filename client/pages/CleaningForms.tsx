@@ -51,6 +51,7 @@ export default function CleaningForms() {
   const [aircraft, setAircraft] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showSignatureDialog, setShowSignatureDialog] = useState<'supervisor' | 'client' | null>(null);
 
   // Form state
   const [formData, setFormData] = useState({
