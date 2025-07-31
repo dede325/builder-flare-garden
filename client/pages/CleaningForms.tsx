@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Search, Download, QrCode, Calendar, Clock, MapPin, Wrench, Users, FileText, Camera, Phone, IdCard, Signature, X, Edit } from 'lucide-react';
+import { ArrowLeft, Plus, Search, Download, QrCode, Calendar, Clock, MapPin, Wrench, Users, FileText, Camera, Phone, IdCard, Signature, X, Edit, CheckSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
