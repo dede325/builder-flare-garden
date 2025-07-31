@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import CleaningForms from "./pages/CleaningForms";
 import EmployeeManager from "./pages/EmployeeManager";
 import AircraftManager from "./pages/AircraftManager";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
