@@ -436,30 +436,19 @@ export default function CleaningForms() {
         if (employeesResult.data) setEmployees(employeesResult.data);
       }
 
-      // Load forms using secure sync service if available, fallback to localStorage
+      // Load forms using intelligent sync service
       try {
-        if (isSecureMode) {
-          const secureForms = await secureSyncService.getAllForms();
-          setForms(secureForms);
-          console.log("Loaded forms from secure storage:", secureForms.length);
-        } else {
-          // Fallback to localStorage
-          const savedForms = localStorage.getItem("cleaningForms");
-          if (savedForms) {
-            const parsedForms = JSON.parse(savedForms);
-            // Ensure all forms have proper changeHistory array
-            const normalizedForms = parsedForms.map((form: any) => ({
-              ...form,
-              changeHistory: form.changeHistory || [],
-            }));
-            setForms(normalizedForms);
-          }
-        }
+        const syncedForms = await intelligentSyncService.getAllForms();
+        // Ensure all forms have proper changeHistory array
+        const normalizedForms = syncedForms.map((form: any) => ({
+          ...form,
+          changeHistory: form.changeHistory || [],
+        }));
+        setForms(normalizedForms);
+        console.log("Loaded forms from intelligent sync:", normalizedForms.length);
       } catch (error) {
-        console.warn(
-          "Failed to load from secure storage, falling back to localStorage:",
-          error,
-        );
+        console.warn("Failed to load from intelligent sync, falling back to localStorage:", error);
+
         // Fallback to localStorage
         const savedForms = localStorage.getItem("cleaningForms");
         if (savedForms) {
@@ -541,7 +530,7 @@ export default function CleaningForms() {
     }
 
     if (!formData.location) {
-      errors.location = "Local da intervenção é obrigatório";
+      errors.location = "Local da interven��ão é obrigatório";
     }
 
     if (formData.interventionTypes.length === 0) {
@@ -1341,7 +1330,7 @@ export default function CleaningForms() {
 
                   {/* Intervention Types */}
                   <div className="space-y-2">
-                    <Label className="text-white">Tipos de Intervenç��o *</Label>
+                    <Label className="text-white">Tipos de Intervenção *</Label>
                     <div
                       className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-3 rounded-lg border ${formErrors.interventionTypes ? "border-red-500" : "border-white/30"}`}
                     >
