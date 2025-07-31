@@ -16,6 +16,7 @@ import SignatureCanvas from '@/components/SignatureCanvas';
 import PhotoUpload from '@/components/PhotoUpload';
 import { downloadCleaningFormPDF, previewCleaningFormPDF, generateAndUploadPDF } from '@/lib/pdf-utils';
 import { supabaseStorage } from '@/lib/supabase-storage';
+import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import QRCode from 'qrcode';
@@ -755,7 +756,7 @@ export default function CleaningForms() {
                       </div>
                       {employees.filter(emp => !formData.employees.some(formEmp => formEmp.name === emp.name)).length > 6 && (
                         <p className="text-white/60 text-sm mt-2">
-                          E mais {employees.filter(emp => !formData.employees.some(formEmp => formEmp.name === emp.name)).length - 6} funcion��rios disponíveis
+                          E mais {employees.filter(emp => !formData.employees.some(formEmp => formEmp.name === emp.name)).length - 6} funcionários disponíveis
                         </p>
                       )}
                     </Card>
