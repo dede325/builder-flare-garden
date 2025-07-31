@@ -236,6 +236,16 @@ export default function Index() {
       borderColor: "border-purple-400/50",
       textColor: "text-purple-300",
     },
+    {
+      title: "Configurações",
+      description: "Tipos e locais",
+      icon: Settings,
+      link: "/configuration",
+      gradient: "from-gray-500 to-gray-600",
+      bgGradient: "from-gray-500/20 to-gray-600/30",
+      borderColor: "border-gray-400/50",
+      textColor: "text-gray-300",
+    },
   ];
 
   return (
