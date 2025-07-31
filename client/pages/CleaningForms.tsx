@@ -510,12 +510,13 @@ export default function CleaningForms() {
                             </div>
 
                             <div className="md:col-span-2 lg:col-span-3 flex justify-between items-center pt-2">
-                              <Button variant="outline" className="border-white/30 text-white hover:bg-white/20">
-                                <Camera className="h-4 w-4 mr-2" />
-                                Adicionar Foto
-                              </Button>
-                              <Button 
-                                variant="destructive" 
+                              <PhotoUpload
+                                currentPhoto={employee.photo}
+                                onPhotoChange={(photoDataURL) => updateEmployeePhoto(index, photoDataURL)}
+                                employeeName={employee.name || `Funcionário ${index + 1}`}
+                              />
+                              <Button
+                                variant="destructive"
                                 onClick={() => removeEmployee(index)}
                                 className="bg-red-600 hover:bg-red-700"
                               >
