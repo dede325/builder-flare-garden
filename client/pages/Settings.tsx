@@ -133,6 +133,24 @@ export default function Settings() {
     };
   }, [user]);
 
+  const checkMigrationStatus = async () => {
+    try {
+      const [isConfigured, dataCounts] = await Promise.all([
+        migrationService.isSupabaseConfigured(),
+        migrationService.getOfflineDataCounts()
+      ]);
+      setMigrationStatus({ isConfigured, dataCounts });
+    } catch (error) {
+      console.error('Failed to check migration status:', error);
+      setMigrationStatus({ isConfigured: false, dataCounts: null });
+    }
+  };
+
+  const handleMigrationComplete = () => {
+    // Refresh migration status after successful migration
+    checkMigrationStatus();
+  };
+
   const handleSaveProfile = () => {
     localStorage.setItem("userProfile", JSON.stringify(profileData));
     // TODO: Sync with Supabase when connected
