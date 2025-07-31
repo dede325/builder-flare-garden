@@ -166,6 +166,7 @@ export default function CleaningForms() {
       before: { exterior: [], interior: [], details: [] },
       after: { exterior: [], interior: [], details: [] },
     },
+    photoEvidence: [] as PhotoEvidence[],
     supervisorSignature: "",
     clientSignature: "",
     clientConfirmedWithoutSignature: false,
