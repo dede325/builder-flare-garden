@@ -1,5 +1,6 @@
 import "./global.css";
 
+import { Component, ErrorInfo, ReactNode } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { createRoot } from "react-dom/client";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -16,64 +17,114 @@ import AircraftManager from "./pages/AircraftManager";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
+// Error Boundary Component
+class ErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean; error?: Error }
+> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('Error Boundary caught an error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-aviation-gradient flex items-center justify-center px-4">
+          <div className="bg-white/10 backdrop-blur-md rounded-lg p-8 max-w-lg text-center">
+            <h2 className="text-2xl font-bold text-white mb-4">Algo deu errado</h2>
+            <p className="text-white/80 mb-4">
+              Ocorreu um erro inesperado. Por favor, recarregue a página.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-aviation-blue-600 hover:bg-aviation-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+            >
+              Recarregar Página
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <Index />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/cleaning-forms"
-              element={
-                <ProtectedRoute>
-                  <CleaningForms />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/employee-manager"
-              element={
-                <ProtectedRoute>
-                  <EmployeeManager />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/aircraft-manager"
-              element={
-                <ProtectedRoute>
-                  <AircraftManager />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute>
-                  <Settings />
-                </ProtectedRoute>
-              }
-            />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <Index />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/cleaning-forms"
+                element={
+                  <ProtectedRoute>
+                    <CleaningForms />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/employee-manager"
+                element={
+                  <ProtectedRoute>
+                    <EmployeeManager />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/aircraft-manager"
+                element={
+                  <ProtectedRoute>
+                    <AircraftManager />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                }
+              />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
-createRoot(document.getElementById("root")!).render(<App />);
+// Prevent multiple root creation in development
+const rootElement = document.getElementById("root")!;
+if (!rootElement._reactRootContainer) {
+  const root = createRoot(rootElement);
+  (rootElement as any)._reactRootContainer = root;
+  root.render(<App />);
+}
