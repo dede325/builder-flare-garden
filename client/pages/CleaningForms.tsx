@@ -146,34 +146,104 @@ export default function CleaningForms() {
     }
   };
 
-  const handleCreateForm = async () => {
-    const formCode = generateFormCode(formData.date, formData.shift, formData.location);
-    const qrCode = await generateQRCode(formCode);
-    
-    const newForm: CleaningForm = {
-      id: crypto.randomUUID(),
-      code: formCode,
-      date: formData.date,
-      shift: formData.shift,
-      location: formData.location,
-      interventionTypes: formData.interventionTypes,
-      aircraftId: formData.aircraftId,
-      employees: formData.employees,
-      supervisorSignature: '',
-      clientSignature: '',
-      clientConfirmedWithoutSignature: false,
-      qrCode,
-      status: 'draft',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
+  const validateForm = (): boolean => {
+    const errors: Record<string, string> = {};
 
-    const updatedForms = [...forms, newForm];
-    setForms(updatedForms);
-    localStorage.setItem('cleaningForms', JSON.stringify(updatedForms));
-    
-    setIsCreateDialogOpen(false);
-    resetForm();
+    // Basic validation
+    if (!formData.date) {
+      errors.date = 'Data é obrigatória';
+    }
+
+    if (!formData.location) {
+      errors.location = 'Local da intervenção é obrigatório';
+    }
+
+    if (formData.interventionTypes.length === 0) {
+      errors.interventionTypes = 'Selecione pelo menos um tipo de intervenção';
+    }
+
+    if (!formData.aircraftId) {
+      errors.aircraftId = 'Selecione uma aeronave';
+    }
+
+    if (formData.employees.length === 0) {
+      errors.employees = 'Adicione pelo menos um funcionário';
+    }
+
+    // Employee validation
+    formData.employees.forEach((employee, index) => {
+      if (!employee.name.trim()) {
+        errors[`employee_${index}_name`] = 'Nome é obrigatório';
+      }
+
+      if (!employee.task.trim()) {
+        errors[`employee_${index}_task`] = 'Tarefa é obrigatória';
+      }
+
+      if (!employee.phone.trim()) {
+        errors[`employee_${index}_phone`] = 'Telefone é obrigatório';
+      } else if (!/^\(\d{2}\)\s\d{4,5}-\d{4}$/.test(employee.phone)) {
+        errors[`employee_${index}_phone`] = 'Formato inválido. Use (11) 99999-9999';
+      }
+
+      if (!employee.idNumber.trim()) {
+        errors[`employee_${index}_idNumber`] = 'Documento é obrigatório';
+      }
+
+      if (employee.startTime && employee.endTime) {
+        const start = new Date(`2000-01-01T${employee.startTime}`);
+        const end = new Date(`2000-01-01T${employee.endTime}`);
+        if (start >= end) {
+          errors[`employee_${index}_time`] = 'Horário de fim deve ser maior que o início';
+        }
+      }
+    });
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleCreateForm = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const formCode = generateFormCode(formData.date, formData.shift, formData.location);
+      const qrCode = await generateQRCode(formCode);
+
+      const newForm: CleaningForm = {
+        id: crypto.randomUUID(),
+        code: formCode,
+        date: formData.date,
+        shift: formData.shift,
+        location: formData.location,
+        interventionTypes: formData.interventionTypes,
+        aircraftId: formData.aircraftId,
+        employees: formData.employees,
+        supervisorSignature: formData.supervisorSignature,
+        clientSignature: formData.clientSignature,
+        clientConfirmedWithoutSignature: formData.clientConfirmedWithoutSignature,
+        qrCode,
+        status: formData.supervisorSignature && (formData.clientSignature || formData.clientConfirmedWithoutSignature) ? 'completed' : 'draft',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      const updatedForms = [...forms, newForm];
+      setForms(updatedForms);
+      localStorage.setItem('cleaningForms', JSON.stringify(updatedForms));
+
+      setIsCreateDialogOpen(false);
+      resetForm();
+      setFormErrors({});
+    } catch (error) {
+      console.error('Error creating form:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const resetForm = () => {
