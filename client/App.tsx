@@ -15,6 +15,8 @@ import Employees from "./pages/Employees";
 import Tasks from "./pages/Tasks";
 import FlightSheets from "./pages/FlightSheets";
 import CleaningForms from "./pages/CleaningForms";
+import EmployeeManager from "./pages/EmployeeManager";
+import AircraftManager from "./pages/AircraftManager";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
