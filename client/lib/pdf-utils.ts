@@ -34,9 +34,9 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
   const pageHeight = pdf.internal.pageSize.getHeight();
   const margin = 12;
   const contentWidth = pageWidth - (margin * 2);
-  const primaryColor = [37, 99, 235]; // Aviation blue #2563eb
-  const gradientColor = [59, 130, 246]; // Lighter blue #3b82f6
-  const accentColor = [71, 85, 105]; // Aviation gray #475569
+  const primaryColor = [0, 176, 234]; // Aviation blue #00b0ea
+  const gradientColor = [0, 157, 223]; // Aviation blue #009ddf
+  const accentColor = [0, 136, 199]; // Aviation blue #0088c7
 
   let yPosition = margin;
   const hasPhotos = formData.employees.some(emp => emp.photo);
