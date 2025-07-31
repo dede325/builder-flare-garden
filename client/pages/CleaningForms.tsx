@@ -356,7 +356,7 @@ export default function CleaningForms() {
           updatedAt: new Date().toISOString(),
           version: editingForm.version + 1,
           changeHistory: [
-            ...editingForm.changeHistory,
+            ...(editingForm.changeHistory || []),
             {
               version: editingForm.version + 1,
               timestamp: new Date().toISOString(),
