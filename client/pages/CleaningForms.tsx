@@ -77,6 +77,7 @@ import {
 import { secureSyncService } from "@/lib/secure-sync";
 import { intelligentSyncService } from "@/lib/intelligent-sync-service";
 import { cacheService } from "@/lib/cache-service";
+import { codeGenerationService } from "@/lib/code-generation-service";
 import SyncStatusIndicator from "@/components/SyncStatusIndicator";
 
 interface CleaningForm {
