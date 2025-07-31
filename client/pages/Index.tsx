@@ -11,6 +11,14 @@ import {
   WifiOff,
   LogOut,
   Settings,
+  Menu,
+  X,
+  Home,
+  History,
+  Download,
+  RefreshCw,
+  Plus,
+  Clock,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -26,6 +34,8 @@ import { MigrationNotification } from "@/components/MigrationNotification";
 
 export default function Index() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("home");
   const [systemStats, setSystemStats] = useState({
     aircraft: 0,
     employees: 0,
@@ -54,26 +64,28 @@ export default function Index() {
     await signOut();
   };
 
+  const handleSync = () => {
+    // Simulate sync action
+    console.log("Sincronizando dados...");
+  };
+
   useEffect(() => {
     let isMounted = true;
 
     const loadSystemStatsAsync = () => {
       try {
-        // Load aircraft data
         const savedAircraft = localStorage.getItem("aviation_aircraft");
         const aircraftCount = savedAircraft
           ? JSON.parse(savedAircraft).filter((a: any) => a.status === "active")
               .length
           : 0;
 
-        // Load employees data
         const savedEmployees = localStorage.getItem("aviation_employees");
         const employeesCount = savedEmployees
           ? JSON.parse(savedEmployees).filter((e: any) => e.status === "active")
               .length
           : 0;
 
-        // Load cleaning forms data
         const savedForms = localStorage.getItem("cleaningForms");
         const forms = savedForms ? JSON.parse(savedForms) : [];
         const activeForms = forms.filter(
@@ -102,10 +114,7 @@ export default function Index() {
       }
     };
 
-    // Load initial stats
     loadSystemStatsAsync();
-
-    // Listen for online/offline changes
     window.addEventListener("online", handleOnlineStatus);
     window.addEventListener("offline", handleOnlineStatus);
 
@@ -116,39 +125,8 @@ export default function Index() {
     };
   }, []);
 
-  // Real data from system
-  const stats = [
-    {
-      title: "Aeronaves Cadastradas",
-      value: systemStats.aircraft.toString(),
-      icon: Plane,
-      change: "",
-    },
-    {
-      title: "Funcionários Ativos",
-      value: systemStats.employees.toString(),
-      icon: Users,
-      change: "",
-    },
-    {
-      title: "Folhas de Limpeza Abertas",
-      value: systemStats.activeForms.toString(),
-      icon: FileText,
-      change: "",
-    },
-    {
-      title: "Limpezas Concluídas",
-      value: systemStats.completedForms.toString(),
-      icon: Activity,
-      change: "",
-    },
-  ];
-
-  // Load recent activities from system data
   const getRecentActivities = () => {
     const activities = [];
-
-    // Get recent forms
     const savedForms = localStorage.getItem("cleaningForms");
     if (savedForms) {
       const forms = JSON.parse(savedForms);
@@ -157,7 +135,7 @@ export default function Index() {
           (a: any, b: any) =>
             new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
         )
-        .slice(0, 3);
+        .slice(0, 5);
 
       recentForms.forEach((form: any, index: number) => {
         const timeAgo = getTimeAgo(form.updatedAt);
@@ -199,292 +177,301 @@ export default function Index() {
 
   const recentActivities = getRecentActivities();
 
+  // Mobile tabs configuration
+  const tabs = [
+    { id: "home", label: "Início", icon: Home },
+    { id: "history", label: "Histórico", icon: History },
+  ];
+
+  // Main action buttons for mobile
+  const mainActions = [
+    {
+      title: "Nova Folha",
+      description: "Criar nova folha de limpeza",
+      icon: Plus,
+      link: "/cleaning-forms",
+      gradient: "from-blue-500 to-blue-600",
+      bgGradient: "from-blue-500/20 to-blue-600/30",
+      borderColor: "border-blue-400/50",
+      textColor: "text-blue-300",
+    },
+    {
+      title: "Aeronaves",
+      description: "Gestão da frota",
+      icon: Plane,
+      link: "/aircraft-manager",
+      gradient: "from-cyan-500 to-cyan-600",
+      bgGradient: "from-cyan-500/20 to-cyan-600/30",
+      borderColor: "border-cyan-400/50",
+      textColor: "text-cyan-300",
+    },
+    {
+      title: "Funcionários",
+      description: "Equipe de limpeza",
+      icon: Users,
+      link: "/employee-manager",
+      gradient: "from-emerald-500 to-emerald-600",
+      bgGradient: "from-emerald-500/20 to-emerald-600/30",
+      borderColor: "border-emerald-400/50",
+      textColor: "text-emerald-300",
+    },
+    {
+      title: "Utilizadores",
+      description: "Gestão de acesso",
+      icon: Shield,
+      link: "/user-management",
+      gradient: "from-orange-500 to-orange-600",
+      bgGradient: "from-orange-500/20 to-orange-600/30",
+      borderColor: "border-orange-400/50",
+      textColor: "text-orange-300",
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-aviation-gradient">
-      {/* Header */}
-      <header className="bg-white/10 backdrop-blur-md border-b border-white/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <Plane className="h-8 w-8 text-white" />
-              <h1 className="text-2xl font-bold text-white">AviationOps</h1>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white">
+      {/* Mobile Header */}
+      <header className="sticky top-0 z-50 bg-gradient-to-r from-slate-900/95 to-blue-900/95 backdrop-blur-xl border-b border-white/10">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center space-x-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="text-white hover:bg-white/10 lg:hidden"
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </Button>
+            <Plane className="h-7 w-7 text-blue-400" />
+            <h1 className="text-lg font-bold text-white">AviationOps</h1>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            {/* Connection Status */}
+            <div className="flex items-center space-x-2">
+              {isOnline ? (
+                <Wifi className="h-4 w-4 text-green-400" />
+              ) : (
+                <WifiOff className="h-4 w-4 text-red-400" />
+              )}
+              <Badge 
+                variant={isOnline ? "default" : "destructive"}
+                className="text-xs px-2 py-1"
+              >
+                {isOnline ? "Online" : "Offline"}
+              </Badge>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                {isOnline ? (
-                  <Wifi className="h-5 w-5 text-green-400" />
-                ) : (
-                  <WifiOff className="h-5 w-5 text-red-400" />
-                )}
-                <Badge variant={isOnline ? "default" : "destructive"}>
-                  {isOnline ? "Online" : "Offline"}
-                </Badge>
-              </div>
-
-              <div className="text-right">
-                <p className="text-sm text-white font-medium">{user.name}</p>
-                <p className="text-xs text-white/70">{user.role}</p>
-              </div>
-
-              <div className="h-10 w-10 bg-aviation-blue-600 rounded-full flex items-center justify-center">
-                <span className="text-white font-semibold">
-                  {user.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </span>
-              </div>
-
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleSignOut}
-                className="text-white hover:bg-white/20"
-                title="Sair"
-              >
-                <LogOut className="h-5 w-5" />
-              </Button>
+            {/* User Avatar */}
+            <div className="h-8 w-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+              <span className="text-white font-semibold text-sm">
+                {user.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
+              </span>
             </div>
           </div>
         </div>
+
+        {/* Mobile Menu Drawer */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden bg-gradient-to-r from-slate-900 to-blue-900 border-t border-white/10">
+            <div className="px-4 py-4 space-y-3">
+              <div className="text-center border-b border-white/10 pb-3">
+                <p className="text-sm text-white font-medium">{user.name}</p>
+                <p className="text-xs text-blue-300">{user.role}</p>
+              </div>
+              
+              <Link 
+                to="/settings" 
+                className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-white/10 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Settings className="h-5 w-5 text-blue-300" />
+                <span className="text-white">Configurações</span>
+              </Link>
+              
+              <button
+                onClick={handleSignOut}
+                className="flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-white/10 transition-colors w-full text-left"
+              >
+                <LogOut className="h-5 w-5 text-red-400" />
+                <span className="text-white">Sair</span>
+              </button>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h2 className="text-4xl font-bold text-white mb-2">
-            Sistema de Gestão de Limpeza de Aeronaves
-          </h2>
-          <p className="text-xl text-white/80">
-            Controle completo das operações de limpeza, funcionários e aeronaves
-          </p>
-        </div>
-
+      <main className="pb-20 lg:pb-8">
         {/* Migration Notification */}
-        <MigrationNotification className="mb-8" />
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => (
-            <Card
-              key={index}
-              className="glass-card border-white/20 hover:bg-white/20 transition-all duration-300"
-            >
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-white/70 text-sm font-medium">
-                      {stat.title}
-                    </p>
-                    <p className="text-3xl font-bold text-white">
-                      {stat.value}
-                    </p>
-                    <p className="text-aviation-blue-300 text-sm">
-                      {stat.change} esta semana
-                    </p>
-                  </div>
-                  <div className="h-12 w-12 bg-aviation-blue-600/30 rounded-lg flex items-center justify-center">
-                    <stat.icon className="h-6 w-6 text-aviation-blue-300" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+        <div className="px-4 pt-4">
+          <MigrationNotification className="mb-4" />
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-          <div className="lg:col-span-2">
-            <Card className="glass-card border-white/20">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center space-x-2">
-                  <Activity className="h-5 w-5" />
-                  <span>Ações Rápidas</span>
-                </CardTitle>
-                <CardDescription className="text-white/70">
-                  Acesse as principais funcionalidades do sistema
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <Link to="/cleaning-forms">
-                  <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/30 border border-blue-400/30 hover:border-blue-400/50 transition-all duration-300 h-32">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative p-6 h-full flex items-center space-x-4">
-                      <div className="p-3 rounded-xl bg-blue-500/20 border border-blue-400/30">
-                        <FileText className="h-8 w-8 text-blue-300" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white mb-1">
-                          Folhas de Limpeza
-                        </h3>
-                        <p className="text-blue-200/80 text-sm">
-                          Criar requisições com IDs seguros
-                        </p>
-                        <div className="flex items-center mt-2 text-xs text-blue-300/70">
-                          <Shield className="h-3 w-3 mr-1" />
-                          <span>Sistema criptografado</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
+        {/* Tab Content */}
+        {activeTab === "home" && (
+          <div className="px-4 space-y-6">
+            {/* Welcome Section */}
+            <div className="text-center py-6">
+              <h2 className="text-2xl lg:text-4xl font-bold text-white mb-2">
+                Bem-vindo ao AviationOps
+              </h2>
+              <p className="text-blue-200 text-sm lg:text-lg">
+                Gestão completa de limpeza de aeronaves
+              </p>
+            </div>
 
-                <Link to="/aircraft-manager">
-                  <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-cyan-500/20 to-cyan-600/30 border border-cyan-400/30 hover:border-cyan-400/50 transition-all duration-300 h-32">
-                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative p-6 h-full flex items-center space-x-4">
-                      <div className="p-3 rounded-xl bg-cyan-500/20 border border-cyan-400/30">
-                        <Plane className="h-8 w-8 text-cyan-300" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white mb-1">
-                          Aeronaves
-                        </h3>
-                        <p className="text-cyan-200/80 text-sm">
-                          Gestão completa da frota
-                        </p>
-                        <div className="flex items-center mt-2 text-xs text-cyan-300/70">
-                          <Activity className="h-3 w-3 mr-1" />
-                          <span>Dados em tempo real</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
+            {/* Quick Stats */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20">
+                <CardContent className="p-4 text-center">
+                  <Plane className="h-6 w-6 text-blue-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-white">{systemStats.aircraft}</p>
+                  <p className="text-xs text-blue-200">Aeronaves</p>
+                </CardContent>
+              </Card>
 
-                <Link to="/employee-manager">
-                  <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/30 border border-emerald-400/30 hover:border-emerald-400/50 transition-all duration-300 h-32">
-                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative p-6 h-full flex items-center space-x-4">
-                      <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-400/30">
-                        <Users className="h-8 w-8 text-emerald-300" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white mb-1">
-                          Funcionários
-                        </h3>
-                        <p className="text-emerald-200/80 text-sm">
-                          Equipe de limpeza especializada
-                        </p>
-                        <div className="flex items-center mt-2 text-xs text-emerald-300/70">
-                          <Users className="h-3 w-3 mr-1" />
-                          <span>Gestão integrada</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
+              <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20">
+                <CardContent className="p-4 text-center">
+                  <Users className="h-6 w-6 text-emerald-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-white">{systemStats.employees}</p>
+                  <p className="text-xs text-emerald-200">Funcionários</p>
+                </CardContent>
+              </Card>
 
-                <Link to="/user-management">
-                  <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-600/30 border border-orange-400/30 hover:border-orange-400/50 transition-all duration-300 h-32">
-                    <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative p-6 h-full flex items-center space-x-4">
-                      <div className="p-3 rounded-xl bg-orange-500/20 border border-orange-400/30">
-                        <Shield className="h-8 w-8 text-orange-300" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white mb-1">
-                          Utilizadores
-                        </h3>
-                        <p className="text-orange-200/80 text-sm">
-                          Gestão de utilizadores e roles
-                        </p>
-                        <div className="flex items-center mt-2 text-xs text-orange-300/70">
-                          <Shield className="h-3 w-3 mr-1" />
-                          <span>Controlo de acesso</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
+              <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20">
+                <CardContent className="p-4 text-center">
+                  <FileText className="h-6 w-6 text-orange-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-white">{systemStats.activeForms}</p>
+                  <p className="text-xs text-orange-200">Folhas Abertas</p>
+                </CardContent>
+              </Card>
 
-                <Link to="/settings">
-                  <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/30 border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300 h-32">
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative p-6 h-full flex items-center space-x-4">
-                      <div className="p-3 rounded-xl bg-purple-500/20 border border-purple-400/30">
-                        <Settings className="h-8 w-8 text-purple-300" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white mb-1">
-                          Configurações
-                        </h3>
-                        <p className="text-purple-200/80 text-sm">
-                          Perfis e segurança
-                        </p>
-                        <div className="flex items-center mt-2 text-xs text-purple-300/70">
-                          <Shield className="h-3 w-3 mr-1" />
-                          <span>Configuração avançada</span>
+              <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20">
+                <CardContent className="p-4 text-center">
+                  <Activity className="h-6 w-6 text-cyan-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-white">{systemStats.completedForms}</p>
+                  <p className="text-xs text-cyan-200">Concluídas</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Main Actions */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-white">Ações Principais</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {mainActions.map((action, index) => (
+                  <Link key={index} to={action.link}>
+                    <Card className={`bg-gradient-to-br ${action.bgGradient} backdrop-blur-xl border ${action.borderColor} hover:scale-105 transition-all duration-300 touch-manipulation`}>
+                      <CardContent className="p-6">
+                        <div className="flex items-center space-x-4">
+                          <div className={`p-3 rounded-xl bg-gradient-to-br ${action.gradient} shadow-lg`}>
+                            <action.icon className="h-8 w-8 text-white" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-lg font-bold text-white mb-1">
+                              {action.title}
+                            </h3>
+                            <p className={`text-sm ${action.textColor}`}>
+                              {action.description}
+                            </p>
+                          </div>
                         </div>
-                      </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Offline Status & Sync */}
+            <Card className="bg-gradient-to-br from-slate-800/50 to-slate-700/50 backdrop-blur-xl border border-white/20">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Cloud className={`h-5 w-5 ${isOnline ? "text-green-400" : "text-orange-400"}`} />
+                    <div>
+                      <p className="text-white font-medium">
+                        Modo {isOnline ? "Online" : "Offline"}
+                      </p>
+                      <p className="text-xs text-blue-200">
+                        {isOnline ? "Dados sincronizados" : "Trabalhando offline"}
+                      </p>
                     </div>
                   </div>
-                </Link>
+                  <Button
+                    onClick={handleSync}
+                    variant="outline"
+                    size="sm"
+                    className="border-blue-400/50 text-blue-300 hover:bg-blue-500/20 touch-manipulation"
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Sincronizar agora
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
+        )}
 
-          {/* Recent Activities */}
-          <Card className="glass-card border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white">Atividades Recentes</CardTitle>
-              <CardDescription className="text-white/70">
-                Últimas atualizações do sistema
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {recentActivities.map((activity) => (
-                <div key={activity.id} className="flex items-start space-x-3">
-                  <div className="h-2 w-2 bg-aviation-blue-400 rounded-full mt-2"></div>
-                  <div className="flex-1">
-                    <p className="text-white text-sm">{activity.action}</p>
-                    <p className="text-white/60 text-xs">{activity.time}</p>
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* System Status */}
-        <Card className="glass-card border-white/20">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center space-x-2">
-              <Shield className="h-5 w-5" />
-              <span>Status do Sistema</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="flex items-center space-x-3">
-                <div className="h-3 w-3 bg-green-400 rounded-full animate-pulse"></div>
-                <div>
-                  <p className="text-white font-medium">Banco de Dados</p>
-                  <p className="text-white/70 text-sm">Conectado</p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-3">
-                <div className="h-3 w-3 bg-green-400 rounded-full animate-pulse"></div>
-                <div>
-                  <p className="text-white font-medium">Supabase</p>
-                  <p className="text-white/70 text-sm">Online</p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-3">
-                <Cloud className="h-5 w-5 text-aviation-blue-300" />
-                <div>
-                  <p className="text-white font-medium">Sincronização</p>
-                  <p className="text-white/70 text-sm">Ativa</p>
-                </div>
-              </div>
+        {activeTab === "history" && (
+          <div className="px-4 space-y-6">
+            <div className="text-center py-6">
+              <h2 className="text-2xl font-bold text-white mb-2">Histórico</h2>
+              <p className="text-blue-200 text-sm">
+                Atividades recentes do sistema
+              </p>
             </div>
-          </CardContent>
-        </Card>
+
+            <div className="space-y-3">
+              {recentActivities.map((activity) => (
+                <Card key={activity.id} className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20">
+                  <CardContent className="p-4">
+                    <div className="flex items-start space-x-3">
+                      <div className="h-2 w-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white text-sm font-medium break-words">
+                          {activity.action}
+                        </p>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <Clock className="h-3 w-3 text-blue-300" />
+                          <p className="text-blue-200 text-xs">{activity.time}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
+
+      {/* Mobile Tab Navigation */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-r from-slate-900/95 to-blue-900/95 backdrop-blur-xl border-t border-white/10">
+        <div className="flex items-center justify-around py-2">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex flex-col items-center space-y-1 py-2 px-4 rounded-lg transition-all duration-200 touch-manipulation ${
+                activeTab === tab.id
+                  ? "bg-blue-500/20 text-blue-300"
+                  : "text-white/70 hover:text-white"
+              }`}
+            >
+              <tab.icon className="h-5 w-5" />
+              <span className="text-xs font-medium">{tab.label}</span>
+            </button>
+          ))}
+        </div>
+      </nav>
     </div>
   );
 }
