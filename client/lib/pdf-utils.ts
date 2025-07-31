@@ -197,9 +197,9 @@ export const generateCleaningFormPDF = async (formData: CleaningFormData, aircra
     yPosition += (itemsPerCol * 6) + 8;
   }
 
-  // Employees Section
+  // Employees Section - Only show if employees are selected
   if (formData.employees.length > 0) {
-    yPosition = addSectionHeader('FUNCIONÁRIOS DO TURNO', yPosition);
+    yPosition = addSectionHeader('FUNCIONÁRIOS DESIGNADOS', yPosition);
 
     formData.employees.forEach((employee, index) => {
       const isEven = index % 2 === 0;
