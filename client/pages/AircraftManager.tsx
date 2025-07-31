@@ -636,27 +636,31 @@ export default function AircraftManager() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="text-white">Peso Máx. Decolagem (kg)</Label>
+                      <Label className="text-white">Altura (m)</Label>
                       <Input
                         type="number"
-                        value={formData.specifications.maxTakeoffWeight || ''}
-                        onChange={(e) => setFormData(prev => ({ 
-                          ...prev, 
-                          specifications: { ...prev.specifications, maxTakeoffWeight: parseInt(e.target.value) || 0 }
+                        step="0.1"
+                        value={formData.specifications.height || ''}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          specifications: { ...prev.specifications, height: parseFloat(e.target.value) || 0 }
                         }))}
                         className="aviation-input"
-                        placeholder="79000"
+                        placeholder="12.5"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-white">Horas de Voo</Label>
+                      <Label className="text-white">Área Exterior (m²)</Label>
                       <Input
                         type="number"
-                        value={formData.flightHours || ''}
-                        onChange={(e) => setFormData(prev => ({ ...prev, flightHours: parseInt(e.target.value) || 0 }))}
+                        value={formData.specifications.exteriorArea || ''}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          specifications: { ...prev.specifications, exteriorArea: parseInt(e.target.value) || 0 }
+                        }))}
                         className="aviation-input"
-                        placeholder="12450"
+                        placeholder="845"
                       />
                     </div>
                   </div>
@@ -694,60 +698,55 @@ export default function AircraftManager() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-white">Motores</Label>
+                    <Label className="text-white">Hangar</Label>
                     <Input
-                      value={formData.specifications.engines}
-                      onChange={(e) => setFormData(prev => ({ 
-                        ...prev, 
-                        specifications: { ...prev.specifications, engines: e.target.value }
-                      }))}
+                      value={formData.hangar || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, hangar: e.target.value }))}
                       className="aviation-input"
-                      placeholder="2x CFM56-7B26"
+                      placeholder="Hangar 1"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="text-white">Última Inspeção</Label>
+                      <Label className="text-white">Última Limpeza</Label>
                       <Input
                         type="date"
-                        value={formData.lastInspection}
-                        onChange={(e) => setFormData(prev => ({ ...prev, lastInspection: e.target.value }))}
+                        value={formData.lastCleaningDate || ''}
+                        onChange={(e) => setFormData(prev => ({ ...prev, lastCleaningDate: e.target.value }))}
                         className="aviation-input"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-white">Próxima Inspeção</Label>
-                      <Input
-                        type="date"
-                        value={formData.nextInspection}
-                        onChange={(e) => setFormData(prev => ({ ...prev, nextInspection: e.target.value }))}
-                        className="aviation-input"
-                      />
+                      <Label className="text-white">Tipo de Limpeza</Label>
+                      <Select
+                        value={formData.lastCleaningType || ''}
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, lastCleaningType: value }))}
+                      >
+                        <SelectTrigger className="aviation-input">
+                          <SelectValue placeholder="Selecione o tipo" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-aviation-gray-800 border-white/20">
+                          <SelectItem value="Limpeza Exterior" className="text-white">Limpeza Exterior</SelectItem>
+                          <SelectItem value="Limpeza Interior" className="text-white">Limpeza Interior</SelectItem>
+                          <SelectItem value="Polimento" className="text-white">Polimento</SelectItem>
+                          <SelectItem value="Lavagem Profunda Durante a Manutenção de Base" className="text-white">Lavagem Profunda</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-white">Vencimento do Seguro</Label>
-                    <Input
-                      type="date"
-                      value={formData.insuranceExpiry}
-                      onChange={(e) => setFormData(prev => ({ ...prev, insuranceExpiry: e.target.value }))}
-                      className="aviation-input"
-                    />
                   </div>
                 </div>
               </div>
 
-              {/* Maintenance Notes */}
+              {/* Cleaning Notes */}
               <div className="mt-6">
-                <Label className="text-white">Observações de Manutenção</Label>
+                <Label className="text-white">Observações de Limpeza</Label>
                 <Textarea
-                  value={formData.maintenanceNotes}
-                  onChange={(e) => setFormData(prev => ({ ...prev, maintenanceNotes: e.target.value }))}
+                  value={formData.cleaningNotes || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, cleaningNotes: e.target.value }))}
                   className="aviation-input min-h-20 mt-2"
-                  placeholder="Observações sobre manutenção, reparos, etc..."
+                  placeholder="Observações sobre limpeza, requisitos especiais, etc..."
                 />
               </div>
 
