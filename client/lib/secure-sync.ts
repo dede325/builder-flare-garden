@@ -272,6 +272,7 @@ class SecureSyncService {
 
           // Check if it's a Supabase configuration error
           const isConfigError = error instanceof Error && (
+            error.message.includes('Supabase client not configured') ||
             error.message.includes('Supabase client not initialized') ||
             error.message.includes('Cannot read properties of null') ||
             error.message.includes('from') ||
@@ -279,9 +280,10 @@ class SecureSyncService {
           );
 
           if (isConfigError) {
-            console.warn('Supabase not properly configured, marking as pending');
-            // Don't increment retry count for config issues
-            item.lastError = 'Supabase configuration pending';
+            console.warn('Supabase not configured - forms will be stored locally only');
+            // Don't increment retry count for config issues, just mark as pending
+            item.lastError = 'Supabase not configured - local storage only';
+            item.retryCount = 0; // Reset retry count
             await this.db.put("sync_queue", item);
           } else {
             // Increment retry count for actual errors
