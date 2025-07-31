@@ -346,7 +346,8 @@ class SecureSyncService {
     try {
       // Check if supabase client is properly initialized
       if (!supabase) {
-        throw new Error('Supabase client not initialized');
+        console.warn('Supabase client not configured - skipping sync. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.');
+        throw new Error('Supabase client not configured');
       }
 
       // Insert form data into Supabase
@@ -365,6 +366,8 @@ class SecureSyncService {
         console.error('Supabase insert error:', insertError);
         throw insertError;
       }
+
+      console.log('Successfully synced form to Supabase:', metadata.id);
 
       // Generate and upload PDF (if data exists)
       if (formData.aircraftId && formData.employees?.length > 0) {
