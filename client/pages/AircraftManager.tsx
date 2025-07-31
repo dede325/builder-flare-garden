@@ -823,7 +823,7 @@ export default function AircraftManager() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-white/70 text-sm font-medium">Horas de Voo</p>
+                  <p className="text-white/70 text-sm font-medium">Limpas (7 dias)</p>
                   <p className="text-3xl font-bold text-white">
                     {aircraft.filter(ac => ac.lastCleaningDate &&
                       Math.ceil((new Date().getTime() - new Date(ac.lastCleaningDate).getTime()) / (1000 * 60 * 60 * 24)) <= 7
