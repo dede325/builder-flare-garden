@@ -407,35 +407,13 @@ export default function CleaningForms() {
 
   const loadData = async () => {
     try {
-      // Load from management modules first
-      const savedAircraft = localStorage.getItem("aviation_aircraft");
-      const savedEmployees = localStorage.getItem("aviation_employees");
+      // Load aircraft using cache service
+      const aircraftData = await cacheService.loadAircraftWithCache();
+      setAircraft(aircraftData);
 
-      if (savedAircraft) {
-        const aircraftData = JSON.parse(savedAircraft);
-        // Filter only active aircraft for selection
-        const activeAircraft = aircraftData.filter(
-          (ac: any) => ac.status === "active",
-        );
-        setAircraft(activeAircraft);
-      } else {
-        // Fallback to Supabase
-        const aircraftResult = await db.getAircraft();
-        if (aircraftResult.data) setAircraft(aircraftResult.data);
-      }
-
-      if (savedEmployees) {
-        const employeesData = JSON.parse(savedEmployees);
-        // Filter only active employees for selection
-        const activeEmployees = employeesData.filter(
-          (emp: any) => emp.status === "active",
-        );
-        setEmployees(activeEmployees);
-      } else {
-        // Fallback to Supabase
-        const employeesResult = await db.getEmployees();
-        if (employeesResult.data) setEmployees(employeesResult.data);
-      }
+      // Load employees using cache service
+      const employeesData = await cacheService.loadEmployeesWithCache();
+      setEmployees(employeesData);
 
       // Load forms using intelligent sync service
       try {
