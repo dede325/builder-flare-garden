@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Search, Download, QrCode, Calendar, Clock, MapPin, Wrench, Users, FileText, Camera, Phone, IdCard, Signature, X, Edit, CheckSquare, Shield, Wifi, WifiOff, AlertTriangle, Sync } from 'lucide-react';
+import { ArrowLeft, Plus, Search, Download, QrCode, Calendar, Clock, MapPin, Wrench, Users, FileText, Camera, Phone, IdCard, Signature, X, Edit, CheckSquare, Shield, Wifi, WifiOff, AlertTriangle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -803,7 +803,7 @@ export default function CleaningForms() {
                 <div className="flex items-center space-x-1">
                   <Shield className={`h-4 w-4 ${securityStatus === 'secure' ? 'text-green-400' : 'text-yellow-400'}`} />
                   <span className={`text-xs ${securityStatus === 'secure' ? 'text-green-400' : 'text-yellow-400'}`}>
-                    {securityStatus === 'secure' ? 'Seguro' : 'B��sico'}
+                    {securityStatus === 'secure' ? 'Seguro' : 'Básico'}
                   </span>
                 </div>
 
