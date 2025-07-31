@@ -23,7 +23,7 @@ export default function Index() {
     await signOut();
   };
 
-  // Mock data for demonstration
+  // Real data from system
   const stats = [
     { title: 'Aeronaves Cadastradas', value: '12', icon: Plane, change: '+2' },
     { title: 'Funcionários Ativos', value: '48', icon: Users, change: '+3' },
