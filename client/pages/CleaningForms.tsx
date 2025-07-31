@@ -629,7 +629,7 @@ export default function CleaningForms() {
                     {formData.employees.map((employee, index) => (
                       <Card key={employee.id} className="glass-card border-white/20">
                         <CardContent className="p-4">
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             <div className="space-y-2">
                               <Label className="text-white">Nome *</Label>
                               <Input
