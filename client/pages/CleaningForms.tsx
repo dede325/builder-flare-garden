@@ -319,63 +319,117 @@ export default function CleaningForms() {
     setIsSubmitting(true);
 
     try {
-      const formCode = generateFormCode(formData.date, formData.shift, formData.location);
-      const formId = crypto.randomUUID();
+      if (editingForm) {
+        // Update existing form
+        const updatedForm: CleaningForm = {
+          ...editingForm,
+          date: formData.date,
+          shift: formData.shift,
+          location: formData.location,
+          interventionTypes: formData.interventionTypes,
+          aircraftId: formData.aircraftId,
+          employees: formData.employees,
+          supervisorSignature: formData.supervisorSignature,
+          clientSignature: formData.clientSignature,
+          clientConfirmedWithoutSignature: formData.clientConfirmedWithoutSignature,
+          status: formData.supervisorSignature && (formData.clientSignature || formData.clientConfirmedWithoutSignature) ? 'completed' : 'draft',
+          updatedAt: new Date().toISOString()
+        };
 
-      // Create initial form object
-      const newForm: CleaningForm = {
-        id: formId,
-        code: formCode,
-        date: formData.date,
-        shift: formData.shift,
-        location: formData.location,
-        interventionTypes: formData.interventionTypes,
-        aircraftId: formData.aircraftId,
-        employees: formData.employees,
-        supervisorSignature: formData.supervisorSignature,
-        clientSignature: formData.clientSignature,
-        clientConfirmedWithoutSignature: formData.clientConfirmedWithoutSignature,
-        qrCode: '', // Will be updated after PDF generation
-        status: formData.supervisorSignature && (formData.clientSignature || formData.clientConfirmedWithoutSignature) ? 'completed' : 'draft',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
+        // Regenerate PDF and QR code if needed
+        const aircraftData = aircraft.find((ac: any) => ac.id === formData.aircraftId);
+        const pdfStorageUrl = await generateAndUploadPDF(updatedForm, aircraftData);
 
-      // Generate and upload PDF to get the storage URL
-      const aircraftData = aircraft.find((ac: any) => ac.id === formData.aircraftId);
-      const pdfStorageUrl = await generateAndUploadPDF(newForm, aircraftData);
+        const qrCodeUrl = pdfStorageUrl || `${window.location.origin}/cleaning-forms/${updatedForm.code}`;
+        const qrCode = await QRCode.toDataURL(qrCodeUrl, {
+          width: 250,
+          margin: 2,
+          color: {
+            dark: '#1e293b',
+            light: '#ffffff'
+          },
+          errorCorrectionLevel: 'M'
+        });
 
-      // Generate QR code with the PDF storage URL or form view URL
-      const qrCodeUrl = pdfStorageUrl || `${window.location.origin}/cleaning-forms/${formCode}`;
-      const qrCode = await QRCode.toDataURL(qrCodeUrl, {
-        width: 250,
-        margin: 2,
-        color: {
-          dark: '#1e293b',
-          light: '#ffffff'
-        },
-        errorCorrectionLevel: 'M'
-      });
+        updatedForm.qrCode = qrCode;
 
-      // Update form with QR code
-      newForm.qrCode = qrCode;
+        const updatedForms = forms.map(form =>
+          form.id === editingForm.id ? updatedForm : form
+        );
+        setForms(updatedForms);
+        localStorage.setItem('cleaningForms', JSON.stringify(updatedForms));
 
-      // Save to Supabase if configured
-      try {
-        await supabaseStorage.saveFormMetadata(newForm);
-      } catch (error) {
-        console.log('Supabase metadata save skipped:', error);
+        toast({
+          title: "Folha atualizada",
+          description: "As alterações foram salvas com sucesso.",
+        });
+      } else {
+        // Create new form
+        const formCode = generateFormCode(formData.date, formData.shift, formData.location);
+        const formId = crypto.randomUUID();
+
+        const newForm: CleaningForm = {
+          id: formId,
+          code: formCode,
+          date: formData.date,
+          shift: formData.shift,
+          location: formData.location,
+          interventionTypes: formData.interventionTypes,
+          aircraftId: formData.aircraftId,
+          employees: formData.employees,
+          supervisorSignature: formData.supervisorSignature,
+          clientSignature: formData.clientSignature,
+          clientConfirmedWithoutSignature: formData.clientConfirmedWithoutSignature,
+          qrCode: '',
+          status: formData.supervisorSignature && (formData.clientSignature || formData.clientConfirmedWithoutSignature) ? 'completed' : 'draft',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+
+        // Generate and upload PDF
+        const aircraftData = aircraft.find((ac: any) => ac.id === formData.aircraftId);
+        const pdfStorageUrl = await generateAndUploadPDF(newForm, aircraftData);
+
+        const qrCodeUrl = pdfStorageUrl || `${window.location.origin}/cleaning-forms/${formCode}`;
+        const qrCode = await QRCode.toDataURL(qrCodeUrl, {
+          width: 250,
+          margin: 2,
+          color: {
+            dark: '#1e293b',
+            light: '#ffffff'
+          },
+          errorCorrectionLevel: 'M'
+        });
+
+        newForm.qrCode = qrCode;
+
+        try {
+          await supabaseStorage.saveFormMetadata(newForm);
+        } catch (error) {
+          console.log('Supabase metadata save skipped:', error);
+        }
+
+        const updatedForms = [...forms, newForm];
+        setForms(updatedForms);
+        localStorage.setItem('cleaningForms', JSON.stringify(updatedForms));
+
+        toast({
+          title: "Folha criada",
+          description: "Nova folha de limpeza criada com sucesso.",
+        });
       }
 
-      const updatedForms = [...forms, newForm];
-      setForms(updatedForms);
-      localStorage.setItem('cleaningForms', JSON.stringify(updatedForms));
-
       setIsCreateDialogOpen(false);
+      setEditingForm(null);
       resetForm();
       setFormErrors({});
     } catch (error) {
-      console.error('Error creating form:', error);
+      console.error('Error creating/updating form:', error);
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro ao salvar a folha.",
+        variant: "destructive"
+      });
     } finally {
       setIsSubmitting(false);
     }
