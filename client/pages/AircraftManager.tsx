@@ -150,19 +150,18 @@ export default function AircraftManager() {
             cargo: 1200
           },
           specifications: {
-            maxTakeoffWeight: 79000,
             wingspan: 35.8,
             length: 39.5,
-            engines: '2x CFM56-7B26'
+            height: 12.5,
+            exteriorArea: 845
           },
           status: 'active',
-          lastInspection: '2024-01-15',
-          nextInspection: '2024-07-15',
-          flightHours: 12450,
-          location: 'Hangar Principal',
-          maintenanceNotes: 'Última manutenção preventiva realizada com sucesso',
-          certifications: ['Certificado de Aeronavegabilidade', 'Certificado de Matrícula'],
-          insuranceExpiry: '2024-12-31',
+          location: 'Rampa A',
+          hangar: 'Hangar 1',
+          lastCleaningDate: '2024-01-15',
+          lastCleaningType: 'Limpeza Exterior',
+          cleaningNotes: 'Limpeza completa realizada. Necessário polimento na próxima intervenção.',
+          cleaningRequirements: ['Limpeza especial de turbinas', 'Polimento da fuselagem'],
           createdAt: '2023-01-01T08:00:00Z',
           updatedAt: '2024-01-15T10:30:00Z'
         },
@@ -178,19 +177,18 @@ export default function AircraftManager() {
             cargo: 800
           },
           specifications: {
-            maxTakeoffWeight: 54500,
             wingspan: 28.7,
             length: 36.2,
-            engines: '2x CF34-10E'
+            height: 10.5,
+            exteriorArea: 620
           },
-          status: 'maintenance',
-          lastInspection: '2024-01-10',
-          nextInspection: '2024-06-10',
-          flightHours: 8920,
-          location: 'Hangar de Manutenção',
-          maintenanceNotes: 'Substituição do trem de pouso em andamento',
-          certifications: ['Certificado de Aeronavegabilidade', 'Certificado de Matrícula'],
-          insuranceExpiry: '2024-11-30',
+          status: 'active',
+          location: 'Hangar 2',
+          hangar: 'Hangar 2',
+          lastCleaningDate: '2024-01-10',
+          lastCleaningType: 'Lavagem Profunda Durante a Manutenção de Base',
+          cleaningNotes: 'Limpeza profunda realizada. Aeronave em excelente estado.',
+          cleaningRequirements: ['Limpeza interior detalhada', 'Desinfecção completa'],
           createdAt: '2023-02-15T08:00:00Z',
           updatedAt: '2024-01-20T14:15:00Z'
         }
