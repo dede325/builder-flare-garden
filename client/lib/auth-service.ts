@@ -3,8 +3,8 @@
  * Handles authentication, authorization, roles, and permissions
  */
 
-import { supabase } from './supabase';
-import { User } from '@supabase/supabase-js';
+import { supabase } from "./supabase";
+import { User } from "@supabase/supabase-js";
 
 export interface UserProfile {
   id: string;
@@ -60,7 +60,7 @@ class AuthService {
   private authState: AuthState = {
     user: null,
     loading: true,
-    initialized: false
+    initialized: false,
   };
 
   private listeners: Array<(state: AuthState) => void> = [];
@@ -81,17 +81,24 @@ class AuthService {
       }
 
       // Get current session
-      const { data: { session }, error } = await supabase.auth.getSession();
-      
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
+
       if (error) {
-        console.error('Error getting session:', error);
+        console.error("Error getting session:", error);
         this.setAuthState({ user: null, loading: false, initialized: true });
         return;
       }
 
       if (session?.user) {
         const userWithProfile = await this.enrichUserWithProfile(session.user);
-        this.setAuthState({ user: userWithProfile, loading: false, initialized: true });
+        this.setAuthState({
+          user: userWithProfile,
+          loading: false,
+          initialized: true,
+        });
       } else {
         this.setAuthState({ user: null, loading: false, initialized: true });
       }
@@ -99,18 +106,23 @@ class AuthService {
       // Listen for auth changes
       supabase.auth.onAuthStateChange(async (event, session) => {
         if (session?.user) {
-          const userWithProfile = await this.enrichUserWithProfile(session.user);
-          this.setAuthState({ user: userWithProfile, loading: false, initialized: true });
-          
+          const userWithProfile = await this.enrichUserWithProfile(
+            session.user,
+          );
+          this.setAuthState({
+            user: userWithProfile,
+            loading: false,
+            initialized: true,
+          });
+
           // Log login activity
-          await this.logActivity('user_login', 'auth', session.user.id);
+          await this.logActivity("user_login", "auth", session.user.id);
         } else {
           this.setAuthState({ user: null, loading: false, initialized: true });
         }
       });
-
     } catch (error) {
-      console.error('Auth initialization error:', error);
+      console.error("Auth initialization error:", error);
       this.setDemoState();
     }
   }
@@ -120,37 +132,48 @@ class AuthService {
    */
   private setDemoState() {
     const demoUser: UserWithProfile = {
-      id: 'demo-user',
-      email: 'demo@aviation.com',
+      id: "demo-user",
+      email: "demo@aviation.com",
       user_metadata: {
-        full_name: 'João Silva (Demo)'
+        full_name: "João Silva (Demo)",
       },
       app_metadata: {},
-      aud: 'authenticated',
+      aud: "authenticated",
       created_at: new Date().toISOString(),
       profile: {
-        id: 'demo-user',
-        display_name: 'João Silva (Demo)',
-        department: 'Operações',
+        id: "demo-user",
+        display_name: "João Silva (Demo)",
+        department: "Operações",
         is_active: true,
         certifications: [],
         preferences: {},
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       },
-      roles: [{
-        id: 'demo-role',
-        name: 'manager',
-        display_name: 'Gestor',
-        level: 70,
-        is_system_role: false
-      }],
+      roles: [
+        {
+          id: "demo-role",
+          name: "manager",
+          display_name: "Gestor",
+          level: 70,
+          is_system_role: false,
+        },
+      ],
       permissions: [
-        'read_aircraft', 'update_aircraft', 'create_aircraft',
-        'read_employees', 'update_employees', 'create_employees',
-        'read_tasks', 'create_tasks', 'update_tasks', 'assign_tasks',
-        'read_cleaning_forms', 'create_cleaning_forms', 'update_cleaning_forms'
-      ]
+        "read_aircraft",
+        "update_aircraft",
+        "create_aircraft",
+        "read_employees",
+        "update_employees",
+        "create_employees",
+        "read_tasks",
+        "create_tasks",
+        "update_tasks",
+        "assign_tasks",
+        "read_cleaning_forms",
+        "create_cleaning_forms",
+        "update_cleaning_forms",
+      ],
     };
 
     this.setAuthState({ user: demoUser, loading: false, initialized: true });
@@ -161,22 +184,25 @@ class AuthService {
    */
   private async enrichUserWithProfile(user: User): Promise<UserWithProfile> {
     try {
-      const [profileResult, rolesResult, permissionsResult] = await Promise.all([
-        supabase.from('user_profiles').select('*').eq('id', user.id).single(),
-        supabase.rpc('get_user_roles', { user_uuid: user.id }),
-        supabase.rpc('get_user_permissions', { user_uuid: user.id })
-      ]);
+      const [profileResult, rolesResult, permissionsResult] = await Promise.all(
+        [
+          supabase.from("user_profiles").select("*").eq("id", user.id).single(),
+          supabase.rpc("get_user_roles", { user_uuid: user.id }),
+          supabase.rpc("get_user_permissions", { user_uuid: user.id }),
+        ],
+      );
 
       const enrichedUser: UserWithProfile = {
         ...user,
         profile: profileResult.data,
         roles: rolesResult.data || [],
-        permissions: permissionsResult.data?.map((p: any) => p.permission_name) || []
+        permissions:
+          permissionsResult.data?.map((p: any) => p.permission_name) || [],
       };
 
       return enrichedUser;
     } catch (error) {
-      console.error('Error enriching user:', error);
+      console.error("Error enriching user:", error);
       return user;
     }
   }
@@ -186,7 +212,7 @@ class AuthService {
    */
   private setAuthState(newState: AuthState) {
     this.authState = newState;
-    this.listeners.forEach(listener => listener(newState));
+    this.listeners.forEach((listener) => listener(newState));
   }
 
   /**
@@ -199,7 +225,7 @@ class AuthService {
 
     // Return unsubscribe function
     return () => {
-      this.listeners = this.listeners.filter(l => l !== listener);
+      this.listeners = this.listeners.filter((l) => l !== listener);
     };
   }
 
@@ -217,28 +243,35 @@ class AuthService {
     if (!supabase) {
       // Demo mode - simulate successful login
       this.setDemoState();
-      return { data: { user: this.authState.user, session: null }, error: null };
+      return {
+        data: { user: this.authState.user, session: null },
+        error: null,
+      };
     }
 
     const result = await supabase.auth.signInWithPassword({ email, password });
-    
+
     if (result.data.user) {
-      await this.logActivity('user_login', 'auth', result.data.user.id);
+      await this.logActivity("user_login", "auth", result.data.user.id);
     }
-    
+
     return result;
   }
 
   /**
    * Sign up new user
    */
-  async signUp(email: string, password: string, userData?: {
-    first_name?: string;
-    last_name?: string;
-    display_name?: string;
-    department?: string;
-    phone?: string;
-  }) {
+  async signUp(
+    email: string,
+    password: string,
+    userData?: {
+      first_name?: string;
+      last_name?: string;
+      display_name?: string;
+      department?: string;
+      phone?: string;
+    },
+  ) {
     if (!supabase) {
       return { data: { user: null, session: null }, error: null };
     }
@@ -247,12 +280,12 @@ class AuthService {
       email,
       password,
       options: {
-        data: userData
-      }
+        data: userData,
+      },
     });
 
     if (result.data.user) {
-      await this.logActivity('user_signup', 'auth', result.data.user.id);
+      await this.logActivity("user_signup", "auth", result.data.user.id);
     }
 
     return result;
@@ -268,7 +301,7 @@ class AuthService {
     }
 
     if (this.authState.user) {
-      await this.logActivity('user_logout', 'auth', this.authState.user.id);
+      await this.logActivity("user_logout", "auth", this.authState.user.id);
     }
 
     return await supabase.auth.signOut();
@@ -279,13 +312,13 @@ class AuthService {
    */
   async updateProfile(updates: Partial<UserProfile>) {
     if (!supabase || !this.authState.user) {
-      return { data: null, error: new Error('Not authenticated') };
+      return { data: null, error: new Error("Not authenticated") };
     }
 
     const result = await supabase
-      .from('user_profiles')
+      .from("user_profiles")
       .update(updates)
-      .eq('id', this.authState.user.id)
+      .eq("id", this.authState.user.id)
       .select()
       .single();
 
@@ -293,8 +326,12 @@ class AuthService {
       // Refresh user data
       const updatedUser = await this.enrichUserWithProfile(this.authState.user);
       this.setAuthState({ ...this.authState, user: updatedUser });
-      
-      await this.logActivity('profile_updated', 'user_profiles', this.authState.user.id);
+
+      await this.logActivity(
+        "profile_updated",
+        "user_profiles",
+        this.authState.user.id,
+      );
     }
 
     return result;
@@ -306,12 +343,18 @@ class AuthService {
   hasPermission(permission: string): boolean {
     const user = this.authState.user;
     if (!user) return false;
-    
+
     // Demo mode - allow common permissions
     if (!supabase) {
       const commonPermissions = [
-        'read_aircraft', 'read_employees', 'read_tasks', 'read_cleaning_forms',
-        'create_tasks', 'update_tasks', 'create_cleaning_forms', 'update_cleaning_forms'
+        "read_aircraft",
+        "read_employees",
+        "read_tasks",
+        "read_cleaning_forms",
+        "create_tasks",
+        "update_tasks",
+        "create_cleaning_forms",
+        "update_cleaning_forms",
       ];
       return commonPermissions.includes(permission);
     }
@@ -325,8 +368,8 @@ class AuthService {
   hasRole(roleName: string): boolean {
     const user = this.authState.user;
     if (!user) return false;
-    
-    return user.roles?.some(role => role.name === roleName) || false;
+
+    return user.roles?.some((role) => role.name === roleName) || false;
   }
 
   /**
@@ -335,8 +378,10 @@ class AuthService {
   hasMinimumRoleLevel(minLevel: number): boolean {
     const user = this.authState.user;
     if (!user) return false;
-    
-    const maxLevel = Math.max(...(user.roles?.map(role => role.level) || [0]));
+
+    const maxLevel = Math.max(
+      ...(user.roles?.map((role) => role.level) || [0]),
+    );
     return maxLevel >= minLevel;
   }
 
@@ -346,31 +391,31 @@ class AuthService {
   getUserLevel(): number {
     const user = this.authState.user;
     if (!user) return 0;
-    
-    return Math.max(...(user.roles?.map(role => role.level) || [0]));
+
+    return Math.max(...(user.roles?.map((role) => role.level) || [0]));
   }
 
   /**
    * Log user activity
    */
   async logActivity(
-    action: string, 
-    resourceType?: string, 
-    resourceId?: string, 
-    details?: Record<string, any>
+    action: string,
+    resourceType?: string,
+    resourceId?: string,
+    details?: Record<string, any>,
   ) {
     if (!supabase || !this.authState.user) return;
 
     try {
-      await supabase.rpc('log_user_activity', {
+      await supabase.rpc("log_user_activity", {
         user_uuid: this.authState.user.id,
         action_name: action,
         resource_type: resourceType,
         resource_uuid: resourceId,
-        details: details
+        details: details,
       });
     } catch (error) {
-      console.error('Failed to log activity:', error);
+      console.error("Failed to log activity:", error);
     }
   }
 
@@ -383,9 +428,9 @@ class AuthService {
     }
 
     return await supabase
-      .from('roles')
-      .select('*')
-      .order('level', { ascending: false });
+      .from("roles")
+      .select("*")
+      .order("level", { ascending: false });
   }
 
   /**
@@ -397,9 +442,9 @@ class AuthService {
     }
 
     return await supabase
-      .from('permissions')
-      .select('*')
-      .order('resource', { ascending: true });
+      .from("permissions")
+      .select("*")
+      .order("resource", { ascending: true });
   }
 
   /**
@@ -407,22 +452,24 @@ class AuthService {
    */
   async assignRole(userId: string, roleName: string) {
     if (!supabase) {
-      return { data: null, error: new Error('Supabase not configured') };
+      return { data: null, error: new Error("Supabase not configured") };
     }
 
-    if (!this.hasPermission('manage_user_roles')) {
-      return { data: null, error: new Error('Insufficient permissions') };
+    if (!this.hasPermission("manage_user_roles")) {
+      return { data: null, error: new Error("Insufficient permissions") };
     }
 
     try {
-      const { data, error } = await supabase.rpc('assign_user_role', {
+      const { data, error } = await supabase.rpc("assign_user_role", {
         target_user_id: userId,
         role_name: roleName,
-        assigned_by_user_id: this.authState.user?.id
+        assigned_by_user_id: this.authState.user?.id,
       });
 
       if (!error) {
-        await this.logActivity('role_assigned', 'user_roles', userId, { role: roleName });
+        await this.logActivity("role_assigned", "user_roles", userId, {
+          role: roleName,
+        });
       }
 
       return { data, error };
@@ -436,21 +483,23 @@ class AuthService {
    */
   async removeRole(userId: string, roleName: string) {
     if (!supabase) {
-      return { data: null, error: new Error('Supabase not configured') };
+      return { data: null, error: new Error("Supabase not configured") };
     }
 
-    if (!this.hasPermission('manage_user_roles')) {
-      return { data: null, error: new Error('Insufficient permissions') };
+    if (!this.hasPermission("manage_user_roles")) {
+      return { data: null, error: new Error("Insufficient permissions") };
     }
 
     try {
-      const { data, error } = await supabase.rpc('remove_user_role', {
+      const { data, error } = await supabase.rpc("remove_user_role", {
         target_user_id: userId,
-        role_name: roleName
+        role_name: roleName,
       });
 
       if (!error) {
-        await this.logActivity('role_removed', 'user_roles', userId, { role: roleName });
+        await this.logActivity("role_removed", "user_roles", userId, {
+          role: roleName,
+        });
       }
 
       return { data, error };
@@ -467,14 +516,14 @@ class AuthService {
       return { data: [], error: null };
     }
 
-    if (!this.hasPermission('read_users')) {
-      return { data: [], error: new Error('Insufficient permissions') };
+    if (!this.hasPermission("read_users")) {
+      return { data: [], error: new Error("Insufficient permissions") };
     }
 
     return await supabase
-      .from('user_management_view')
-      .select('*')
-      .order('display_name', { ascending: true });
+      .from("user_management_view")
+      .select("*")
+      .order("display_name", { ascending: true });
   }
 
   /**
@@ -482,23 +531,23 @@ class AuthService {
    */
   async updateUserStatus(userId: string, isActive: boolean) {
     if (!supabase) {
-      return { data: null, error: new Error('Supabase not configured') };
+      return { data: null, error: new Error("Supabase not configured") };
     }
 
-    if (!this.hasPermission('update_users')) {
-      return { data: null, error: new Error('Insufficient permissions') };
+    if (!this.hasPermission("update_users")) {
+      return { data: null, error: new Error("Insufficient permissions") };
     }
 
     const result = await supabase
-      .from('user_profiles')
+      .from("user_profiles")
       .update({ is_active: isActive })
-      .eq('id', userId);
+      .eq("id", userId);
 
     if (!result.error) {
       await this.logActivity(
-        isActive ? 'user_activated' : 'user_deactivated', 
-        'user_profiles', 
-        userId
+        isActive ? "user_activated" : "user_deactivated",
+        "user_profiles",
+        userId,
       );
     }
 

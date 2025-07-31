@@ -1,22 +1,48 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import { authService } from '@/lib/auth-service';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { UserCreateDialog } from '@/components/UserCreateDialog';
-import { UserEditDialog } from '@/components/UserEditDialog';
-import { RoleManagementDialog } from '@/components/RoleManagementDialog';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { authService } from "@/lib/auth-service";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { UserCreateDialog } from "@/components/UserCreateDialog";
+import { UserEditDialog } from "@/components/UserEditDialog";
+import { RoleManagementDialog } from "@/components/RoleManagementDialog";
+import { useToast } from "@/hooks/use-toast";
 import {
   Users,
   UserPlus,
@@ -30,7 +56,7 @@ import {
   Settings,
   Ban,
   CheckCircle,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface UserData {
   id: string;
@@ -51,30 +77,32 @@ export default function UserManagement() {
   const [users, setUsers] = useState<UserData[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
-  const [roleFilter, setRoleFilter] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "active" | "inactive"
+  >("all");
+  const [roleFilter, setRoleFilter] = useState<string>("all");
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [roleDialogOpen, setRoleDialogOpen] = useState(false);
 
   // Check permissions
-  const canManageUsers = hasPermission('manage_users');
-  const canReadUsers = hasPermission('read_users');
-  const canUpdateUsers = hasPermission('update_users');
-  const canManageRoles = hasPermission('manage_user_roles');
+  const canManageUsers = hasPermission("manage_users");
+  const canReadUsers = hasPermission("read_users");
+  const canUpdateUsers = hasPermission("update_users");
+  const canManageRoles = hasPermission("manage_user_roles");
 
   useEffect(() => {
     if (!canReadUsers) {
       toast({
-        title: 'Acesso Negado',
-        description: 'Não tem permissão para aceder à gestão de utilizadores.',
-        variant: 'destructive'
+        title: "Acesso Negado",
+        description: "Não tem permissão para aceder à gestão de utilizadores.",
+        variant: "destructive",
       });
       return;
     }
-    
+
     loadUsers();
   }, [canReadUsers]);
 
@@ -86,23 +114,23 @@ export default function UserManagement() {
     try {
       setLoading(true);
       const { data, error } = await authService.getUsers();
-      
+
       if (error) {
         toast({
-          title: 'Erro',
-          description: 'Falha ao carregar utilizadores.',
-          variant: 'destructive'
+          title: "Erro",
+          description: "Falha ao carregar utilizadores.",
+          variant: "destructive",
         });
         return;
       }
 
       setUsers(data || []);
     } catch (error) {
-      console.error('Error loading users:', error);
+      console.error("Error loading users:", error);
       toast({
-        title: 'Erro',
-        description: 'Erro inesperado ao carregar utilizadores.',
-        variant: 'destructive'
+        title: "Erro",
+        description: "Erro inesperado ao carregar utilizadores.",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -114,25 +142,28 @@ export default function UserManagement() {
 
     // Search filter
     if (searchTerm) {
-      filtered = filtered.filter(user =>
-        user.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.employee_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.department?.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (user) =>
+          user.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.employee_number
+            ?.toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          user.department?.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
     // Status filter
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(user => 
-        statusFilter === 'active' ? user.is_active : !user.is_active
+    if (statusFilter !== "all") {
+      filtered = filtered.filter((user) =>
+        statusFilter === "active" ? user.is_active : !user.is_active,
       );
     }
 
     // Role filter
-    if (roleFilter !== 'all') {
-      filtered = filtered.filter(user =>
-        user.roles?.some(role => role.name === roleFilter)
+    if (roleFilter !== "all") {
+      filtered = filtered.filter((user) =>
+        user.roles?.some((role) => role.name === roleFilter),
       );
     }
 
@@ -142,64 +173,67 @@ export default function UserManagement() {
   const toggleUserStatus = async (userId: string, currentStatus: boolean) => {
     if (!canUpdateUsers) {
       toast({
-        title: 'Erro',
-        description: 'Sem permissão para atualizar utilizadores.',
-        variant: 'destructive'
+        title: "Erro",
+        description: "Sem permissão para atualizar utilizadores.",
+        variant: "destructive",
       });
       return;
     }
 
     try {
-      const { error } = await authService.updateUserStatus(userId, !currentStatus);
-      
+      const { error } = await authService.updateUserStatus(
+        userId,
+        !currentStatus,
+      );
+
       if (error) {
         toast({
-          title: 'Erro',
-          description: 'Falha ao atualizar status do utilizador.',
-          variant: 'destructive'
+          title: "Erro",
+          description: "Falha ao atualizar status do utilizador.",
+          variant: "destructive",
         });
         return;
       }
 
       toast({
-        title: 'Sucesso',
-        description: `Utilizador ${!currentStatus ? 'ativado' : 'desativado'} com sucesso.`
+        title: "Sucesso",
+        description: `Utilizador ${!currentStatus ? "ativado" : "desativado"} com sucesso.`,
       });
 
       loadUsers();
     } catch (error) {
       toast({
-        title: 'Erro',
-        description: 'Erro inesperado ao atualizar utilizador.',
-        variant: 'destructive'
+        title: "Erro",
+        description: "Erro inesperado ao atualizar utilizador.",
+        variant: "destructive",
       });
     }
   };
 
   const getRoleDisplayName = (roles: any[]) => {
-    if (!roles || roles.length === 0) return 'Sem role';
-    
-    const highestRole = roles.reduce((prev, current) => 
-      (prev.level > current.level) ? prev : current
+    if (!roles || roles.length === 0) return "Sem role";
+
+    const highestRole = roles.reduce((prev, current) =>
+      prev.level > current.level ? prev : current,
     );
-    
+
     return highestRole.display_name;
   };
 
   const getRoleBadgeVariant = (roles: any[]) => {
-    if (!roles || roles.length === 0) return 'secondary';
-    
-    const maxLevel = Math.max(...roles.map(r => r.level));
-    
-    if (maxLevel >= 90) return 'destructive'; // Admin
-    if (maxLevel >= 70) return 'default';     // Manager
-    if (maxLevel >= 40) return 'secondary';   // Supervisor/Pilot
-    return 'outline';                         // Technician/Viewer
+    if (!roles || roles.length === 0) return "secondary";
+
+    const maxLevel = Math.max(...roles.map((r) => r.level));
+
+    if (maxLevel >= 90) return "destructive"; // Admin
+    if (maxLevel >= 70) return "default"; // Manager
+    if (maxLevel >= 40) return "secondary"; // Supervisor/Pilot
+    return "outline"; // Technician/Viewer
   };
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return 'Nunca';
-    return new Date(dateString).toLocaleDateString('pt-PT');
+    if (!dateString) return "Nunca";
+    return new Date(dateString).toLocaleDateString("pt-PT");
   };
 
   if (!canReadUsers) {
@@ -232,12 +266,18 @@ export default function UserManagement() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
               <Link to="/">
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-white/20"
+                >
                   <ArrowLeft className="h-5 w-5" />
                 </Button>
               </Link>
               <Users className="h-8 w-8 text-white" />
-              <h1 className="text-2xl font-bold text-white">Gestão de Utilizadores</h1>
+              <h1 className="text-2xl font-bold text-white">
+                Gestão de Utilizadores
+              </h1>
             </div>
 
             <div className="flex items-center space-x-4">
@@ -250,9 +290,13 @@ export default function UserManagement() {
                   Novo Utilizador
                 </Button>
               )}
-              
+
               <Link to="/settings">
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-white/20"
+                >
                   <Settings className="h-5 w-5" />
                 </Button>
               </Link>
@@ -290,9 +334,12 @@ export default function UserManagement() {
                   />
                 </div>
               </div>
-              
+
               <div className="flex gap-2">
-                <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
+                <Select
+                  value={statusFilter}
+                  onValueChange={(value: any) => setStatusFilter(value)}
+                >
                   <SelectTrigger className="w-32 bg-white/10 border-white/20 text-white">
                     <SelectValue />
                   </SelectTrigger>
@@ -336,33 +383,49 @@ export default function UserManagement() {
                 <TableBody>
                   {loading ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center text-white/70 py-8">
+                      <TableCell
+                        colSpan={6}
+                        className="text-center text-white/70 py-8"
+                      >
                         Carregando utilizadores...
                       </TableCell>
                     </TableRow>
                   ) : filteredUsers.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center text-white/70 py-8">
+                      <TableCell
+                        colSpan={6}
+                        className="text-center text-white/70 py-8"
+                      >
                         Nenhum utilizador encontrado
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredUsers.map((userData) => (
-                      <TableRow key={userData.id} className="border-white/20 hover:bg-white/5">
+                      <TableRow
+                        key={userData.id}
+                        className="border-white/20 hover:bg-white/5"
+                      >
                         <TableCell>
                           <div className="flex items-center space-x-3">
                             <Avatar className="h-8 w-8">
                               <AvatarFallback className="bg-aviation-blue-600 text-white text-xs">
-                                {userData.display_name?.split(' ').map(n => n[0]).join('') || '?'}
+                                {userData.display_name
+                                  ?.split(" ")
+                                  .map((n) => n[0])
+                                  .join("") || "?"}
                               </AvatarFallback>
                             </Avatar>
                             <div>
                               <div className="text-white font-medium">
                                 {userData.display_name || userData.email}
                               </div>
-                              <div className="text-white/70 text-sm">{userData.email}</div>
+                              <div className="text-white/70 text-sm">
+                                {userData.email}
+                              </div>
                               {userData.employee_number && (
-                                <div className="text-white/50 text-xs">#{userData.employee_number}</div>
+                                <div className="text-white/50 text-xs">
+                                  #{userData.employee_number}
+                                </div>
                               )}
                             </div>
                           </div>
@@ -373,7 +436,7 @@ export default function UserManagement() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-white/80">
-                          {userData.department || 'Não definido'}
+                          {userData.department || "Não definido"}
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
@@ -382,8 +445,14 @@ export default function UserManagement() {
                             ) : (
                               <Ban className="h-4 w-4 text-red-400" />
                             )}
-                            <span className={userData.is_active ? 'text-green-200' : 'text-red-200'}>
-                              {userData.is_active ? 'Ativo' : 'Inativo'}
+                            <span
+                              className={
+                                userData.is_active
+                                  ? "text-green-200"
+                                  : "text-red-200"
+                              }
+                            >
+                              {userData.is_active ? "Ativo" : "Inativo"}
                             </span>
                           </div>
                         </TableCell>
@@ -405,7 +474,7 @@ export default function UserManagement() {
                                 <Edit className="h-4 w-4" />
                               </Button>
                             )}
-                            
+
                             {canManageRoles && (
                               <Button
                                 variant="ghost"
@@ -419,11 +488,16 @@ export default function UserManagement() {
                                 <Shield className="h-4 w-4" />
                               </Button>
                             )}
-                            
+
                             {canUpdateUsers && (
                               <Switch
                                 checked={userData.is_active}
-                                onCheckedChange={() => toggleUserStatus(userData.id, userData.is_active)}
+                                onCheckedChange={() =>
+                                  toggleUserStatus(
+                                    userData.id,
+                                    userData.is_active,
+                                  )
+                                }
                               />
                             )}
                           </div>

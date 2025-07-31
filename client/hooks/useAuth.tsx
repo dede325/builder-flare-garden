@@ -1,9 +1,22 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { authService, AuthState, UserWithProfile } from '@/lib/auth-service';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import { authService, AuthState, UserWithProfile } from "@/lib/auth-service";
 
 interface AuthContextType extends AuthState {
-  signIn: (email: string, password: string) => Promise<{ data: any; error: any }>;
-  signUp: (email: string, password: string, userData?: any) => Promise<{ data: any; error: any }>;
+  signIn: (
+    email: string,
+    password: string,
+  ) => Promise<{ data: any; error: any }>;
+  signUp: (
+    email: string,
+    password: string,
+    userData?: any,
+  ) => Promise<{ data: any; error: any }>;
   signOut: () => Promise<{ error: any }>;
   updateProfile: (updates: any) => Promise<{ data: any; error: any }>;
   hasPermission: (permission: string) => boolean;
@@ -19,7 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
     loading: true,
-    initialized: false
+    initialized: false,
   });
 
   useEffect(() => {
@@ -81,20 +94,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     refreshUser,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }
 
 // Export types for convenience
-export type { UserWithProfile } from '@/lib/auth-service';
+export type { UserWithProfile } from "@/lib/auth-service";

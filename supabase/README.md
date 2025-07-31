@@ -61,6 +61,7 @@ supabase db push --linked
 ### Tabelas Principais
 
 **Operacionais:**
+
 1. **aircraft** - Aeronaves da frota
 2. **employees** - Funcionários e pilotos
 3. **tasks** - Tarefas de manutenção
@@ -70,19 +71,12 @@ supabase db push --linked
 7. **system_settings** - Configurações do sistema
 8. **file_attachments** - Anexos de arquivos
 
-**Autenticação e Autorização:**
-9. **roles** - Roles do sistema (8 roles)
-10. **permissions** - Permissões granulares (40+ permissões)
-11. **role_permissions** - Relacionamento roles/permissões
-12. **user_profiles** - Perfis estendidos de utilizadores
-13. **user_roles** - Atribuição de roles aos utilizadores
-14. **user_activity_log** - Log de atividades
-15. **user_sessions** - Gestão de sessões
-16. **password_reset_tokens** - Tokens de reset de senha
+**Autenticação e Autorização:** 9. **roles** - Roles do sistema (8 roles) 10. **permissions** - Permissões granulares (40+ permissões) 11. **role_permissions** - Relacionamento roles/permissões 12. **user_profiles** - Perfis estendidos de utilizadores 13. **user_roles** - Atribuição de roles aos utilizadores 14. **user_activity_log** - Log de atividades 15. **user_sessions** - Gestão de sessões 16. **password_reset_tokens** - Tokens de reset de senha
 
 ### Dados Demo
 
 As migrations incluem dados de demonstração para:
+
 - **4 aeronaves** (PT-ABC, PT-XYZ, PT-DEF, PT-GHI)
 - **14 funcionários específicos** de Angola com dados reais
 - **8 roles** (Super Admin → Viewer) com níveis hierárquicos
@@ -97,14 +91,17 @@ As migrations incluem dados de demonstração para:
 Os seguintes funcionários foram criados com dados reais:
 
 **Diretores:**
+
 - Amizanguel da Silva (001023626BA037)
 - Jaime da Graça (000821215LA035)
 
 **Chefes de Departamento:**
+
 - Evandra dos Santos - D. Comercial e Marketing (005280783LA047)
 - Liliana dos Santos - D. Recursos Humanos (005259127LA042)
 
 **Técnicos Auxiliares de Placa:**
+
 - Augusto Tomás (000862944ME035)
 - Celestino Domingos (000951540HA036)
 - Daniel Segunda (003557571HO034)
@@ -173,6 +170,7 @@ supabase storage create-bucket <bucket-name>
 ## 🎯 Resultado Final
 
 Após o deploy bem-sucedido, você terá:
+
 - **Banco PostgreSQL** configurado com 16 tabelas
 - **Sistema de autenticação** completo com RLS
 - **14 funcionários específicos** de Angola criados

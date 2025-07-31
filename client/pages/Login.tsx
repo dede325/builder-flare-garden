@@ -1,20 +1,26 @@
-import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { Plane, Lock, Mail, Eye, EyeOff } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { Navigate } from "react-router-dom";
+import { Plane, Lock, Mail, Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   const { user, signIn, signUp } = useAuth();
   const { toast } = useToast();
 
@@ -30,7 +36,7 @@ export default function Login() {
       toast({
         title: "Erro",
         description: "Por favor, preencha todos os campos.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -40,8 +46,8 @@ export default function Login() {
     try {
       const { error } = isSignUp
         ? await signUp(email, password, {
-            display_name: email.split('@')[0], // Default display name
-            department: 'Operações'
+            display_name: email.split("@")[0], // Default display name
+            department: "Operações",
           })
         : await signIn(email, password);
 
@@ -49,7 +55,7 @@ export default function Login() {
         toast({
           title: "Erro de autenticação",
           description: error.message,
-          variant: "destructive"
+          variant: "destructive",
         });
       } else if (isSignUp) {
         toast({
@@ -67,7 +73,7 @@ export default function Login() {
       toast({
         title: "Erro",
         description: "Ocorreu um erro inesperado. Tente novamente.",
-        variant: "destructive"
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -87,14 +93,16 @@ export default function Login() {
             AviationOps
           </CardTitle>
           <CardDescription className="text-white/70">
-            {isSignUp ? 'Criar nova conta' : 'Entre na sua conta'}
+            {isSignUp ? "Criar nova conta" : "Entre na sua conta"}
           </CardDescription>
         </CardHeader>
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-white">Email</Label>
+              <Label htmlFor="email" className="text-white">
+                Email
+              </Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 h-5 w-5 text-white/70" />
                 <Input
@@ -110,7 +118,9 @@ export default function Login() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-white">Senha</Label>
+              <Label htmlFor="password" className="text-white">
+                Senha
+              </Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-5 w-5 text-white/70" />
                 <Input
@@ -149,8 +159,10 @@ export default function Login() {
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                   <span>Processando...</span>
                 </div>
+              ) : isSignUp ? (
+                "Criar Conta"
               ) : (
-                isSignUp ? 'Criar Conta' : 'Entrar'
+                "Entrar"
               )}
             </Button>
           </form>
@@ -162,17 +174,17 @@ export default function Login() {
               className="text-white/80 hover:text-white"
               disabled={loading}
             >
-              {isSignUp 
-                ? 'Já tem uma conta? Entre aqui' 
-                : 'Não tem conta? Cadastre-se aqui'
-              }
+              {isSignUp
+                ? "Já tem uma conta? Entre aqui"
+                : "Não tem conta? Cadastre-se aqui"}
             </Button>
           </div>
 
           {/* Demo mode indicator */}
           <div className="mt-4 p-3 bg-yellow-500/20 rounded-lg border border-yellow-500/30">
             <p className="text-yellow-200 text-sm text-center">
-              <strong>Modo Demo:</strong> Configure as variáveis de ambiente do Supabase para funcionalidade completa
+              <strong>Modo Demo:</strong> Configure as variáveis de ambiente do
+              Supabase para funcionalidade completa
             </p>
           </div>
         </CardContent>

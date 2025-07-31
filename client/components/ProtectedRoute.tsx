@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+import { ReactNode } from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -13,9 +13,16 @@ export default function ProtectedRoute({
   children,
   permission,
   role,
-  minimumLevel
+  minimumLevel,
 }: ProtectedRouteProps) {
-  const { user, loading, initialized, hasPermission, hasRole, hasMinimumRoleLevel } = useAuth();
+  const {
+    user,
+    loading,
+    initialized,
+    hasPermission,
+    hasRole,
+    hasMinimumRoleLevel,
+  } = useAuth();
 
   if (loading || !initialized) {
     return (
