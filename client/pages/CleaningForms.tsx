@@ -158,6 +158,26 @@ export default function CleaningForms() {
     }
   };
 
+  const loadDraft = (draftKey: string) => {
+    try {
+      const draftData = localStorage.getItem(draftKey);
+      if (draftData) {
+        setFormData(JSON.parse(draftData));
+        setFormErrors({});
+      }
+    } catch (error) {
+      console.error('Error loading draft:', error);
+    }
+  };
+
+  const getDrafts = () => {
+    try {
+      return JSON.parse(localStorage.getItem('cleaning_form_drafts') || '[]');
+    } catch (error) {
+      return [];
+    }
+  };
+
   const loadData = async () => {
     try {
       const [aircraftResult, employeesResult] = await Promise.all([
