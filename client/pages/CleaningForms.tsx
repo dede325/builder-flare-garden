@@ -1294,7 +1294,7 @@ export default function CleaningForms() {
                       )}
                       {/* Sync status indicator */}
                       {form.syncStatus === 'pending' && (
-                        <Sync className="h-3 w-3 text-yellow-400 animate-spin" title="Sincronização Pendente" />
+                        <RefreshCw className="h-3 w-3 text-yellow-400 animate-spin" title="Sincronização Pendente" />
                       )}
                       {form.syncStatus === 'synced' && (
                         <Wifi className="h-3 w-3 text-green-400" title="Sincronizado" />
