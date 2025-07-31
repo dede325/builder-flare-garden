@@ -76,6 +76,7 @@ import {
 } from "@/lib/crypto-utils";
 import { secureSyncService } from "@/lib/secure-sync";
 import { intelligentSyncService } from "@/lib/intelligent-sync-service";
+import { cacheService } from "@/lib/cache-service";
 import SyncStatusIndicator from "@/components/SyncStatusIndicator";
 
 interface CleaningForm {
@@ -530,7 +531,7 @@ export default function CleaningForms() {
     }
 
     if (!formData.location) {
-      errors.location = "Local da interven��ão é obrigatório";
+      errors.location = "Local da intervenção é obrigatório";
     }
 
     if (formData.interventionTypes.length === 0) {
