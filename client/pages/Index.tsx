@@ -226,6 +226,16 @@ export default function Index() {
       borderColor: "border-orange-400/50",
       textColor: "text-orange-300",
     },
+    {
+      title: "Histórico",
+      description: "Histórico e exportação",
+      icon: History,
+      link: "/history-export",
+      gradient: "from-purple-500 to-purple-600",
+      bgGradient: "from-purple-500/20 to-purple-600/30",
+      borderColor: "border-purple-400/50",
+      textColor: "text-purple-300",
+    },
   ];
 
   return (
