@@ -75,6 +75,9 @@ export default function CleaningForms() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [editingForm, setEditingForm] = useState<CleaningForm | null>(null);
+  const [syncStatus, setSyncStatus] = useState<'synced' | 'pending' | 'error' | 'offline'>('offline');
+  const [securityStatus, setSecurityStatus] = useState<'secure' | 'insecure'>('secure');
+  const [isSecureMode, setIsSecureMode] = useState(false);
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
