@@ -42,6 +42,18 @@ interface CleaningForm {
     idNumber: string;
     photo?: string;
   }[];
+  interventionPhotos: {
+    before: {
+      exterior?: string[];
+      interior?: string[];
+      details?: string[];
+    };
+    after: {
+      exterior?: string[];
+      interior?: string[];
+      details?: string[];
+    };
+  };
   supervisorSignature?: string;
   clientSignature?: string;
   clientConfirmedWithoutSignature: boolean;
@@ -90,6 +102,10 @@ export default function CleaningForms() {
     interventionTypes: [] as string[],
     aircraftId: '',
     employees: [] as any[],
+    interventionPhotos: {
+      before: { exterior: [], interior: [], details: [] },
+      after: { exterior: [], interior: [], details: [] }
+    },
     supervisorSignature: '',
     clientSignature: '',
     clientConfirmedWithoutSignature: false
@@ -617,6 +633,10 @@ export default function CleaningForms() {
       interventionTypes: [],
       aircraftId: '',
       employees: [],
+      interventionPhotos: {
+        before: { exterior: [], interior: [], details: [] },
+        after: { exterior: [], interior: [], details: [] }
+      },
       supervisorSignature: '',
       clientSignature: '',
       clientConfirmedWithoutSignature: false
@@ -745,6 +765,10 @@ export default function CleaningForms() {
         idNumber: emp.idNumber || '',
         photo: emp.photo || ''
       })),
+      interventionPhotos: form.interventionPhotos || {
+        before: { exterior: [], interior: [], details: [] },
+        after: { exterior: [], interior: [], details: [] }
+      },
       supervisorSignature: form.supervisorSignature || '',
       clientSignature: form.clientSignature || '',
       clientConfirmedWithoutSignature: form.clientConfirmedWithoutSignature || false
@@ -926,9 +950,10 @@ export default function CleaningForms() {
               </DialogHeader>
 
               <Tabs defaultValue="basic" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 bg-aviation-gray-700">
+                <TabsList className="grid w-full grid-cols-4 bg-aviation-gray-700">
                   <TabsTrigger value="basic" className="text-white">Dados Básicos</TabsTrigger>
                   <TabsTrigger value="employees" className="text-white">Funcionários</TabsTrigger>
+                  <TabsTrigger value="photos" className="text-white">Fotografias</TabsTrigger>
                   <TabsTrigger value="signatures" className="text-white">Assinaturas</TabsTrigger>
                 </TabsList>
 
