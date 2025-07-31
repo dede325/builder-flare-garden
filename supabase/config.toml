@@ -39,12 +39,10 @@ api_url = "http://127.0.0.1:54321"
 # Email template directory. All template files should in named in the following format:
 # <template_name>.<format>.html or <template_name>.<format>.txt
 # For more details: https://supabase.com/docs/reference/cli/supabase-mail-templates
-[auth.email.templates]
-invite = "supabase/templates/invite.html"
-confirmation = "supabase/templates/confirmation.html"
-recovery = "supabase/templates/recovery.html"
-magic_link = "supabase/templates/magic_link.html"
-email_change = "supabase/templates/email_change.html"
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = false
 
 [auth]
 enabled = true
