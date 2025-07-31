@@ -377,6 +377,29 @@ export default function Index() {
                   </div>
                 </Link>
 
+                <Link to="/user-management">
+                  <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-600/30 border border-orange-400/30 hover:border-orange-400/50 transition-all duration-300 h-32">
+                    <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="relative p-6 h-full flex items-center space-x-4">
+                      <div className="p-3 rounded-xl bg-orange-500/20 border border-orange-400/30">
+                        <Shield className="h-8 w-8 text-orange-300" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-white mb-1">
+                          Utilizadores
+                        </h3>
+                        <p className="text-orange-200/80 text-sm">
+                          Gestão de utilizadores e roles
+                        </p>
+                        <div className="flex items-center mt-2 text-xs text-orange-300/70">
+                          <Shield className="h-3 w-3 mr-1" />
+                          <span>Controlo de acesso</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+
                 <Link to="/settings">
                   <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/30 border border-purple-400/30 hover:border-purple-400/50 transition-all duration-300 h-32">
                     <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
