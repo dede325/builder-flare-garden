@@ -402,7 +402,9 @@ export default function Index() {
             {dashboardType === "client" && <ClientDashboard />}
 
             {/* Intelligent Sync Status */}
-            <SyncStatusIndicator showManualSync={true} />
+            <div {...tutorialData("status-overview")}>
+              <SyncStatusIndicator showManualSync={true} />
+            </div>
           </div>
         )}
 
