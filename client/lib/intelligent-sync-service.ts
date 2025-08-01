@@ -459,7 +459,18 @@ class IntelligentSyncService {
   // Sync Operations
   private async addSyncOperation(
     type: "create" | "update" | "delete",
-    entity: "form" | "employee" | "aircraft" | "photo" | "intervention_type" | "shift_config" | "location_config" | "notification" | "qr_code" | "task" | "flight_sheet",
+    entity:
+      | "form"
+      | "employee"
+      | "aircraft"
+      | "photo"
+      | "intervention_type"
+      | "shift_config"
+      | "location_config"
+      | "notification"
+      | "qr_code"
+      | "task"
+      | "flight_sheet",
     entityId: string,
     data: any,
     priority: "low" | "normal" | "high" = "normal",
@@ -786,7 +797,20 @@ class IntelligentSyncService {
 
   // Sync Status and Statistics
   async getSyncStats(): Promise<SyncStats> {
-    const [forms, employees, aircraft, photos, interventions, shifts, locations, notifications, qrCodes, tasks, flightSheets, pendingOps] = await Promise.all([
+    const [
+      forms,
+      employees,
+      aircraft,
+      photos,
+      interventions,
+      shifts,
+      locations,
+      notifications,
+      qrCodes,
+      tasks,
+      flightSheets,
+      pendingOps,
+    ] = await Promise.all([
       this.db.forms.toArray(),
       this.db.employees.toArray(),
       this.db.aircraft.toArray(),
@@ -801,7 +825,19 @@ class IntelligentSyncService {
       this.db.syncOperations.toArray(),
     ]);
 
-    const allItems = [...forms, ...employees, ...aircraft, ...photos, ...interventions, ...shifts, ...locations, ...notifications, ...qrCodes, ...tasks, ...flightSheets];
+    const allItems = [
+      ...forms,
+      ...employees,
+      ...aircraft,
+      ...photos,
+      ...interventions,
+      ...shifts,
+      ...locations,
+      ...notifications,
+      ...qrCodes,
+      ...tasks,
+      ...flightSheets,
+    ];
     const totalItems = allItems.length;
     const syncedItems = allItems.filter(
       (item) => item.syncStatus === "synced",
