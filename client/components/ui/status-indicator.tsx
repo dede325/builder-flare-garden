@@ -134,7 +134,7 @@ export function StatusIndicator({
         };
       case "syncing":
         return {
-          icon: Sync,
+          icon: RotateCw,
           color: "text-blue-400",
           bgColor: "bg-blue-500/20",
           borderColor: "border-blue-400/50",
