@@ -136,6 +136,11 @@ export default function Settings() {
       setCompanySettings(JSON.parse(savedCompanySettings));
     }
 
+    const savedLogoSettings = localStorage.getItem("logoSettings");
+    if (savedLogoSettings) {
+      setLogoSettings(JSON.parse(savedLogoSettings));
+    }
+
     // Check migration status
     checkMigrationStatus();
 
