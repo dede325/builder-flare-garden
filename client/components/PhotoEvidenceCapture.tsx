@@ -64,6 +64,8 @@ export interface PhotoEvidence {
     userAgent: string;
     orientation: string;
   };
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface PhotoEvidenceCaptureProps {
