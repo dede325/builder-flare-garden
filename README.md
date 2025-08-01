@@ -469,6 +469,7 @@ docs/
 ### 🎯 Links Essenciais
 
 #### 📖 **Documentação Principal**
+
 - [📚 **Centro de Documentação**](docs/) - **← COMEÇAR AQUI**
 - [🎨 Frontend (React SPA)](client/README.md)
 - [🔧 Backend (Express API)](server/README.md)
@@ -477,17 +478,20 @@ docs/
 - [🚀 Scripts de Automação](scripts/README.md)
 
 #### 🚀 **Deploy e Produção**
+
 - [🚀 Guia de Deploy](docs/deploy/AIRPLUS_DEPLOY_GUIDE.md)
 - [🗄️ Deploy Supabase](docs/deploy/SUPABASE_DEPLOY.md)
 - [📊 Resumo Produção](docs/production/AIRPLUS_PRODUCTION_SUMMARY.md)
 
 #### 🛠️ **Desenvolvimento**
+
 - [👥 Guia Técnico Completo](docs/development/AGENTS.md)
 - [🔒 Segurança](docs/development/SECURITY.md)
 - [📋 Plano 50 Migrations](supabase/MIGRATION_PLAN.md)
 - [✅ Relatório Integridade Final](supabase/FINAL_SYSTEM_INTEGRITY_REPORT.md)
 
 #### 📱 **Mobile e Apps**
+
 - [🏗️ Build Mobile Apps](docs/mobile/BUILD_MOBILE_APPS.md)
 - [📱 Status Apps](docs/mobile/MOBILE_APPS_STATUS.md)
 - [📱 Compatibilidade Mobile](supabase/MOBILE_COMPATIBILITY_VALIDATION.md)

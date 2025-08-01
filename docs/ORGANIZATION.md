@@ -75,31 +75,41 @@ docs/
 ## 📁 Categorização por Função
 
 ### 🚀 Deploy (`docs/deploy/`)
+
 **Propósito**: Documentação relacionada ao deploy e configuração de produção
+
 - Guias de deploy
 - Configurações de servidor
 - Procedimentos de atualização
 
 ### 🛠️ Development (`docs/development/`)
+
 **Propósito**: Documentação técnica para desenvolvedores
+
 - Guias técnicos detalhados
 - Configurações de desenvolvimento
 - Políticas de segurança
 
 ### 📱 Mobile (`docs/mobile/`)
+
 **Propósito**: Documentação específica para aplicações mobile
+
 - Builds iOS/Android
 - Status das aplicações
 - Validações mobile
 
 ### 🏭 Production (`docs/production/`)
+
 **Propósito**: Documentação de produção e configurações finais
+
 - Resumos de produção
 - Dados finais
 - Recomendações operacionais
 
 ### 📜 Legacy (`docs/legacy/`)
+
 **Propósito**: Documentação histórica e versões anteriores
+
 - Correções antigas
 - Estados anteriores do sistema
 - Implementações finalizadas
@@ -124,21 +134,25 @@ supabase/FINAL_SYSTEM_INTEGRITY_REPORT.md
 ## 🎯 Benefícios da Reorganização
 
 ### ✅ **Navegação Melhorada**
+
 - Estrutura lógica por categoria
 - Fácil localização de documentos
 - Redução de confusão na raiz
 
 ### ✅ **Manutenção Simplificada**
+
 - Documentos agrupados por função
 - Histórico preservado em legacy
 - Atualizações mais organizadas
 
 ### ✅ **Experiência do Utilizador**
+
 - Índice principal centralizado
 - Links diretos para cada categoria
 - Documentação contextualizada
 
 ### ✅ **Escalabilidade**
+
 - Estrutura preparada para crescimento
 - Fácil adição de novas categorias
 - Manutenção de padrões
@@ -146,11 +160,13 @@ supabase/FINAL_SYSTEM_INTEGRITY_REPORT.md
 ## 🔗 Navegação Rápida
 
 ### 📖 Principais Pontos de Entrada
+
 1. **[README Principal](../README.md)** - Visão geral do projeto
 2. **[Índice Documentação](./README.md)** - Centro de documentação
 3. **[Supabase README](../supabase/README.md)** - Base de dados
 
 ### 🎯 Por Função
+
 - **Deploy**: [`docs/deploy/`](./deploy/)
 - **Mobile**: [`docs/mobile/`](./mobile/)
 - **Desenvolvimento**: [`docs/development/`](./development/)
@@ -169,4 +185,4 @@ supabase/FINAL_SYSTEM_INTEGRITY_REPORT.md
 
 ---
 
-*Reorganização realizada em 2025-01-01 para melhorar a experiência de documentação do projeto AirPlus Aviation.*
+_Reorganização realizada em 2025-01-01 para melhorar a experiência de documentação do projeto AirPlus Aviation._
