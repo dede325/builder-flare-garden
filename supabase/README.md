@@ -53,8 +53,27 @@ supabase db push
 ### 6. Deploy para produção
 
 ```bash
+# Deploy das migrations para produção
 supabase db push --linked
+
+# Verificar status do deploy
+supabase db status --linked
+
+# Backup antes do deploy (recomendado)
+supabase db dump --linked --file backup-$(date +%Y%m%d).sql
 ```
+
+### 7. Configuração de Produção Ativa
+
+O projeto está atualmente configurado com o ambiente de produção:
+
+- **Project ID**: `fyngvoojdfjexbzasgiz`
+- **URL**: `https://fyngvoojdfjexbzasgiz.supabase.co`
+- **Region**: East US (us-east-1)
+- **Database**: PostgreSQL 15
+- **Storage**: Configurado para ficheiros e imagens
+- **Auth**: Sistema de autenticação ativo
+- **Real-time**: Subscriptions ativas para tabelas principais
 
 ## Estrutura do Banco
 
@@ -165,7 +184,7 @@ supabase db status
 # Reset do banco local
 supabase db reset
 
-# Ver diferen��as
+# Ver diferenças
 supabase db diff
 
 # Gerar nova migration
