@@ -430,7 +430,7 @@ export function MobileFeaturesShowcase() {
         <Card className="glass-card border-white/20">
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
-              <Sync className="h-5 w-5" />
+              <RefreshCw className="h-5 w-5" />
               Sincronização Background
             </CardTitle>
           </CardHeader>
