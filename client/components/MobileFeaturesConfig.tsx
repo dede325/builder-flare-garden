@@ -183,7 +183,7 @@ export function MobileFeaturesConfig({ onConfigChange }: MobileFeaturesConfigPro
       const registered = await mobileFeaturesService.biometricAuth.register(userId);
       if (registered) {
         toast({
-          title: "Autenticação biométrica configurada",
+          title: "Autenticaç��o biométrica configurada",
           description: "A autenticação biométrica foi configurada com sucesso.",
         });
       } else {
@@ -681,7 +681,7 @@ export function MobileFeaturesConfig({ onConfigChange }: MobileFeaturesConfigPro
           className="aviation-button"
         >
           {isSaving ? (
-            <Sync className="h-4 w-4 mr-2 animate-spin" />
+            <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
           ) : (
             <Settings className="h-4 w-4 mr-2" />
           )}
