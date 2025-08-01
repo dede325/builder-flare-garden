@@ -62,6 +62,7 @@ export function AdminDashboard() {
     syncStatus: "online",
   });
   const [loading, setLoading] = useState(true);
+  const [showAnalytics, setShowAnalytics] = useState(false);
 
   useEffect(() => {
     loadAdminMetrics();
