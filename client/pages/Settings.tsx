@@ -209,10 +209,38 @@ export default function Settings() {
     }
   };
 
-  const handleSaveProfile = () => {
+  const handleSaveProfile = async () => {
     localStorage.setItem("userProfile", JSON.stringify(profileData));
-    // TODO: Sync with Supabase when connected
-    console.log("Profile saved:", profileData);
+
+    // Sync with Supabase when connected
+    try {
+      const { supabase } = await import("@/lib/supabase");
+      if (supabase && authUser) {
+        const { error } = await supabase
+          .from('usuarios')
+          .update({
+            nome: profileData.name,
+            telefone: profileData.phone,
+            departamento: profileData.department,
+            contacto_emergencia: profileData.emergencyContact,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', authUser.id);
+
+        if (error) {
+          console.warn("Erro ao sincronizar perfil com Supabase:", error);
+        } else {
+          console.log("Perfil sincronizado com Supabase com sucesso");
+        }
+      }
+    } catch (error) {
+      console.warn("Supabase não disponível, dados salvos apenas localmente");
+    }
+
+    toast({
+      title: "Perfil salvo",
+      description: "Suas informações foram atualizadas com sucesso.",
+    });
   };
 
   const handleSaveSystemSettings = () => {
