@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MigrationDialog } from "@/components/MigrationDialog";
+import { LogoUpload } from "@/components/LogoUpload";
 import {
   Settings,
   User,
