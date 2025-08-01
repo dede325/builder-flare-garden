@@ -515,6 +515,9 @@ export default function Index() {
           ))}
         </div>
       </nav>
+
+      {/* Tutorial System */}
+      <TutorialSystem autoStart={!user} />
     </div>
   );
 }
