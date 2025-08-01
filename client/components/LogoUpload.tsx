@@ -142,17 +142,18 @@ export function LogoUpload({
               <img
                 src={preview}
                 alt="Preview do logo"
-                className="w-full h-full object-contain bg-gray-50 dark:bg-gray-900"
+                className="w-full h-full object-contain bg-gray-50 dark:bg-gray-900 rounded-lg"
               />
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <div className="flex gap-2">
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                <div className="flex gap-2 flex-col sm:flex-row">
                   <Button
                     type="button"
                     variant="secondary"
                     size="sm"
                     onClick={() => fileInputRef.current?.click()}
+                    className="text-xs sm:text-sm"
                   >
-                    <Upload className="w-4 h-4 mr-1" />
+                    <Upload className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                     Alterar
                   </Button>
                   <Button
@@ -160,8 +161,9 @@ export function LogoUpload({
                     variant="destructive"
                     size="sm"
                     onClick={handleRemove}
+                    className="text-xs sm:text-sm"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="w-3 h-3 sm:w-4 sm:h-4" />
                   </Button>
                 </div>
               </div>
