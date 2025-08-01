@@ -58,6 +58,7 @@ import {
   LocationConfig,
   SystemConfiguration,
 } from "@/lib/configuration-service";
+import { MacroConfigurationPanel } from "@/components/MacroConfigurationPanel";
 
 export default function ConfigurationManager() {
   const [configuration, setConfiguration] = useState<SystemConfiguration>({
@@ -154,7 +155,7 @@ export default function ConfigurationManager() {
     }
 
     if (!shiftForm.endTime) {
-      newErrors.endTime = "Horário de fim é obrigatório";
+      newErrors.endTime = "Hor��rio de fim é obrigatório";
     }
 
     if (shiftForm.order < 0) {
@@ -401,7 +402,11 @@ export default function ConfigurationManager() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-aviation-gray-700">
+          <TabsList className="grid w-full grid-cols-4 bg-aviation-gray-700">
+            <TabsTrigger value="macro" className="text-white">
+              <Settings className="h-4 w-4 mr-2" />
+              Configurações Macro
+            </TabsTrigger>
             <TabsTrigger value="interventions" className="text-white">
               <Wrench className="h-4 w-4 mr-2" />
               Tipos de Intervenção
@@ -415,6 +420,11 @@ export default function ConfigurationManager() {
               Locais
             </TabsTrigger>
           </TabsList>
+
+          {/* Macro Configuration Tab */}
+          <TabsContent value="macro" className="space-y-6 mt-6">
+            <MacroConfigurationPanel />
+          </TabsContent>
 
           {/* Intervention Types Tab */}
           <TabsContent value="interventions" className="space-y-6 mt-6">
