@@ -75,6 +75,9 @@ import {
   SmartAutomationConfig,
   AdvancedSecurityConfig,
 } from "@/lib/advanced-features-service";
+import { MobileFeaturesConfig as MobileFeaturesConfigComponent } from "@/components/MobileFeaturesConfig";
+import { AdvancedAnalyticsDashboard } from "@/components/AdvancedAnalyticsDashboard";
+import { MobileFeaturesShowcase } from "@/components/MobileFeaturesShowcase";
 
 const CategoryIcons = {
   MOBILE: Smartphone,
