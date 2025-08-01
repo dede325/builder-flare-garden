@@ -495,22 +495,22 @@ export default function AdvancedFeatures() {
             </div>
           </TabsContent>
 
-          {/* Category-specific tabs would be implemented here */}
-          {/* For brevity, showing just the mobile tab structure */}
+          {/* Mobile Features Tab */}
           <TabsContent value="mobile" className="space-y-6 mt-6">
-            <div className="text-center py-8">
-              <Smartphone className="h-16 w-16 text-blue-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">
-                Funcionalidades Móveis Avançadas
-              </h3>
-              <p className="text-white/70 mb-6">
-                Configure push notifications, modo offline, QR codes e autenticação biométrica
-              </p>
-              <Button className="aviation-button">
-                <Settings className="h-4 w-4 mr-2" />
-                Configurar Funcionalidades Móveis
-              </Button>
-            </div>
+            <MobileFeaturesShowcase />
+            <Card className="glass-card border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white">Configuração Avançada</CardTitle>
+                <CardDescription className="text-white/70">
+                  Configure detalhadamente as funcionalidades móveis
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <MobileFeaturesConfigComponent onConfigChange={(config) => {
+                  console.log("Mobile config updated:", config);
+                }} />
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6 mt-6">
