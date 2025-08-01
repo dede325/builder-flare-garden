@@ -488,7 +488,7 @@ export function AdminDashboard() {
               <AlertTriangle className="h-4 w-4 text-orange-400 mt-0.5" />
               <div className="flex-1 min-w-0">
                 <p className="text-white text-sm">
-                  Falha de sincronizaç��o resolvida
+                  Falha de sincronização resolvida
                 </p>
                 <p className="text-white/60 text-xs">há 6 horas</p>
               </div>
@@ -550,6 +550,7 @@ export function AdminDashboard() {
             <Eye className="h-4 w-4 mr-2" />
             {showAnalytics ? "Ocultar" : "Mostrar"} Analytics
           </Button>
+          <PerformanceMonitor compact={true} />
         </CardContent>
       </Card>
 
