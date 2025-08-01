@@ -200,7 +200,7 @@ const AppContent = () => {
         <Route
           path="/configuration"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute role="supervisor">
               <ConfigurationManager />
             </ProtectedRoute>
           }
