@@ -514,19 +514,7 @@ export default function AdvancedFeatures() {
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6 mt-6">
-            <div className="text-center py-8">
-              <BarChart3 className="h-16 w-16 text-green-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">
-                Analytics e Relatórios
-              </h3>
-              <p className="text-white/70 mb-6">
-                Dashboard executivo, relatórios automáticos e tracking de performance
-              </p>
-              <Button className="aviation-button">
-                <Settings className="h-4 w-4 mr-2" />
-                Configurar Analytics
-              </Button>
-            </div>
+            <AdvancedAnalyticsDashboard />
           </TabsContent>
 
           <TabsContent value="automation" className="space-y-6 mt-6">
