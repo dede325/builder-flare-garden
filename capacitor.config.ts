@@ -1,29 +1,30 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: 'com.airplus.aviation',
-  appName: 'AirPlus Aviation',
-  webDir: 'dist/spa',
+  appId: "com.airplus.aviation",
+  appName: "AirPlus Aviation",
+  webDir: "dist/spa",
   server: {
-    androidScheme: 'https'
+    androidScheme: "https",
   },
   plugins: {
     App: {
-      launchUrl: 'https://bd27758bea3848a48634fddab10e201a-f54cc508e9464780986cbc6c6.projects.builder.codes'
+      launchUrl:
+        "https://bd27758bea3848a48634fddab10e201a-f54cc508e9464780986cbc6c6.projects.builder.codes",
     },
     Camera: {
-      permissions: ['camera', 'photos']
+      permissions: ["camera", "photos"],
     },
     Filesystem: {
-      enabled: true
+      enabled: true,
     },
     Network: {
-      enabled: true
+      enabled: true,
     },
     Preferences: {
-      enabled: true
-    }
-  }
+      enabled: true,
+    },
+  },
 };
 
 export default config;

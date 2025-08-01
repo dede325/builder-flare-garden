@@ -1023,7 +1023,7 @@ export const setupIntelligentSync = () => {
     destroy: () => {
       // Clean up any background processes
       intelligentSyncService.stopBackgroundSync();
-    }
+    },
   };
 };
 

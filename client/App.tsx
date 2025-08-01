@@ -53,7 +53,8 @@ class ErrorBoundary extends Component<
               Algo deu errado
             </h2>
             <p className="text-white/80 mb-4">
-              Ocorreu um erro inesperado. Você pode tentar novamente ou recarregar a página.
+              Ocorreu um erro inesperado. Você pode tentar novamente ou
+              recarregar a página.
             </p>
             <div className="space-y-2">
               <button
@@ -69,7 +70,7 @@ class ErrorBoundary extends Component<
                 Recarregar Página
               </button>
             </div>
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {process.env.NODE_ENV === "development" && this.state.error && (
               <details className="mt-4 text-left">
                 <summary className="text-white/70 cursor-pointer text-sm">
                   Detalhes do erro (desenvolvimento)
@@ -119,7 +120,7 @@ const AppContent = () => {
 
       // Clean up services with error handling
       try {
-        if (photoCleanup && typeof photoCleanup === 'function') {
+        if (photoCleanup && typeof photoCleanup === "function") {
           photoCleanup();
         }
       } catch (error) {
@@ -127,7 +128,7 @@ const AppContent = () => {
       }
 
       try {
-        if (syncService && typeof syncService.destroy === 'function') {
+        if (syncService && typeof syncService.destroy === "function") {
           syncService.destroy();
         }
       } catch (error) {

@@ -7,6 +7,7 @@ This guide covers the complete deployment process for the AirPlus Aviation clean
 ## 🏗️ Pre-Deployment Checklist
 
 ### ✅ Environment Setup
+
 - [x] Real Supabase credentials configured
 - [x] Production database schema created
 - [x] AirPlus employee data seeded
@@ -14,6 +15,7 @@ This guide covers the complete deployment process for the AirPlus Aviation clean
 - [x] PWA manifest updated with AirPlus branding
 
 ### ✅ Database Configuration
+
 ```sql
 -- Production Supabase URL
 https://fyngvoojdfjexbzasgiz.supabase.co
@@ -31,6 +33,7 @@ https://fyngvoojdfjexbzasgiz.supabase.co
 ## 🌐 Web Deployment
 
 ### 1. Build for Production
+
 ```bash
 # Install dependencies
 npm ci
@@ -45,6 +48,7 @@ npm run build:production
 ### 2. Deploy to Hosting Platform
 
 #### Option A: Vercel
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -60,6 +64,7 @@ VITE_COMPANY_NAME=AirPlus
 ```
 
 #### Option B: Netlify
+
 ```bash
 # Build and deploy
 npm run build:production
@@ -69,6 +74,7 @@ npm run build:production
 ```
 
 #### Option C: Cloudflare Pages
+
 ```bash
 # Connect GitHub repository
 # Set build command: npm run build:production
@@ -76,6 +82,7 @@ npm run build:production
 ```
 
 ### 3. Environment Variables
+
 Set these in your hosting platform:
 
 ```env
@@ -91,6 +98,7 @@ VITE_ENABLE_DEMO_MODE=false
 ## 📱 Mobile Deployment
 
 ### 1. Prepare Mobile Build
+
 ```bash
 # Build and sync mobile platforms
 npm run build:mobile
@@ -102,6 +110,7 @@ npx cap sync
 ```
 
 ### 2. Android Build (APK/AAB)
+
 ```bash
 # Open Android Studio
 npm run mobile:android
@@ -114,12 +123,14 @@ npm run mobile:android
 ```
 
 #### Android Requirements:
+
 - Android Studio installed
 - Java Development Kit (JDK) 11+
 - Android SDK (API level 22+)
 - Signing keystore for production
 
 ### 3. iOS Build (App Store)
+
 ```bash
 # Open Xcode
 npm run mobile:ios
@@ -132,6 +143,7 @@ npm run mobile:ios
 ```
 
 #### iOS Requirements:
+
 - macOS with Xcode 14+
 - Apple Developer Account ($99/year)
 - iOS Deployment Target: iOS 13+
@@ -140,6 +152,7 @@ npm run mobile:ios
 ## 🗄️ Database Setup
 
 ### 1. Run Migrations
+
 ```bash
 # Deploy production schema
 npm run db:migrate
@@ -152,13 +165,16 @@ npm run db:migrate
 ```
 
 ### 2. Verify Data
+
 - Check that funcionarios table has AirPlus employees
 - Verify aeronaves table has sample aircraft
 - Confirm RLS policies are active
 - Test authentication flow
 
 ### 3. Configure Storage
+
 In Supabase dashboard:
+
 1. Go to Storage
 2. Create buckets:
    - `pdfs` (for generated PDFs)
@@ -169,18 +185,21 @@ In Supabase dashboard:
 ## 🔐 Security Configuration
 
 ### 1. Supabase Security
+
 - ✅ Row Level Security (RLS) enabled
 - ✅ JWT authentication configured
 - ✅ API keys properly scoped
 - ✅ Email domain restrictions (@airplus.co)
 
 ### 2. Mobile Security
+
 - Code signing certificates configured
 - App permissions properly set
 - Secure HTTP only (no HTTP in production)
 - Camera and storage permissions
 
 ### 3. Web Security
+
 - HTTPS enforced
 - Content Security Policy configured
 - Secure authentication flow
@@ -189,6 +208,7 @@ In Supabase dashboard:
 ## 🧪 Testing
 
 ### 1. Web Testing
+
 ```bash
 # Test production build locally
 npm run build:production
@@ -201,6 +221,7 @@ npx serve dist
 ```
 
 ### 2. Mobile Testing
+
 - Test on physical devices
 - Verify camera functionality
 - Test offline data sync
@@ -209,12 +230,14 @@ npx serve dist
 ## 📊 Monitoring & Analytics
 
 ### 1. Supabase Dashboard
+
 - Monitor database performance
 - Track API usage
 - Review authentication logs
 - Monitor storage usage
 
 ### 2. Application Monitoring
+
 - Set up error tracking (Sentry)
 - Monitor performance metrics
 - Track user engagement
@@ -223,6 +246,7 @@ npx serve dist
 ## 🚀 Go-Live Process
 
 ### 1. Final Checks
+
 - [ ] Production database populated
 - [ ] All employees can log in
 - [ ] PDF generation working
@@ -232,6 +256,7 @@ npx serve dist
 - [ ] Offline sync verified
 
 ### 2. Deployment Steps
+
 1. Deploy web application to hosting
 2. Update DNS if needed
 3. Submit mobile apps for review
@@ -239,6 +264,7 @@ npx serve dist
 5. Monitor initial usage
 
 ### 3. Post-Launch
+
 - Monitor system performance
 - Collect user feedback
 - Plan feature updates
@@ -267,18 +293,21 @@ npx serve dist
 ## 🎉 Launch Checklist
 
 ### Pre-Launch (1 week before)
+
 - [ ] Complete all testing
 - [ ] Staff training scheduled
 - [ ] Backup procedures tested
 - [ ] Monitoring systems active
 
 ### Launch Day
+
 - [ ] Deploy production systems
 - [ ] Verify all services online
 - [ ] Monitor initial usage
 - [ ] Support team on standby
 
 ### Post-Launch (1 week after)
+
 - [ ] Collect user feedback
 - [ ] Monitor performance metrics
 - [ ] Plan first update cycle
