@@ -39,6 +39,7 @@ import {
   LogOut,
   ArrowLeft,
   RefreshCw,
+  ImageIcon,
 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { migrationService } from "@/lib/migration-service";
