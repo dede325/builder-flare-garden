@@ -112,13 +112,23 @@ export default function Login() {
       <Card className="saas-card w-full max-w-md mx-4">
         <CardHeader className="text-center space-y-6 pt-8">
           <div className="flex justify-center">
-            <div className="h-20 w-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-2xl">
+            <img
+              src="/airplus-logo.png"
+              alt="AirPlus Aviation"
+              className="h-16 w-auto object-contain"
+              onError={(e) => {
+                // Fallback to icon if logo fails to load
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.nextElementSibling?.classList.remove('hidden');
+              }}
+            />
+            <div className="h-20 w-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-2xl hidden">
               <Plane className="h-10 w-10 text-white" />
             </div>
           </div>
           <div className="space-y-2">
             <CardTitle className="text-3xl font-bold text-white">
-              AviationOps
+              AirPlus Aviation
             </CardTitle>
             <CardDescription className="text-blue-200 text-base">
               {isSignUp ? "Criar nova conta" : "Entre na sua conta"}
