@@ -564,4 +564,4 @@ class AuthService {
 export const authService = new AuthService();
 
 // Export types
-export type { AuthState, UserWithProfile, UserProfile, Role, Permission };
+// Types are already exported above
