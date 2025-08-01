@@ -452,27 +452,45 @@ Para mais detalhes: [supabase/README.md](supabase/README.md)
 
 ## 📚 Documentação
 
-### Estrutura da Documentação
+### Centro de Documentação Organizado
+
+A documentação completa está organizada em **[docs/](docs/)** com estrutura lógica:
 
 ```
 docs/
-├── 📖 README.md              # Este arquivo
-├── 🔧 AGENTS.md              # Guia técnico completo
-├── 🚀 DEPLOY_MANUAL.md       # Deploy manual
-├── 📱 MOBILE_APPS_STATUS.md  # Status apps mobile
-├── 🗄️ supabase/README.md     # Documentação da BD
-├── 🔒 SECURITY.md            # Guia de segurança
-└── 📊 api/                   # Documentação da API
+├── 📖 README.md              # Índice principal da documentação
+├── 🚀 deploy/                # Guias de deploy e produção
+├── 📱 mobile/                # Documentação mobile iOS/Android
+├── 🗄️ database/              # Documentação base de dados
+├── 🛠️ development/           # Guias técnicos de desenvolvimento
+└── 📜 legacy/                # Documentação histórica
 ```
 
-### Links Úteis
+### 🎯 Links Essenciais
 
-- [📖 Guia de Desenvolvimento](AGENTS.md)
-- [🚀 Deploy Guide](DEPLOY_MANUAL.md)
-- [📱 Mobile Build Guide](BUILD_MOBILE_APPS.md)
-- [🗄️ Database Schema](supabase/README.md)
-- [🔒 Security Guidelines](SECURITY.md)
-- [📊 API Reference](docs/api.md)
+#### 📖 **Documentação Principal**
+- [📚 **Centro de Documentação**](docs/) - **← COMEÇAR AQUI**
+- [🎨 Frontend (React SPA)](client/README.md)
+- [🔧 Backend (Express API)](server/README.md)
+- [📱 Mobile (iOS/Android)](mobile/README.md)
+- [🗄️ Base de Dados (Supabase)](supabase/README.md)
+- [🚀 Scripts de Automação](scripts/README.md)
+
+#### 🚀 **Deploy e Produção**
+- [🚀 Guia de Deploy](docs/deploy/AIRPLUS_DEPLOY_GUIDE.md)
+- [🗄️ Deploy Supabase](docs/deploy/SUPABASE_DEPLOY.md)
+- [📊 Resumo Produção](docs/production/AIRPLUS_PRODUCTION_SUMMARY.md)
+
+#### 🛠️ **Desenvolvimento**
+- [👥 Guia Técnico Completo](docs/development/AGENTS.md)
+- [🔒 Segurança](docs/development/SECURITY.md)
+- [📋 Plano 50 Migrations](supabase/MIGRATION_PLAN.md)
+- [✅ Relatório Integridade Final](supabase/FINAL_SYSTEM_INTEGRITY_REPORT.md)
+
+#### 📱 **Mobile e Apps**
+- [🏗️ Build Mobile Apps](docs/mobile/BUILD_MOBILE_APPS.md)
+- [📱 Status Apps](docs/mobile/MOBILE_APPS_STATUS.md)
+- [📱 Compatibilidade Mobile](supabase/MOBILE_COMPATIBILITY_VALIDATION.md)
 
 ## 🤝 Contribuição
 
