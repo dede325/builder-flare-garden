@@ -3,7 +3,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.airplus.aviation',
   appName: 'AirPlus Aviation',
-  webDir: 'dist',
+  webDir: 'dist/spa',
   server: {
     androidScheme: 'https'
   },
