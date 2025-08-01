@@ -23,6 +23,8 @@ interface CleaningForm {
   createdAt: string;
   updatedAt: string;
   syncStatus?: "pending" | "synced" | "error";
+  clientConfirmed: boolean;
+  qrCodeData: string;
 }
 
 interface BatchOperationResult {
