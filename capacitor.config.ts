@@ -9,8 +9,7 @@ const config: CapacitorConfig = {
   },
   plugins: {
     App: {
-      launchUrl:
-        "https://bd27758bea3848a48634fddab10e201a-f54cc508e9464780986cbc6c6.projects.builder.codes",
+      launchUrl: import.meta.env?.VITE_APP_URL || "https://airplus-aviation.netlify.app",
     },
     Camera: {
       permissions: ["camera", "photos"],
