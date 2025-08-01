@@ -323,7 +323,7 @@ export default function Settings() {
           defaultValue={searchParams.get("tab") || "profile"}
           className="space-y-6"
         >
-          <TabsList className="grid w-full grid-cols-4 bg-white/10 backdrop-blur-md">
+          <TabsList className="grid w-full grid-cols-5 bg-white/10 backdrop-blur-md">
             <TabsTrigger
               value="profile"
               className="text-white data-[state=active]:bg-white/20"
@@ -344,6 +344,13 @@ export default function Settings() {
             >
               <Shield className="h-4 w-4 mr-2" />
               Empresa
+            </TabsTrigger>
+            <TabsTrigger
+              value="logos"
+              className="text-white data-[state=active]:bg-white/20"
+            >
+              <ImageIcon className="h-4 w-4 mr-2" />
+              Logos
             </TabsTrigger>
             <TabsTrigger
               value="data"
