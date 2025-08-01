@@ -211,3 +211,6 @@ export const previewCleaningFormPDF = async (
 
   return await pdfService.previewPDF(transformedFormData, transformedAircraftData);
 };
+
+// Backward compatibility alias
+export const generateAndUploadPDF = generateCleaningFormPDFToSupabase;
