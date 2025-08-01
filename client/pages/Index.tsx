@@ -308,6 +308,9 @@ export default function Index() {
             {/* Intelligent Sync Status */}
             <SyncStatusIndicator compact={true} />
 
+            {/* Notification Center */}
+            <NotificationCenter />
+
             {/* User Avatar */}
             <div className="h-8 w-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
               <span className="text-white font-semibold text-sm">
