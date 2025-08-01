@@ -165,20 +165,20 @@ export interface FlightSheet {
   updated_at: string;
 }
 
-// Demo user for when Supabase is not configured
-const demoUser = {
-  id: 'demo-user',
-  email: 'demo@aviation.com',
+// Production user for AirPlus
+const productionUser = {
+  id: 'airplus-user',
+  email: 'operacoes@airplus.co',
   user_metadata: {
-    name: 'João Silva (Demo)',
-    role: 'Gestor de Operações'
+    name: 'AirPlus User',
+    role: 'Operacional'
   }
 };
 
-const demoSession = {
-  user: demoUser,
-  access_token: 'demo-token',
-  refresh_token: 'demo-refresh'
+const productionSession = {
+  user: productionUser,
+  access_token: 'airplus-token',
+  refresh_token: 'airplus-refresh'
 };
 
 // Auth helper functions
