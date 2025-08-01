@@ -524,19 +524,7 @@ export default function AdvancedFeatures() {
           </TabsContent>
 
           <TabsContent value="security" className="space-y-6 mt-6">
-            <div className="text-center py-8">
-              <Shield className="h-16 w-16 text-red-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">
-                Segurança Avançada
-              </h3>
-              <p className="text-white/70 mb-6">
-                2FA, SSO, auditoria avançada e backup automático
-              </p>
-              <Button className="aviation-button">
-                <Settings className="h-4 w-4 mr-2" />
-                Configurar Segurança
-              </Button>
-            </div>
+            <AdvancedSecurityDashboard />
           </TabsContent>
         </Tabs>
       </main>
