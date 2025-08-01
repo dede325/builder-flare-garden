@@ -519,19 +519,7 @@ export default function AdvancedFeatures() {
           </TabsContent>
 
           <TabsContent value="automation" className="space-y-6 mt-6">
-            <div className="text-center py-8">
-              <Bot className="h-16 w-16 text-purple-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">
-                Automação Inteligente
-              </h3>
-              <p className="text-white/70 mb-6">
-                Auto-agendamento, predição de tempo e otimização de rotas
-              </p>
-              <Button className="aviation-button">
-                <Settings className="h-4 w-4 mr-2" />
-                Configurar Automação
-              </Button>
-            </div>
+            <SmartAutomationDashboard />
           </TabsContent>
 
           <TabsContent value="security" className="space-y-6 mt-6">
