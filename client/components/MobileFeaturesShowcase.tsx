@@ -241,7 +241,7 @@ export function MobileFeaturesShowcase() {
       offlineStorage: Database,
       qrCode: Camera,
       biometricAuth: Fingerprint,
-      backgroundSync: Sync,
+      backgroundSync: RefreshCw,
     };
     return icons[feature];
   };
@@ -387,7 +387,7 @@ export function MobileFeaturesShowcase() {
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
               <Fingerprint className="h-5 w-5" />
-              Autenticação Biométrica
+              Autenticaç��o Biométrica
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
