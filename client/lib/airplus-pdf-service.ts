@@ -192,7 +192,7 @@ class AirPlusPDFService {
     };
 
     // Page 1: Main form data
-    currentY = addBrandedHeader();
+    currentY = await addBrandedHeader();
 
     // Form identification section
     pdf.setFillColor(...this.brandColors.lightGray);
