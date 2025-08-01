@@ -36,7 +36,9 @@
     "db:status": "supabase status",
     "db:deploy": "bash scripts/supabase-deploy.sh",
     "db:migrate": "supabase db push",
-    "airplus:deploy": "bash scripts/build-production.sh"
+    "airplus:deploy": "bash scripts/build-production.sh",
+    "verify:system": "node scripts/final-verification.cjs",
+    "test:production": "node scripts/final-verification.cjs"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.2",
