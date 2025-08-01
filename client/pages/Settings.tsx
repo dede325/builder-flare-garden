@@ -224,6 +224,15 @@ export default function Settings() {
     console.log("Company settings saved:", companySettings);
   };
 
+  const handleSaveLogoSettings = () => {
+    localStorage.setItem("logoSettings", JSON.stringify(logoSettings));
+    console.log("Logo settings saved:", logoSettings);
+    toast({
+      title: "Configurações salvas",
+      description: "As configurações de logos foram atualizadas com sucesso.",
+    });
+  };
+
   const handleExportData = () => {
     const data = {
       profile: profileData,
