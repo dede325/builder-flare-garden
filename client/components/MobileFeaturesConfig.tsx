@@ -12,7 +12,7 @@ import {
   AlertTriangle,
   Download,
   Upload,
-  Sync,
+  RefreshCw,
   Camera,
   Shield,
   Database,
