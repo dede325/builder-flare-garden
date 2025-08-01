@@ -641,3 +641,6 @@ class AirPlusPDFService {
 
 // Export singleton instance
 export const airPlusPDFService = new AirPlusPDFService();
+
+// Export class for direct instantiation
+export { AirPlusPDFService };
