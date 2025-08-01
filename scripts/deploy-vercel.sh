@@ -9,14 +9,14 @@ echo "🚀 Iniciando deploy para Vercel - AirPlus Aviation"
 
 # Verificar se as variáveis de ambiente estão configuradas
 if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_ANON_KEY" ]; then
-    echo "❌ Variáveis de ambiente Supabase não configuradas"
-    echo "Configure VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY"
-    exit 1
+    echo "⚠️  Variáveis de ambiente Supabase não configuradas localmente"
+    echo "Configure no painel Vercel: VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY"
 fi
 
-# Limpar build anterior
+# Limpar build anterior e diretório vercel
 echo "🧹 Limpando builds anteriores..."
 rm -rf dist/
+rm -rf .vercel/
 
 # Build da aplicação
 echo "🔧 Executando build de produção..."
@@ -35,15 +35,16 @@ if [ ! -f "dist/spa/index.html" ]; then
     exit 1
 fi
 
-# Verificar se Vercel CLI está instalado
-if ! command -v vercel &> /dev/null; then
-    echo "📦 Instalando Vercel CLI..."
-    npm install -g vercel
-fi
-
-# Deploy para Vercel
-echo "🚀 Fazendo deploy para Vercel..."
-vercel --prod
-
-echo "✅ Deploy concluído com sucesso!"
-echo "🌐 Aplicação disponível em produção no Vercel"
+echo "✅ Build concluído com sucesso!"
+echo "📁 Arquivos disponíveis em: dist/spa/"
+echo ""
+echo "🌐 Para fazer deploy no Vercel:"
+echo "1. Abra o painel Vercel: https://vercel.com/dashboard"
+echo "2. Clique em 'Add New Project'"
+echo "3. Importe este repositório ou arraste a pasta dist/spa"
+echo "4. Configure as variáveis de ambiente:"
+echo "   - VITE_SUPABASE_URL=https://fyngvoojdfjexbzasgiz.supabase.co"
+echo "   - VITE_SUPABASE_ANON_KEY=[sua chave]"
+echo "5. Faça o deploy!"
+echo ""
+echo "📋 Alternativamente, use o MCP do Vercel no Builder.io"
