@@ -370,8 +370,19 @@ export function AdminDashboard() {
             const hasActionPermission =
               !action.permission || hasPermission(action.permission);
 
+            const handleActionClick = (e: React.MouseEvent) => {
+              if (action.link === "#analytics") {
+                e.preventDefault();
+                setShowAnalytics(true);
+              }
+            };
+
             return (
-              <Link key={index} to={hasActionPermission ? action.link : "#"}>
+              <Link
+                key={index}
+                to={hasActionPermission ? action.link : "#"}
+                onClick={handleActionClick}
+              >
                 <Card
                   className={`bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 hover:scale-105 transition-all duration-300 touch-manipulation ${
                     !hasActionPermission ? "opacity-50 cursor-not-allowed" : ""
