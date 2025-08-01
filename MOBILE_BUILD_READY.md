@@ -5,14 +5,16 @@
 O projeto **AirPlus Aviation** está **100% preparado** para gerar os arquivos de instalação móvel:
 
 ### 🔧 Configuração Completa:
+
 - ✅ Capacitor 7.x configurado
-- ✅ Projeto Android criado e sincronizado 
+- ✅ Projeto Android criado e sincronizado
 - ✅ Projeto iOS criado e sincronizado
 - ✅ Build de produção funcionando
 - ✅ Plugins móveis instalados (Camera, Filesystem, Network, etc.)
 - ✅ Scripts de build criados
 
 ### 📦 Arquivos de Build Criados:
+
 - `scripts/build-android.sh` - Script automatizado para Android
 - `scripts/build-ios.sh` - Script automatizado para iOS
 - `ExportOptions.plist` - Configuração de export iOS
@@ -21,13 +23,16 @@ O projeto **AirPlus Aviation** está **100% preparado** para gerar os arquivos d
 ## 🚀 Como Gerar APK (Android)
 
 ### Opção 1: Comando Rápido
+
 ```bash
 npm run build:android
 npx cap open android
 ```
+
 Depois no Android Studio: `Build > Build Bundle(s) / APK(s) > Build APK(s)`
 
 ### Opção 2: Manual Completo
+
 ```bash
 # 1. Build da web app
 npm run build:production
@@ -44,24 +49,29 @@ npx cap open android
 ```
 
 ### 📁 Localização do APK:
+
 - **Debug**: `android/app/build/outputs/apk/debug/app-debug.apk`
 - **Release**: `android/app/build/outputs/apk/release/app-release.apk`
 
 ## 📱 Como Gerar IPA (iOS)
 
 ### Pré-requisitos:
+
 - **macOS** (obrigatório)
 - **Xcode** instalado
 - **Conta Apple Developer** (para distribuição)
 
 ### Comando Rápido:
+
 ```bash
 npm run build:ios
 npx cap open ios
 ```
+
 Depois no Xcode: `Product > Archive > Distribute App`
 
 ### Manual Completo:
+
 ```bash
 # 1. Build da web app
 npm run build:production
@@ -89,6 +99,7 @@ npx cap open ios
 ## 🔑 Funcionalidades Móveis Incluídas
 
 ### 📷 Recursos Nativos:
+
 - **Câmera**: Captura de fotos para evidências
 - **Armazenamento**: Dados offline/sync
 - **Rede**: Detecção de conectividade
@@ -96,11 +107,13 @@ npx cap open ios
 - **Preferências**: Configurações locais
 
 ### 💾 Dados Offline:
+
 - Funciona sem conexão à internet
 - Sincronização automática quando online
 - Cache inteligente de dados
 
 ### 🔐 Segurança:
+
 - Autenticação integrada
 - Dados criptografados localmente
 - Sincronização segura com Supabase
@@ -108,12 +121,14 @@ npx cap open ios
 ## 🎯 Próximos Passos
 
 ### Para APK (Android):
+
 1. Execute: `npm run build:android`
 2. Abra Android Studio: `npx cap open android`
 3. Build APK: `Build > Build Bundle(s) / APK(s) > Build APK(s)`
 4. Localizar arquivo em: `android/app/build/outputs/apk/debug/`
 
 ### Para IPA (iOS):
+
 1. Execute: `npm run build:ios` (no macOS)
 2. Abra Xcode: `npx cap open ios`
 3. Configure equipe de desenvolvimento
@@ -123,11 +138,13 @@ npx cap open ios
 ## 📱 Teste da App
 
 ### Android:
+
 1. Ativar "Fontes desconhecidas" no dispositivo
 2. Transferir APK para o dispositivo
 3. Instalar e testar funcionalidades
 
 ### iOS:
+
 1. Usar TestFlight para distribuição
 2. Ou instalar via Xcode em dispositivo conectado
 3. Testar todas as funcionalidades nativas
@@ -152,6 +169,7 @@ npm run mobile:sync       # Sincroniza plugins
 ## ✅ Pronto para Produção
 
 O projeto está **completamente configurado** e **pronto para gerar**:
+
 - ✅ **APK para Android** (instalação direta)
 - ✅ **IPA para iOS** (TestFlight/App Store)
 

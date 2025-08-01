@@ -5,12 +5,14 @@ Este guia detalha como criar os arquivos de instalação para Android (APK) e iO
 ## 🚀 Pré-requisitos
 
 ### Para Android (APK):
+
 - **Android Studio** instalado
 - **Java Development Kit (JDK)** 17 ou superior
 - **Android SDK** configurado
 - **Gradle** (incluído no Android Studio)
 
 ### Para iOS (IPA):
+
 - **macOS** (obrigatório)
 - **Xcode** 15 ou superior
 - **Conta de desenvolvedor Apple** (para distribuição)
@@ -91,11 +93,13 @@ npx cap sync
 ### Método 1: Via Android Studio (Recomendado)
 
 1. **Abrir projeto Android:**
+
    ```bash
    npx cap open android
    ```
 
 2. **No Android Studio:**
+
    - Aguarde a sincronização do Gradle
    - Vá em `Build > Build Bundle(s) / APK(s) > Build APK(s)`
    - Ou `Build > Generate Signed Bundle / APK` para versão de produção
@@ -119,11 +123,13 @@ cd android
 ### Configuração para Release (Produção)
 
 1. **Criar Keystore (primeira vez):**
+
    ```bash
    keytool -genkey -v -keystore airplus-release-key.keystore -alias airplus -keyalg RSA -keysize 2048 -validity 10000
    ```
 
 2. **Configurar assinatura em `android/app/build.gradle`:**
+
    ```gradle
    android {
        signingConfigs {
@@ -154,6 +160,7 @@ cd android
 ### Método 1: Via Xcode (Recomendado)
 
 1. **Abrir projeto iOS:**
+
    ```bash
    npx cap open ios
    ```
@@ -183,6 +190,7 @@ xcodebuild -exportArchive -archivePath build/App.xcarchive -exportPath build/ipa
 ### Configuração de Certificados
 
 1. **No Apple Developer Portal:**
+
    - Criar App ID: `com.airplus.aviation`
    - Gerar certificados de desenvolvimento/distribuição
    - Criar perfis de provisionamento
@@ -219,6 +227,7 @@ npx cap open ios
 ## 📋 Checklist de Build
 
 ### Antes do Build:
+
 - [ ] Testar aplicação web em produção
 - [ ] Verificar todas as funcionalidades offline
 - [ ] Configurar URLs de produção no `capacitor.config.ts`
@@ -226,6 +235,7 @@ npx cap open ios
 - [ ] Verificar permissões necessárias
 
 ### Android:
+
 - [ ] Java/JDK instalado e configurado
 - [ ] Android Studio instalado
 - [ ] SDK configurado
@@ -233,6 +243,7 @@ npx cap open ios
 - [ ] Testar APK em dispositivo real
 
 ### iOS:
+
 - [ ] Xcode instalado (macOS)
 - [ ] Conta Apple Developer ativa
 - [ ] Certificados configurados
@@ -242,11 +253,13 @@ npx cap open ios
 ## 🚀 Distribuição
 
 ### Android:
+
 - **Debug APK**: Para testes internos
 - **Release APK**: Para distribuição via site/email
 - **Google Play Store**: Usar Android App Bundle (AAB)
 
 ### iOS:
+
 - **Development**: Para testes internos
 - **Ad Hoc**: Para distribuição limitada
 - **App Store**: Para distribuição pública
@@ -264,6 +277,7 @@ npx cap open ios
 ### Problemas Comuns:
 
 1. **Gradle Build Failed**:
+
    ```bash
    cd android
    ./gradlew clean
@@ -271,12 +285,14 @@ npx cap open ios
    ```
 
 2. **iOS Pod Install Failed**:
+
    ```bash
    cd ios/App
    pod install --repo-update
    ```
 
 3. **Capacitor Sync Issues**:
+
    ```bash
    npx cap sync --force
    ```
@@ -290,6 +306,7 @@ npx cap open ios
 ## 📞 Suporte
 
 Para problemas específicos:
+
 - **Android**: Documentação do Android Studio
 - **iOS**: Documentação do Xcode
 - **Capacitor**: [Documentação oficial](https://capacitorjs.com/)
@@ -299,6 +316,7 @@ Para problemas específicos:
 ## ✅ Estado Atual
 
 O projeto está configurado com:
+
 - ✅ Capacitor 7.x instalado
 - ✅ Projetos Android e iOS criados
 - ✅ Plugins necessários configurados

@@ -173,7 +173,8 @@ export default function Settings() {
   const handlePopulateDemoData = async () => {
     toast({
       title: "Funcionalidade removida",
-      description: "Os dados demo foram removidos. Use apenas dados reais de produção.",
+      description:
+        "Os dados demo foram removidos. Use apenas dados reais de produção.",
       variant: "destructive",
     });
   };
@@ -1169,8 +1170,8 @@ export default function Settings() {
                     </Button>
                   </div>
                   <p className="text-xs text-white/60">
-                    Dados demo foram removidos para produção. Use apenas dados reais.
-                    Limpe o cache local quando necessário.
+                    Dados demo foram removidos para produção. Use apenas dados
+                    reais. Limpe o cache local quando necessário.
                   </p>
                 </div>
 
