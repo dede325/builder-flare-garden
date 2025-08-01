@@ -171,7 +171,7 @@ export function LogoUpload({
           ) : (
             <div
               className={cn(
-                'border-2 border-dashed border-gray-300 dark:border-gray-600 transition-colors',
+                'border-2 border-dashed border-gray-300 dark:border-gray-600 transition-colors rounded-lg',
                 'hover:border-blue-400 dark:hover:border-blue-500',
                 isDragging && 'border-blue-500 bg-blue-50 dark:bg-blue-950/20',
                 getAspectRatioClass()
@@ -180,12 +180,12 @@ export function LogoUpload({
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
             >
-              <div className="flex flex-col items-center justify-center h-full p-6 text-center">
-                <ImageIcon className="w-12 h-12 text-gray-400 mb-3" />
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <div className="flex flex-col items-center justify-center h-full p-3 sm:p-6 text-center">
+                <ImageIcon className="w-8 h-8 sm:w-12 sm:h-12 text-gray-400 mb-2 sm:mb-3" />
+                <p className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Arraste uma imagem aqui
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-3 sm:mb-4 hidden sm:block">
                   ou clique para selecionar
                 </p>
                 <Button
@@ -193,9 +193,11 @@ export function LogoUpload({
                   variant="outline"
                   size="sm"
                   onClick={() => fileInputRef.current?.click()}
+                  className="text-xs sm:text-sm"
                 >
-                  <Upload className="w-4 h-4 mr-2" />
-                  Selecionar Arquivo
+                  <Upload className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Selecionar Arquivo</span>
+                  <span className="sm:hidden">Selecionar</span>
                 </Button>
                 <p className="text-xs text-gray-400 mt-2">
                   PNG, JPG até {maxWidth}x{maxHeight}px
