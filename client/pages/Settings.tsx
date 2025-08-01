@@ -217,15 +217,15 @@ export default function Settings() {
       const { supabase } = await import("@/lib/supabase");
       if (supabase && authUser) {
         const { error } = await supabase
-          .from('usuarios')
+          .from("usuarios")
           .update({
             nome: profileData.name,
             telefone: profileData.phone,
             departamento: profileData.department,
             contacto_emergencia: profileData.emergencyContact,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
-          .eq('id', authUser.id);
+          .eq("id", authUser.id);
 
         if (error) {
           console.warn("Erro ao sincronizar perfil com Supabase:", error);

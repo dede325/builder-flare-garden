@@ -40,7 +40,7 @@ interface TeamActivity {
   employeeName: string;
   action: string;
   timestamp: string;
-  status: 'completed' | 'pending' | 'in_progress';
+  status: "completed" | "pending" | "in_progress";
   formCode?: string;
   aircraft?: string;
 }
@@ -116,14 +116,16 @@ export function SupervisorDashboard() {
       if (savedForms) {
         const forms = JSON.parse(savedForms);
         const today = new Date().toDateString();
-        
+
         return {
-          active: forms.filter((f: any) => 
-            f.status === "in_progress" || f.status === "pending_signatures"
+          active: forms.filter(
+            (f: any) =>
+              f.status === "in_progress" || f.status === "pending_signatures",
           ).length,
-          completedToday: forms.filter((f: any) => 
-            f.status === "completed" && 
-            new Date(f.completedAt).toDateString() === today
+          completedToday: forms.filter(
+            (f: any) =>
+              f.status === "completed" &&
+              new Date(f.completedAt).toDateString() === today,
           ).length,
           pending: forms.filter((f: any) => f.status === "draft").length,
         };
@@ -138,30 +140,35 @@ export function SupervisorDashboard() {
     try {
       const savedForms = localStorage.getItem("cleaningForms");
       const savedEmployees = localStorage.getItem("aviation_employees");
-      
+
       if (savedForms && savedEmployees) {
         const forms = JSON.parse(savedForms);
         const employees = JSON.parse(savedEmployees);
-        
+
         const activities: TeamActivity[] = [];
-        
+
         forms.slice(0, 10).forEach((form: any, index: number) => {
-          const employee = employees.find((e: any) => e.id === form.assignedTo) || 
-                          employees[index % employees.length];
-          
+          const employee =
+            employees.find((e: any) => e.id === form.assignedTo) ||
+            employees[index % employees.length];
+
           activities.push({
             id: `activity-${index}`,
             employeeName: employee?.name || "Funcionário Desconhecido",
-            action: form.status === "completed" ? "Concluiu limpeza" : "Iniciou limpeza",
+            action:
+              form.status === "completed"
+                ? "Concluiu limpeza"
+                : "Iniciou limpeza",
             timestamp: form.updatedAt || new Date().toISOString(),
             status: form.status as any,
             formCode: form.code,
             aircraft: form.aircraft?.registration || "N/A",
           });
         });
-        
-        return activities.sort((a, b) => 
-          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+
+        return activities.sort(
+          (a, b) =>
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
         );
       }
     } catch (error) {
@@ -202,13 +209,13 @@ export function SupervisorDashboard() {
     }
   };
 
-  const getStatusIcon = (status: TeamActivity['status']) => {
+  const getStatusIcon = (status: TeamActivity["status"]) => {
     switch (status) {
-      case 'completed':
+      case "completed":
         return <CheckCircle className="h-4 w-4 text-green-400" />;
-      case 'in_progress':
+      case "in_progress":
         return <Clock className="h-4 w-4 text-blue-400" />;
-      case 'pending':
+      case "pending":
         return <AlertTriangle className="h-4 w-4 text-orange-400" />;
       default:
         return <Activity className="h-4 w-4 text-gray-400" />;
@@ -233,7 +240,7 @@ export function SupervisorDashboard() {
       title: "Nova Folha",
       description: "Criar nova folha de limpeza",
       icon: Plus,
-      action: () => window.location.href = "/cleaning-forms",
+      action: () => (window.location.href = "/cleaning-forms"),
       color: "from-blue-500 to-blue-600",
     },
     {
@@ -254,7 +261,7 @@ export function SupervisorDashboard() {
       title: "Funcionários",
       description: "Gerenciar equipe",
       icon: User,
-      action: () => window.location.href = "/employee-manager",
+      action: () => (window.location.href = "/employee-manager"),
       color: "from-orange-500 to-orange-600",
     },
   ];
@@ -263,8 +270,12 @@ export function SupervisorDashboard() {
     return (
       <div className="text-center py-8">
         <AlertTriangle className="h-12 w-12 text-orange-400 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-white mb-2">Acesso Restrito</h3>
-        <p className="text-white/70">Você não tem permissão para acessar o dashboard de supervisor.</p>
+        <h3 className="text-lg font-semibold text-white mb-2">
+          Acesso Restrito
+        </h3>
+        <p className="text-white/70">
+          Você não tem permissão para acessar o dashboard de supervisor.
+        </p>
       </div>
     );
   }
@@ -374,7 +385,9 @@ export function SupervisorDashboard() {
             >
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center space-y-3">
-                  <div className={`p-3 rounded-xl bg-gradient-to-br ${action.color} shadow-lg`}>
+                  <div
+                    className={`p-3 rounded-xl bg-gradient-to-br ${action.color} shadow-lg`}
+                  >
                     <action.icon className="h-8 w-8 text-white" />
                   </div>
                   <div>
@@ -414,7 +427,8 @@ export function SupervisorDashboard() {
                       {activity.employeeName}
                     </p>
                     <p className="text-white/70 text-xs">
-                      {activity.action} {activity.formCode && `(${activity.formCode})`}
+                      {activity.action}{" "}
+                      {activity.formCode && `(${activity.formCode})`}
                     </p>
                     <div className="flex items-center gap-3 mt-1">
                       <span className="text-blue-300 text-xs flex items-center gap-1">
@@ -507,22 +521,35 @@ export function SupervisorDashboard() {
               <div className="p-4 bg-white/5 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-white font-medium">Manhã</span>
-                  <Badge variant="default">{Math.ceil(metrics.pendingAssignments / 3)} tarefas</Badge>
+                  <Badge variant="default">
+                    {Math.ceil(metrics.pendingAssignments / 3)} tarefas
+                  </Badge>
                 </div>
                 <p className="text-sm text-white/70">08:00 - 12:00</p>
               </div>
               <div className="p-4 bg-white/5 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-white font-medium">Tarde</span>
-                  <Badge variant="secondary">{Math.floor(metrics.pendingAssignments / 3)} tarefas</Badge>
+                  <Badge variant="secondary">
+                    {Math.floor(metrics.pendingAssignments / 3)} tarefas
+                  </Badge>
                 </div>
                 <p className="text-sm text-white/70">13:00 - 17:00</p>
               </div>
               <div className="p-4 bg-white/5 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-white font-medium">Noite</span>
-                  <Badge variant="outline" className="text-white border-white/20">
-                    {Math.max(0, metrics.pendingAssignments - Math.ceil(metrics.pendingAssignments / 3) - Math.floor(metrics.pendingAssignments / 3))} tarefas
+                  <Badge
+                    variant="outline"
+                    className="text-white border-white/20"
+                  >
+                    {Math.max(
+                      0,
+                      metrics.pendingAssignments -
+                        Math.ceil(metrics.pendingAssignments / 3) -
+                        Math.floor(metrics.pendingAssignments / 3),
+                    )}{" "}
+                    tarefas
                   </Badge>
                 </div>
                 <p className="text-sm text-white/70">18:00 - 22:00</p>

@@ -46,9 +46,9 @@ interface AssignedTask {
     location: string;
   };
   interventionType: string;
-  priority: 'high' | 'medium' | 'low';
+  priority: "high" | "medium" | "low";
   estimatedTime: number;
-  status: 'pending' | 'in_progress' | 'completed';
+  status: "pending" | "in_progress" | "completed";
   assignedAt: string;
   dueTime?: string;
   completedAt?: string;
@@ -83,12 +83,15 @@ export function OperationalDashboard() {
 
       const today = new Date().toDateString();
       const completedToday = tasksData.filter(
-        (task) => task.status === 'completed' && 
-        task.completedAt && 
-        new Date(task.completedAt).toDateString() === today
+        (task) =>
+          task.status === "completed" &&
+          task.completedAt &&
+          new Date(task.completedAt).toDateString() === today,
       ).length;
 
-      const inProgress = tasksData.filter(task => task.status === 'in_progress').length;
+      const inProgress = tasksData.filter(
+        (task) => task.status === "in_progress",
+      ).length;
 
       setMetrics({
         assignedForms: tasksData.length,
@@ -100,9 +103,11 @@ export function OperationalDashboard() {
       });
 
       setAssignedTasks(tasksData);
-      
+
       // Set current task if any is in progress
-      const activeTask = tasksData.find(task => task.status === 'in_progress');
+      const activeTask = tasksData.find(
+        (task) => task.status === "in_progress",
+      );
       setCurrentTask(activeTask || null);
     } catch (error) {
       console.error("Error loading operational metrics:", error);
@@ -122,8 +127,8 @@ export function OperationalDashboard() {
       if (savedForms) {
         const forms = JSON.parse(savedForms);
         // Filter forms assigned to current user
-        return forms.filter((f: any) => 
-          f.assignedTo === user?.id || f.status !== 'completed'
+        return forms.filter(
+          (f: any) => f.assignedTo === user?.id || f.status !== "completed",
         );
       }
     } catch (error) {
@@ -136,31 +141,35 @@ export function OperationalDashboard() {
     try {
       const savedForms = localStorage.getItem("cleaningForms");
       const savedAircraft = localStorage.getItem("aviation_aircraft");
-      
+
       if (savedForms && savedAircraft) {
         const forms = JSON.parse(savedForms);
         const aircraft = JSON.parse(savedAircraft);
-        
+
         const tasks: AssignedTask[] = [];
-        
+
         forms.slice(0, 5).forEach((form: any, index: number) => {
           const aircraftData = aircraft[index % aircraft.length] || {
-            registration: `D2-${String(index + 1).padStart(3, '0')}`,
+            registration: `D2-${String(index + 1).padStart(3, "0")}`,
             model: "Boeing 737",
-            location: "Terminal A"
+            location: "Terminal A",
           };
-          
-          const priorities: Array<'high' | 'medium' | 'low'> = ['high', 'medium', 'low'];
-          const interventions = [
-            "Limpeza Exterior", 
-            "Limpeza Interior", 
-            "Polimento", 
-            "Lavagem Profunda"
+
+          const priorities: Array<"high" | "medium" | "low"> = [
+            "high",
+            "medium",
+            "low",
           ];
-          
+          const interventions = [
+            "Limpeza Exterior",
+            "Limpeza Interior",
+            "Polimento",
+            "Lavagem Profunda",
+          ];
+
           tasks.push({
             id: form.id || `task-${index}`,
-            code: form.code || `FORM-${String(index + 1).padStart(4, '0')}`,
+            code: form.code || `FORM-${String(index + 1).padStart(4, "0")}`,
             aircraft: {
               registration: aircraftData.registration,
               model: aircraftData.model,
@@ -168,21 +177,27 @@ export function OperationalDashboard() {
             },
             interventionType: interventions[index % interventions.length],
             priority: priorities[index % priorities.length],
-            estimatedTime: 30 + (index * 15),
-            status: form.status === 'completed' ? 'completed' : 
-                   form.status === 'in_progress' ? 'in_progress' : 'pending',
+            estimatedTime: 30 + index * 15,
+            status:
+              form.status === "completed"
+                ? "completed"
+                : form.status === "in_progress"
+                  ? "in_progress"
+                  : "pending",
             assignedAt: form.createdAt || new Date().toISOString(),
             dueTime: form.dueTime,
             completedAt: form.completedAt,
           });
         });
-        
+
         return tasks.sort((a, b) => {
-          if (a.status === 'in_progress') return -1;
-          if (b.status === 'in_progress') return 1;
-          if (a.status === 'pending' && b.status === 'completed') return -1;
-          if (b.status === 'pending' && a.status === 'completed') return 1;
-          return new Date(a.assignedAt).getTime() - new Date(b.assignedAt).getTime();
+          if (a.status === "in_progress") return -1;
+          if (b.status === "in_progress") return 1;
+          if (a.status === "pending" && b.status === "completed") return -1;
+          if (b.status === "pending" && a.status === "completed") return 1;
+          return (
+            new Date(a.assignedAt).getTime() - new Date(b.assignedAt).getTime()
+          );
         });
       }
     } catch (error) {
@@ -193,14 +208,14 @@ export function OperationalDashboard() {
 
   const handleStartTask = async (taskId: string) => {
     try {
-      const updatedTasks = assignedTasks.map(task => 
-        task.id === taskId ? { ...task, status: 'in_progress' as const } : task
+      const updatedTasks = assignedTasks.map((task) =>
+        task.id === taskId ? { ...task, status: "in_progress" as const } : task,
       );
       setAssignedTasks(updatedTasks);
-      
-      const startedTask = updatedTasks.find(task => task.id === taskId);
+
+      const startedTask = updatedTasks.find((task) => task.id === taskId);
       setCurrentTask(startedTask || null);
-      
+
       toast({
         title: "Tarefa iniciada",
         description: `Limpeza da aeronave ${startedTask?.aircraft.registration} iniciada.`,
@@ -216,12 +231,12 @@ export function OperationalDashboard() {
 
   const handlePauseTask = async (taskId: string) => {
     try {
-      const updatedTasks = assignedTasks.map(task => 
-        task.id === taskId ? { ...task, status: 'pending' as const } : task
+      const updatedTasks = assignedTasks.map((task) =>
+        task.id === taskId ? { ...task, status: "pending" as const } : task,
       );
       setAssignedTasks(updatedTasks);
       setCurrentTask(null);
-      
+
       toast({
         title: "Tarefa pausada",
         description: "Você pode retomar a tarefa a qualquer momento.",
@@ -238,30 +253,33 @@ export function OperationalDashboard() {
   const handleCompleteTask = async (taskId: string) => {
     try {
       const completedTime = new Date().toISOString();
-      const updatedTasks = assignedTasks.map(task => 
-        task.id === taskId ? { 
-          ...task, 
-          status: 'completed' as const,
-          completedAt: completedTime 
-        } : task
+      const updatedTasks = assignedTasks.map((task) =>
+        task.id === taskId
+          ? {
+              ...task,
+              status: "completed" as const,
+              completedAt: completedTime,
+            }
+          : task,
       );
       setAssignedTasks(updatedTasks);
       setCurrentTask(null);
-      
+
       // Update metrics
       const today = new Date().toDateString();
       const completedToday = updatedTasks.filter(
-        task => task.status === 'completed' && 
-        task.completedAt && 
-        new Date(task.completedAt).toDateString() === today
+        (task) =>
+          task.status === "completed" &&
+          task.completedAt &&
+          new Date(task.completedAt).toDateString() === today,
       ).length;
-      
-      setMetrics(prev => ({
+
+      setMetrics((prev) => ({
         ...prev,
         completedToday,
         inProgress: prev.inProgress - 1,
       }));
-      
+
       toast({
         title: "Tarefa concluída",
         description: "Parabéns! Tarefa marcada como concluída.",
@@ -290,39 +308,41 @@ export function OperationalDashboard() {
     }
   };
 
-  const getPriorityColor = (priority: AssignedTask['priority']) => {
+  const getPriorityColor = (priority: AssignedTask["priority"]) => {
     switch (priority) {
-      case 'high':
-        return 'border-red-400/50 bg-red-500/10';
-      case 'medium':
-        return 'border-orange-400/50 bg-orange-500/10';
-      case 'low':
-        return 'border-green-400/50 bg-green-500/10';
+      case "high":
+        return "border-red-400/50 bg-red-500/10";
+      case "medium":
+        return "border-orange-400/50 bg-orange-500/10";
+      case "low":
+        return "border-green-400/50 bg-green-500/10";
       default:
-        return 'border-white/20 bg-white/5';
+        return "border-white/20 bg-white/5";
     }
   };
 
-  const getPriorityBadge = (priority: AssignedTask['priority']) => {
+  const getPriorityBadge = (priority: AssignedTask["priority"]) => {
     switch (priority) {
-      case 'high':
+      case "high":
         return <Badge variant="destructive">Alta</Badge>;
-      case 'medium':
-        return <Badge className="bg-orange-500 hover:bg-orange-600">Média</Badge>;
-      case 'low':
+      case "medium":
+        return (
+          <Badge className="bg-orange-500 hover:bg-orange-600">Média</Badge>
+        );
+      case "low":
         return <Badge variant="secondary">Baixa</Badge>;
       default:
         return <Badge variant="outline">Normal</Badge>;
     }
   };
 
-  const getStatusIcon = (status: AssignedTask['status']) => {
+  const getStatusIcon = (status: AssignedTask["status"]) => {
     switch (status) {
-      case 'completed':
+      case "completed":
         return <CheckCircle className="h-5 w-5 text-green-400" />;
-      case 'in_progress':
+      case "in_progress":
         return <PlayCircle className="h-5 w-5 text-blue-400" />;
-      case 'pending':
+      case "pending":
         return <Clock className="h-5 w-5 text-orange-400" />;
       default:
         return <FileText className="h-5 w-5 text-gray-400" />;
@@ -441,7 +461,9 @@ export function OperationalDashboard() {
                   <h3 className="text-lg font-bold text-white">
                     {currentTask.aircraft.registration}
                   </h3>
-                  <p className="text-blue-200">{currentTask.interventionType}</p>
+                  <p className="text-blue-200">
+                    {currentTask.interventionType}
+                  </p>
                   <p className="text-sm text-blue-300 flex items-center gap-1 mt-1">
                     <MapPin className="h-3 w-3" />
                     {currentTask.aircraft.location}
@@ -514,7 +536,9 @@ export function OperationalDashboard() {
                     {getStatusIcon(task.status)}
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-white font-semibold">{task.code}</h3>
+                        <h3 className="text-white font-semibold">
+                          {task.code}
+                        </h3>
                         {getPriorityBadge(task.priority)}
                       </div>
                       <p className="text-white/80 text-sm">
@@ -526,14 +550,13 @@ export function OperationalDashboard() {
                           {task.aircraft.location}
                         </span>
                         <span className="text-blue-300 text-xs flex items-center gap-1">
-                          <Timer className="h-3 w-3" />
-                          ~{task.estimatedTime}min
+                          <Timer className="h-3 w-3" />~{task.estimatedTime}min
                         </span>
                       </div>
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    {task.status === 'pending' && (
+                    {task.status === "pending" && (
                       <Button
                         onClick={() => handleStartTask(task.id)}
                         size="sm"
@@ -543,7 +566,7 @@ export function OperationalDashboard() {
                         Iniciar
                       </Button>
                     )}
-                    {task.status === 'in_progress' && (
+                    {task.status === "in_progress" && (
                       <div className="flex gap-2">
                         <Button
                           onClick={() => handlePauseTask(task.id)}
@@ -564,8 +587,11 @@ export function OperationalDashboard() {
                         </Button>
                       </div>
                     )}
-                    {task.status === 'completed' && (
-                      <Badge variant="secondary" className="bg-green-500/20 text-green-300">
+                    {task.status === "completed" && (
+                      <Badge
+                        variant="secondary"
+                        className="bg-green-500/20 text-green-300"
+                      >
                         Concluída
                       </Badge>
                     )}
@@ -591,13 +617,17 @@ export function OperationalDashboard() {
           <Card className="bg-gradient-to-br from-blue-500/20 to-blue-600/30 backdrop-blur-xl border border-blue-400/50 hover:scale-105 transition-all duration-300 cursor-pointer touch-manipulation">
             <CardContent className="p-6 text-center">
               <FileText className="h-12 w-12 text-blue-400 mx-auto mb-3" />
-              <h3 className="text-lg font-bold text-white mb-2">Minhas Folhas</h3>
-              <p className="text-sm text-blue-300">Ver todas as folhas de limpeza</p>
+              <h3 className="text-lg font-bold text-white mb-2">
+                Minhas Folhas
+              </h3>
+              <p className="text-sm text-blue-300">
+                Ver todas as folhas de limpeza
+              </p>
             </CardContent>
           </Card>
         </Link>
 
-        <Card 
+        <Card
           className="bg-gradient-to-br from-green-500/20 to-green-600/30 backdrop-blur-xl border border-green-400/50 hover:scale-105 transition-all duration-300 cursor-pointer touch-manipulation"
           onClick={handleUploadPhotos}
         >
@@ -620,7 +650,9 @@ export function OperationalDashboard() {
             <CardContent className="p-6 text-center">
               <User className="h-12 w-12 text-purple-400 mx-auto mb-3" />
               <h3 className="text-lg font-bold text-white mb-2">Meu Perfil</h3>
-              <p className="text-sm text-purple-300">Configurações e performance</p>
+              <p className="text-sm text-purple-300">
+                Configurações e performance
+              </p>
             </CardContent>
           </Card>
         </Link>

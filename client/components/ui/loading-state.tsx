@@ -1,6 +1,13 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Loader2, Plane, Settings, RefreshCw, Download, Upload } from "lucide-react";
+import {
+  Loader2,
+  Plane,
+  Settings,
+  RefreshCw,
+  Download,
+  Upload,
+} from "lucide-react";
 
 interface LoadingStateProps {
   variant?: "default" | "aviation" | "minimal" | "card" | "inline";
@@ -31,9 +38,16 @@ export function LoadingState({
 
   if (variant === "aviation") {
     return (
-      <div className={cn("flex flex-col items-center justify-center py-8", className)}>
+      <div
+        className={cn(
+          "flex flex-col items-center justify-center py-8",
+          className,
+        )}
+      >
         <div className="relative">
-          <Plane className={cn("text-blue-400 animate-pulse", sizeClasses[size])} />
+          <Plane
+            className={cn("text-blue-400 animate-pulse", sizeClasses[size])}
+          />
           <div className="absolute inset-0 animate-spin">
             <Loader2 className={cn("text-blue-600", sizeClasses[size])} />
           </div>
@@ -64,9 +78,13 @@ export function LoadingState({
   if (variant === "minimal") {
     return (
       <div className={cn("flex items-center gap-2", className)}>
-        <Loader2 className={cn("animate-spin text-blue-400", sizeClasses[size])} />
+        <Loader2
+          className={cn("animate-spin text-blue-400", sizeClasses[size])}
+        />
         {message && (
-          <span className={cn("text-white", messageSizes[size])}>{message}</span>
+          <span className={cn("text-white", messageSizes[size])}>
+            {message}
+          </span>
         )}
       </div>
     );
@@ -74,12 +92,16 @@ export function LoadingState({
 
   if (variant === "card") {
     return (
-      <div className={cn(
-        "bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-lg p-6",
-        className
-      )}>
+      <div
+        className={cn(
+          "bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-lg p-6",
+          className,
+        )}
+      >
         <div className="flex flex-col items-center justify-center">
-          <Loader2 className={cn("animate-spin text-blue-400 mb-4", sizeClasses[size])} />
+          <Loader2
+            className={cn("animate-spin text-blue-400 mb-4", sizeClasses[size])}
+          />
           {message && (
             <p className={cn("text-white text-center", messageSizes[size])}>
               {message}
@@ -107,9 +129,13 @@ export function LoadingState({
   if (variant === "inline") {
     return (
       <div className={cn("flex items-center gap-2 py-2", className)}>
-        <Loader2 className={cn("animate-spin text-blue-400", sizeClasses[size])} />
+        <Loader2
+          className={cn("animate-spin text-blue-400", sizeClasses[size])}
+        />
         {message && (
-          <span className={cn("text-white/80", messageSizes[size])}>{message}</span>
+          <span className={cn("text-white/80", messageSizes[size])}>
+            {message}
+          </span>
         )}
       </div>
     );
@@ -117,8 +143,15 @@ export function LoadingState({
 
   // Default variant
   return (
-    <div className={cn("flex flex-col items-center justify-center py-8", className)}>
-      <Loader2 className={cn("animate-spin text-blue-400 mb-4", sizeClasses[size])} />
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center py-8",
+        className,
+      )}
+    >
+      <Loader2
+        className={cn("animate-spin text-blue-400 mb-4", sizeClasses[size])}
+      />
       {message && (
         <p className={cn("text-white text-center", messageSizes[size])}>
           {message}
@@ -204,7 +237,7 @@ export function Skeleton({
   const baseClasses = cn(
     "bg-white/10 rounded",
     animate && "animate-pulse",
-    className
+    className,
   );
 
   if (variant === "text") {
@@ -270,7 +303,7 @@ export function ProgressIndicator({
         <div
           className={cn(
             "h-full transition-all duration-300 ease-out",
-            variantClasses[variant]
+            variantClasses[variant],
           )}
           style={{ width: `${clampedProgress}%` }}
         />
@@ -310,14 +343,14 @@ export function PulseIndicator({
           "rounded-full animate-ping absolute",
           sizeClasses[variant],
           colorClasses[color],
-          "opacity-75"
+          "opacity-75",
         )}
       />
       <div
         className={cn(
           "rounded-full",
           sizeClasses[variant],
-          colorClasses[color]
+          colorClasses[color],
         )}
       />
     </div>

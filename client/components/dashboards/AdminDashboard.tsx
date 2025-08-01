@@ -39,7 +39,7 @@ interface SystemMetrics {
   totalEmployees: number;
   activeEmployees: number;
   systemErrors: number;
-  syncStatus: 'online' | 'offline' | 'syncing';
+  syncStatus: "online" | "offline" | "syncing";
 }
 
 export function AdminDashboard() {
@@ -56,7 +56,7 @@ export function AdminDashboard() {
     totalEmployees: 0,
     activeEmployees: 0,
     systemErrors: 0,
-    syncStatus: 'online',
+    syncStatus: "online",
   });
   const [loading, setLoading] = useState(true);
 
@@ -85,7 +85,7 @@ export function AdminDashboard() {
         totalEmployees: employeesData.total,
         activeEmployees: employeesData.active,
         systemErrors: 0,
-        syncStatus: navigator.onLine ? 'online' : 'offline',
+        syncStatus: navigator.onLine ? "online" : "offline",
       });
     } catch (error) {
       console.error("Error loading admin metrics:", error);
@@ -138,8 +138,9 @@ export function AdminDashboard() {
         const forms = JSON.parse(savedForms);
         return {
           total: forms.length,
-          pending: forms.filter((f: any) => 
-            f.status === "draft" || f.status === "pending_signatures"
+          pending: forms.filter(
+            (f: any) =>
+              f.status === "draft" || f.status === "pending_signatures",
           ).length,
           completed: forms.filter((f: any) => f.status === "completed").length,
         };
@@ -153,19 +154,19 @@ export function AdminDashboard() {
   const handleSystemAction = async (action: string) => {
     try {
       switch (action) {
-        case 'force-sync':
+        case "force-sync":
           toast({
             title: "Sincronização iniciada",
             description: "Sincronização forçada com todos os dispositivos.",
           });
           break;
-        case 'backup':
+        case "backup":
           toast({
             title: "Backup iniciado",
             description: "Backup completo do sistema em andamento.",
           });
           break;
-        case 'maintenance':
+        case "maintenance":
           toast({
             title: "Modo manutenção",
             description: "Sistema entrará em manutenção em 5 minutos.",
@@ -187,8 +188,12 @@ export function AdminDashboard() {
     return (
       <div className="text-center py-8">
         <AlertTriangle className="h-12 w-12 text-orange-400 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-white mb-2">Acesso Restrito</h3>
-        <p className="text-white/70">Você não tem permissão para acessar o dashboard de administrador.</p>
+        <h3 className="text-lg font-semibold text-white mb-2">
+          Acesso Restrito
+        </h3>
+        <p className="text-white/70">
+          Você não tem permissão para acessar o dashboard de administrador.
+        </p>
       </div>
     );
   }
@@ -252,7 +257,7 @@ export function AdminDashboard() {
             Atualizar
           </Button>
           <Button
-            onClick={() => handleSystemAction('force-sync')}
+            onClick={() => handleSystemAction("force-sync")}
             variant="outline"
             size="sm"
             className="border-blue-400/50 text-blue-300 hover:bg-blue-500/20"
@@ -313,11 +318,19 @@ export function AdminDashboard() {
               <div>
                 <p className="text-sm text-white/70">Status Sistema</p>
                 <div className="flex items-center gap-2 mt-1">
-                  <Badge variant={metrics.syncStatus === 'online' ? 'default' : 'destructive'}>
-                    {metrics.syncStatus === 'online' ? 'Online' : 'Offline'}
+                  <Badge
+                    variant={
+                      metrics.syncStatus === "online"
+                        ? "default"
+                        : "destructive"
+                    }
+                  >
+                    {metrics.syncStatus === "online" ? "Online" : "Offline"}
                   </Badge>
                   {metrics.systemErrors > 0 && (
-                    <Badge variant="destructive">{metrics.systemErrors} erros</Badge>
+                    <Badge variant="destructive">
+                      {metrics.systemErrors} erros
+                    </Badge>
                   )}
                 </div>
               </div>
@@ -329,21 +342,26 @@ export function AdminDashboard() {
 
       {/* Quick Actions */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-white">Ações Administrativas</h3>
+        <h3 className="text-lg font-semibold text-white">
+          Ações Administrativas
+        </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {quickActions.map((action, index) => {
-            const hasActionPermission = !action.permission || hasPermission(action.permission);
-            
+            const hasActionPermission =
+              !action.permission || hasPermission(action.permission);
+
             return (
               <Link key={index} to={hasActionPermission ? action.link : "#"}>
                 <Card
                   className={`bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 hover:scale-105 transition-all duration-300 touch-manipulation ${
-                    !hasActionPermission ? 'opacity-50 cursor-not-allowed' : ''
+                    !hasActionPermission ? "opacity-50 cursor-not-allowed" : ""
                   }`}
                 >
                   <CardContent className="p-6">
                     <div className="flex flex-col items-center text-center space-y-3">
-                      <div className={`p-3 rounded-xl bg-gradient-to-br ${action.color} shadow-lg`}>
+                      <div
+                        className={`p-3 rounded-xl bg-gradient-to-br ${action.color} shadow-lg`}
+                      >
                         <action.icon className="h-8 w-8 text-white" />
                       </div>
                       <div>
@@ -419,28 +437,36 @@ export function AdminDashboard() {
             <div className="flex items-start space-x-3">
               <CheckCircle className="h-4 w-4 text-green-400 mt-0.5" />
               <div className="flex-1 min-w-0">
-                <p className="text-white text-sm">Backup automático concluído</p>
+                <p className="text-white text-sm">
+                  Backup automático concluído
+                </p>
                 <p className="text-white/60 text-xs">há 2 horas</p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
               <Users className="h-4 w-4 text-blue-400 mt-0.5" />
               <div className="flex-1 min-w-0">
-                <p className="text-white text-sm">3 novos usuários registrados</p>
+                <p className="text-white text-sm">
+                  3 novos usuários registrados
+                </p>
                 <p className="text-white/60 text-xs">há 4 horas</p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
               <AlertTriangle className="h-4 w-4 text-orange-400 mt-0.5" />
               <div className="flex-1 min-w-0">
-                <p className="text-white text-sm">Falha de sincronização resolvida</p>
+                <p className="text-white text-sm">
+                  Falha de sincronização resolvida
+                </p>
                 <p className="text-white/60 text-xs">há 6 horas</p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
               <Database className="h-4 w-4 text-purple-400 mt-0.5" />
               <div className="flex-1 min-w-0">
-                <p className="text-white text-sm">Migração de dados concluída</p>
+                <p className="text-white text-sm">
+                  Migração de dados concluída
+                </p>
                 <p className="text-white/60 text-xs">ontem</p>
               </div>
             </div>
@@ -461,7 +487,7 @@ export function AdminDashboard() {
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">
           <Button
-            onClick={() => handleSystemAction('backup')}
+            onClick={() => handleSystemAction("backup")}
             variant="outline"
             className="border-blue-400/50 text-blue-300 hover:bg-blue-500/20"
           >
@@ -469,7 +495,7 @@ export function AdminDashboard() {
             Backup Manual
           </Button>
           <Button
-            onClick={() => handleSystemAction('maintenance')}
+            onClick={() => handleSystemAction("maintenance")}
             variant="outline"
             className="border-orange-400/50 text-orange-300 hover:bg-orange-500/20"
           >
@@ -477,7 +503,7 @@ export function AdminDashboard() {
             Modo Manutenção
           </Button>
           <Button
-            onClick={() => handleSystemAction('force-sync')}
+            onClick={() => handleSystemAction("force-sync")}
             variant="outline"
             className="border-green-400/50 text-green-300 hover:bg-green-500/20"
           >

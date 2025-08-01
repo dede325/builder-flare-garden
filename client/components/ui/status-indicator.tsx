@@ -26,17 +26,17 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
-export type StatusType = 
-  | "success" 
-  | "error" 
-  | "warning" 
-  | "info" 
-  | "pending" 
-  | "processing" 
-  | "online" 
-  | "offline" 
-  | "syncing" 
-  | "active" 
+export type StatusType =
+  | "success"
+  | "error"
+  | "warning"
+  | "info"
+  | "pending"
+  | "processing"
+  | "online"
+  | "offline"
+  | "syncing"
+  | "active"
   | "inactive";
 
 interface StatusIndicatorProps {
@@ -188,13 +188,18 @@ export function StatusIndicator({
 
   if (variant === "badge") {
     return (
-      <Badge variant={config.badgeVariant} className={cn("flex items-center gap-1", className)}>
+      <Badge
+        variant={config.badgeVariant}
+        className={cn("flex items-center gap-1", className)}
+      >
         {showIcon && (
-          <Icon 
+          <Icon
             className={cn(
-              sizeClasses[size], 
-              animated && (status === "processing" || status === "syncing") && "animate-spin"
-            )} 
+              sizeClasses[size],
+              animated &&
+                (status === "processing" || status === "syncing") &&
+                "animate-spin",
+            )}
           />
         )}
         <span className={textSizes[size]}>{config.label}</span>
@@ -206,35 +211,43 @@ export function StatusIndicator({
     return (
       <div className={cn("flex items-center gap-2", className)}>
         {showIcon && (
-          <Icon 
+          <Icon
             className={cn(
               sizeClasses[size],
               config.color,
-              animated && (status === "processing" || status === "syncing") && "animate-spin"
-            )} 
+              animated &&
+                (status === "processing" || status === "syncing") &&
+                "animate-spin",
+            )}
           />
         )}
-        <span className={cn("text-white", textSizes[size])}>{config.label}</span>
+        <span className={cn("text-white", textSizes[size])}>
+          {config.label}
+        </span>
       </div>
     );
   }
 
   if (variant === "card") {
     return (
-      <div className={cn(
-        "p-3 rounded-lg border",
-        config.bgColor,
-        config.borderColor,
-        className
-      )}>
+      <div
+        className={cn(
+          "p-3 rounded-lg border",
+          config.bgColor,
+          config.borderColor,
+          className,
+        )}
+      >
         <div className="flex items-center gap-3">
           {showIcon && (
-            <Icon 
+            <Icon
               className={cn(
                 sizeClasses[size],
                 config.color,
-                animated && (status === "processing" || status === "syncing") && "animate-spin"
-              )} 
+                animated &&
+                  (status === "processing" || status === "syncing") &&
+                  "animate-spin",
+              )}
             />
           )}
           <span className={cn("text-white font-medium", textSizes[size])}>
@@ -249,12 +262,14 @@ export function StatusIndicator({
     return (
       <div className={cn("flex items-center gap-1", className)}>
         {showIcon && (
-          <Icon 
+          <Icon
             className={cn(
               sizeClasses[size],
               config.color,
-              animated && (status === "processing" || status === "syncing") && "animate-spin"
-            )} 
+              animated &&
+                (status === "processing" || status === "syncing") &&
+                "animate-spin",
+            )}
           />
         )}
       </div>
@@ -335,7 +350,9 @@ export function TaskStatus({ status, progress, className }: TaskStatusProps) {
       case "not_started":
         return "Não iniciado";
       case "in_progress":
-        return progress ? `Em andamento (${Math.round(progress)}%)` : "Em andamento";
+        return progress
+          ? `Em andamento (${Math.round(progress)}%)`
+          : "Em andamento";
       case "completed":
         return "Concluído";
       case "cancelled":
@@ -441,7 +458,7 @@ export function QualityScore({
   className,
 }: QualityScoreProps) {
   const percentage = (score / maxScore) * 100;
-  
+
   const getStatus = (): StatusType => {
     if (percentage >= 90) return "success";
     if (percentage >= 70) return "warning";

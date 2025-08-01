@@ -27,7 +27,14 @@ import {
 import { useToast } from "@/hooks/use-toast";
 
 interface ActionFeedbackProps {
-  action: "save" | "delete" | "upload" | "download" | "sync" | "like" | "dislike";
+  action:
+    | "save"
+    | "delete"
+    | "upload"
+    | "download"
+    | "sync"
+    | "like"
+    | "dislike";
   status: "idle" | "loading" | "success" | "error";
   onAction?: () => void;
   disabled?: boolean;
@@ -167,13 +174,13 @@ export function ActionFeedback({
         className={cn(
           status === "success" && "text-green-400 hover:text-green-300",
           status === "error" && "text-red-400 hover:text-red-300",
-          className
+          className,
         )}
       >
         <Icon
           className={cn(
             sizeClasses[size],
-            status === "loading" && "animate-spin"
+            status === "loading" && "animate-spin",
           )}
         />
       </Button>
@@ -192,7 +199,7 @@ export function ActionFeedback({
         className={cn(
           sizeClasses[size],
           status === "loading" && "animate-spin",
-          "mr-2"
+          "mr-2",
         )}
       />
       {getLabel()}
@@ -242,16 +249,14 @@ export function Rating({
             className={cn(
               "transition-colors",
               !readonly && "hover:scale-110 transform transition-transform",
-              readonly && "cursor-default"
+              readonly && "cursor-default",
             )}
           >
             <Star
               className={cn(
                 sizeClasses[size],
-                isFilled
-                  ? "text-yellow-400 fill-yellow-400"
-                  : "text-gray-400",
-                !readonly && "hover:text-yellow-300"
+                isFilled ? "text-yellow-400 fill-yellow-400" : "text-gray-400",
+                !readonly && "hover:text-yellow-300",
               )}
             />
           </button>
@@ -290,7 +295,7 @@ export function ToggleButton({
   className,
 }: ToggleButtonProps) {
   const ActiveIcon = PressedIcon || Icon;
-  const currentLabel = pressed ? (pressedLabel || label) : label;
+  const currentLabel = pressed ? pressedLabel || label : label;
 
   const sizeClasses = {
     sm: "h-3 w-3",
@@ -305,7 +310,7 @@ export function ToggleButton({
       onClick={() => onPressedChange(!pressed)}
       className={cn(
         pressed && "bg-blue-600 hover:bg-blue-700 text-white",
-        className
+        className,
       )}
     >
       {pressed ? (
@@ -358,14 +363,14 @@ export function LikeButton({
         "flex items-center gap-2 transition-all",
         liked && "text-red-400 hover:text-red-300",
         isAnimating && "scale-110",
-        className
+        className,
       )}
     >
       <Heart
         className={cn(
           sizeClasses[size],
           liked && "fill-red-400",
-          isAnimating && "animate-pulse"
+          isAnimating && "animate-pulse",
         )}
       />
       {showCount && count !== undefined && (
@@ -431,7 +436,7 @@ export function SuccessAnimation({
     <div
       className={cn(
         "fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm",
-        className
+        className,
       )}
     >
       <Card className="bg-green-500/20 border-green-400/50 backdrop-blur-xl p-8">
@@ -465,10 +470,10 @@ export function PulseButton({
 
   const handleClick = () => {
     if (disabled) return;
-    
+
     setIsPulsing(true);
     onClick?.();
-    
+
     setTimeout(() => setIsPulsing(false), 1000);
   };
 
@@ -486,7 +491,7 @@ export function PulseButton({
       className={cn(
         "relative transition-all duration-300",
         isPulsing && `animate-pulse shadow-lg ${colorClasses[pulseColor]}`,
-        className
+        className,
       )}
     >
       {children}

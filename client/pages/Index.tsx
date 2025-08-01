@@ -69,14 +69,14 @@ export default function Index() {
 
   // Determine dashboard type based on user role
   const getDashboardType = () => {
-    if (hasRole('admin') || hasMinimumRoleLevel(90)) {
-      return 'admin';
-    } else if (hasRole('supervisor') || hasMinimumRoleLevel(70)) {
-      return 'supervisor';
-    } else if (hasRole('client') || hasRole('cliente')) {
-      return 'client';
+    if (hasRole("admin") || hasMinimumRoleLevel(90)) {
+      return "admin";
+    } else if (hasRole("supervisor") || hasMinimumRoleLevel(70)) {
+      return "supervisor";
+    } else if (hasRole("client") || hasRole("cliente")) {
+      return "client";
     } else {
-      return 'operational';
+      return "operational";
     }
   };
 
@@ -356,25 +356,25 @@ export default function Index() {
                 Gestão completa de limpeza de aeronaves
               </p>
               <div className="flex items-center justify-center gap-2 mt-2">
-                {dashboardType === 'admin' && (
+                {dashboardType === "admin" && (
                   <Badge className="bg-red-500/20 text-red-300 border-red-400/50">
                     <Shield className="h-3 w-3 mr-1" />
                     Administrador
                   </Badge>
                 )}
-                {dashboardType === 'supervisor' && (
+                {dashboardType === "supervisor" && (
                   <Badge className="bg-blue-500/20 text-blue-300 border-blue-400/50">
                     <Eye className="h-3 w-3 mr-1" />
                     Supervisor
                   </Badge>
                 )}
-                {dashboardType === 'operational' && (
+                {dashboardType === "operational" && (
                   <Badge className="bg-green-500/20 text-green-300 border-green-400/50">
                     <Wrench className="h-3 w-3 mr-1" />
                     Operacional
                   </Badge>
                 )}
-                {dashboardType === 'client' && (
+                {dashboardType === "client" && (
                   <Badge className="bg-purple-500/20 text-purple-300 border-purple-400/50">
                     <Shield className="h-3 w-3 mr-1" />
                     Cliente
@@ -384,10 +384,10 @@ export default function Index() {
             </div>
 
             {/* Role-Based Dashboard */}
-            {dashboardType === 'admin' && <AdminDashboard />}
-            {dashboardType === 'supervisor' && <SupervisorDashboard />}
-            {dashboardType === 'operational' && <OperationalDashboard />}
-            {dashboardType === 'client' && <ClientDashboard />}
+            {dashboardType === "admin" && <AdminDashboard />}
+            {dashboardType === "supervisor" && <SupervisorDashboard />}
+            {dashboardType === "operational" && <OperationalDashboard />}
+            {dashboardType === "client" && <ClientDashboard />}
 
             {/* Intelligent Sync Status */}
             <SyncStatusIndicator showManualSync={true} />

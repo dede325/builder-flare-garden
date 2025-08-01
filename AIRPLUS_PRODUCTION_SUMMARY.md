@@ -114,7 +114,7 @@ npm run build:staging
 # Deploy para plataforma de hosting
 # Upload da pasta 'dist' para:
 # - Vercel
-# - Netlify  
+# - Netlify
 # - Cloudflare Pages
 ```
 
@@ -316,10 +316,10 @@ VITE_ENABLE_DEBUG_MODE=true
 
 **🎉 SISTEMA AIRPLUS AVIATION - READY FOR IMMEDIATE TAKEOFF!**
 
-*Sistema completamente implementado com todas as funcionalidades solicitadas.*  
-*Integração real Supabase, sistema de logos completo, validações avançadas.*  
-*Mobile apps prontos, ambientes separados, proteção role-based.*  
-*100% pronto para produção imediata!* 🚀
+_Sistema completamente implementado com todas as funcionalidades solicitadas._  
+_Integração real Supabase, sistema de logos completo, validações avançadas._  
+_Mobile apps prontos, ambientes separados, proteção role-based._  
+_100% pronto para produção imediata!_ 🚀
 
 ---
 

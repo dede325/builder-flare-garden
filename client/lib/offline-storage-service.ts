@@ -60,12 +60,12 @@ class OfflineDatabase extends Dexie {
   photoEvidence!: Table<OfflineEntity>;
   userProfiles!: Table<OfflineEntity>;
   configurations!: Table<OfflineEntity>;
-  
+
   // Sync management tables
   syncOperations!: Table<SyncOperation>;
   conflicts!: Table<ConflictResolution>;
   metadata!: Table<OfflineMetadata>;
-  
+
   // Cache tables for frequently accessed data
   cache!: Table<{ key: string; data: any; expiry: string; category: string }>;
 
@@ -80,12 +80,13 @@ class OfflineDatabase extends Dexie {
       photoEvidence: "id, syncStatus, lastModified, retryCount, hash",
       userProfiles: "id, syncStatus, lastModified, retryCount, hash",
       configurations: "id, syncStatus, lastModified, retryCount, hash",
-      
+
       // Sync management
-      syncOperations: "++id, operation, entityType, entityId, priority, timestamp, userId, retryCount",
+      syncOperations:
+        "++id, operation, entityType, entityId, priority, timestamp, userId, retryCount",
       conflicts: "id, entityType, timestamp, resolved",
       metadata: "key, category, timestamp",
-      
+
       // Cache with expiry
       cache: "key, category, expiry",
     });
@@ -105,7 +106,11 @@ class OfflineDatabase extends Dexie {
     this.configurations.hook("updating", this.addUpdateMetadata);
   }
 
-  private addCreationMetadata = (primKey: any, obj: OfflineEntity, trans: any) => {
+  private addCreationMetadata = (
+    primKey: any,
+    obj: OfflineEntity,
+    trans: any,
+  ) => {
     const now = new Date().toISOString();
     obj.lastModified = now;
     obj.syncStatus = "pending";
@@ -113,7 +118,12 @@ class OfflineDatabase extends Dexie {
     obj.hash = this.generateHash(obj.data);
   };
 
-  private addUpdateMetadata = (modifications: any, primKey: any, obj: OfflineEntity, trans: any) => {
+  private addUpdateMetadata = (
+    modifications: any,
+    primKey: any,
+    obj: OfflineEntity,
+    trans: any,
+  ) => {
     if (modifications.data !== undefined) {
       modifications.lastModified = new Date().toISOString();
       modifications.syncStatus = "pending";
@@ -128,7 +138,7 @@ class OfflineDatabase extends Dexie {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return hash.toString(36);
@@ -165,7 +175,10 @@ export class OfflineStorageService {
       initialized: { value: true, category: "config" as const },
       version: { value: "3.0.0", category: "config" as const },
       platform: { value: this.platform, category: "config" as const },
-      lastCleanup: { value: new Date().toISOString(), category: "sync" as const },
+      lastCleanup: {
+        value: new Date().toISOString(),
+        category: "sync" as const,
+      },
     };
 
     for (const [key, data] of Object.entries(metadata)) {
@@ -211,12 +224,18 @@ export class OfflineStorageService {
     };
 
     await this.db.cleaningForms.put(entity);
-    await this.addSyncOperation("create", "cleaning_forms", id, entity.data, "high");
-    
+    await this.addSyncOperation(
+      "create",
+      "cleaning_forms",
+      id,
+      entity.data,
+      "high",
+    );
+
     if (navigator.onLine) {
       this.syncEntity("cleaningForms", id);
     }
-    
+
     return id;
   }
 
@@ -236,8 +255,14 @@ export class OfflineStorageService {
     };
 
     await this.db.cleaningForms.put(entity);
-    await this.addSyncOperation("update", "cleaning_forms", id, updatedData, "high");
-    
+    await this.addSyncOperation(
+      "update",
+      "cleaning_forms",
+      id,
+      updatedData,
+      "high",
+    );
+
     if (navigator.onLine) {
       this.syncEntity("cleaningForms", id);
     }
@@ -250,7 +275,7 @@ export class OfflineStorageService {
 
   async getAllCleaningForms(): Promise<any[]> {
     const entities = await this.db.cleaningForms.toArray();
-    return entities.map(entity => ({
+    return entities.map((entity) => ({
       ...entity.data,
       _syncStatus: entity.syncStatus,
       _lastModified: entity.lastModified,
@@ -261,7 +286,7 @@ export class OfflineStorageService {
   async deleteCleaningForm(id: string): Promise<void> {
     await this.db.cleaningForms.delete(id);
     await this.addSyncOperation("delete", "cleaning_forms", id, null, "normal");
-    
+
     if (navigator.onLine) {
       this.syncDeletion("cleaning_forms", id);
     }
@@ -279,12 +304,18 @@ export class OfflineStorageService {
     };
 
     await this.db.employees.put(entity);
-    await this.addSyncOperation("create", "employees", id, entity.data, "normal");
-    
+    await this.addSyncOperation(
+      "create",
+      "employees",
+      id,
+      entity.data,
+      "normal",
+    );
+
     if (navigator.onLine) {
       this.syncEntity("employees", id);
     }
-    
+
     return id;
   }
 
@@ -304,8 +335,14 @@ export class OfflineStorageService {
     };
 
     await this.db.employees.put(entity);
-    await this.addSyncOperation("update", "employees", id, updatedData, "normal");
-    
+    await this.addSyncOperation(
+      "update",
+      "employees",
+      id,
+      updatedData,
+      "normal",
+    );
+
     if (navigator.onLine) {
       this.syncEntity("employees", id);
     }
@@ -313,7 +350,7 @@ export class OfflineStorageService {
 
   async getAllEmployees(): Promise<any[]> {
     const entities = await this.db.employees.toArray();
-    return entities.map(entity => ({
+    return entities.map((entity) => ({
       ...entity.data,
       _syncStatus: entity.syncStatus,
       _lastModified: entity.lastModified,
@@ -332,18 +369,24 @@ export class OfflineStorageService {
     };
 
     await this.db.aircraft.put(entity);
-    await this.addSyncOperation("create", "aircraft", id, entity.data, "normal");
-    
+    await this.addSyncOperation(
+      "create",
+      "aircraft",
+      id,
+      entity.data,
+      "normal",
+    );
+
     if (navigator.onLine) {
       this.syncEntity("aircraft", id);
     }
-    
+
     return id;
   }
 
   async getAllAircraft(): Promise<any[]> {
     const entities = await this.db.aircraft.toArray();
-    return entities.map(entity => ({
+    return entities.map((entity) => ({
       ...entity.data,
       _syncStatus: entity.syncStatus,
       _lastModified: entity.lastModified,
@@ -362,18 +405,24 @@ export class OfflineStorageService {
     };
 
     await this.db.photoEvidence.put(entity);
-    await this.addSyncOperation("create", "photo_evidence", id, entity.data, "high");
-    
+    await this.addSyncOperation(
+      "create",
+      "photo_evidence",
+      id,
+      entity.data,
+      "high",
+    );
+
     if (navigator.onLine) {
       this.syncEntity("photoEvidence", id);
     }
-    
+
     return id;
   }
 
   async getAllPhotoEvidence(): Promise<any[]> {
     const entities = await this.db.photoEvidence.toArray();
-    return entities.map(entity => ({
+    return entities.map((entity) => ({
       ...entity.data,
       _syncStatus: entity.syncStatus,
       _lastModified: entity.lastModified,
@@ -392,18 +441,24 @@ export class OfflineStorageService {
     };
 
     await this.db.configurations.put(entity);
-    await this.addSyncOperation("create", "configurations", id, entity.data, "low");
-    
+    await this.addSyncOperation(
+      "create",
+      "configurations",
+      id,
+      entity.data,
+      "low",
+    );
+
     if (navigator.onLine) {
       this.syncEntity("configurations", id);
     }
-    
+
     return id;
   }
 
   async getAllConfigurations(): Promise<any[]> {
     const entities = await this.db.configurations.toArray();
-    return entities.map(entity => ({
+    return entities.map((entity) => ({
       ...entity.data,
       _syncStatus: entity.syncStatus,
       _lastModified: entity.lastModified,
@@ -416,7 +471,7 @@ export class OfflineStorageService {
     entityType: string,
     entityId: string,
     data: any,
-    priority: "low" | "normal" | "high" | "critical" = "normal"
+    priority: "low" | "normal" | "high" | "critical" = "normal",
   ): Promise<void> {
     const syncOp: SyncOperation = {
       operation,
@@ -446,9 +501,12 @@ export class OfflineStorageService {
       // Sort by priority and timestamp
       const sortedOps = pendingOps.sort((a, b) => {
         const priorityOrder = { critical: 0, high: 1, normal: 2, low: 3 };
-        const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
+        const priorityDiff =
+          priorityOrder[a.priority] - priorityOrder[b.priority];
         if (priorityDiff !== 0) return priorityDiff;
-        return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+        return (
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+        );
       });
 
       let successCount = 0;
@@ -465,7 +523,9 @@ export class OfflineStorageService {
         }
       }
 
-      console.log(`Sync completed: ${successCount} success, ${errorCount} errors`);
+      console.log(
+        `Sync completed: ${successCount} success, ${errorCount} errors`,
+      );
       return errorCount === 0;
     } catch (error) {
       console.error("Sync operation failed:", error);
@@ -478,7 +538,9 @@ export class OfflineStorageService {
 
     switch (operation) {
       case "create":
-        const { error: createError } = await supabase.from(entityType).insert(data);
+        const { error: createError } = await supabase
+          .from(entityType)
+          .insert(data);
         if (createError) throw createError;
         break;
 
@@ -517,7 +579,10 @@ export class OfflineStorageService {
     }
   }
 
-  private async markEntityAsSynced(entityType: string, entityId: string): Promise<void> {
+  private async markEntityAsSynced(
+    entityType: string,
+    entityId: string,
+  ): Promise<void> {
     const tableMap: { [key: string]: Table<OfflineEntity> } = {
       cleaning_forms: this.db.cleaningForms,
       employees: this.db.employees,
@@ -537,7 +602,11 @@ export class OfflineStorageService {
     }
   }
 
-  private async markEntityAsError(entityType: string, entityId: string, error: string): Promise<void> {
+  private async markEntityAsError(
+    entityType: string,
+    entityId: string,
+    error: string,
+  ): Promise<void> {
     const tableMap: { [key: string]: Table<OfflineEntity> } = {
       cleaning_forms: this.db.cleaningForms,
       employees: this.db.employees,
@@ -564,7 +633,10 @@ export class OfflineStorageService {
     }, 100);
   }
 
-  private async syncDeletion(entityType: string, entityId: string): Promise<void> {
+  private async syncDeletion(
+    entityType: string,
+    entityId: string,
+  ): Promise<void> {
     // Handle deletion sync
     setTimeout(() => {
       this.syncPendingOperations();
@@ -576,14 +648,18 @@ export class OfflineStorageService {
     return await this.db.conflicts.where("resolved").equals(false).toArray();
   }
 
-  async resolveConflict(conflictId: string, resolution: "local" | "remote"): Promise<void> {
+  async resolveConflict(
+    conflictId: string,
+    resolution: "local" | "remote",
+  ): Promise<void> {
     const conflict = await this.db.conflicts.get(conflictId);
     if (!conflict) {
       throw new Error("Conflict not found");
     }
 
-    const dataToUse = resolution === "local" ? conflict.localData : conflict.remoteData;
-    
+    const dataToUse =
+      resolution === "local" ? conflict.localData : conflict.remoteData;
+
     // Apply resolution
     const tableMap: { [key: string]: Table<OfflineEntity> } = {
       cleaning_forms: this.db.cleaningForms,
@@ -616,7 +692,12 @@ export class OfflineStorageService {
   }
 
   // Cache management
-  async setCache(key: string, data: any, category: string = "general", ttlMinutes: number = 60): Promise<void> {
+  async setCache(
+    key: string,
+    data: any,
+    category: string = "general",
+    ttlMinutes: number = 60,
+  ): Promise<void> {
     const expiry = new Date(Date.now() + ttlMinutes * 60 * 1000).toISOString();
     await this.db.cache.put({ key, data, expiry, category });
   }
@@ -640,7 +721,11 @@ export class OfflineStorageService {
   }
 
   // Metadata management
-  async setMetadata(key: string, value: any, category: "sync" | "config" | "cache" | "user" = "config"): Promise<void> {
+  async setMetadata(
+    key: string,
+    value: any,
+    category: "sync" | "config" | "cache" | "user" = "config",
+  ): Promise<void> {
     await this.db.metadata.put({
       key,
       value,
@@ -663,7 +748,16 @@ export class OfflineStorageService {
     pendingOperations: number;
     conflicts: number;
   }> {
-    const [forms, employees, aircraft, photos, profiles, configs, operations, conflicts] = await Promise.all([
+    const [
+      forms,
+      employees,
+      aircraft,
+      photos,
+      profiles,
+      configs,
+      operations,
+      conflicts,
+    ] = await Promise.all([
       this.db.cleaningForms.toArray(),
       this.db.employees.toArray(),
       this.db.aircraft.toArray(),
@@ -674,13 +768,22 @@ export class OfflineStorageService {
       this.db.conflicts.where("resolved").equals(false).toArray(),
     ]);
 
-    const allEntities = [...forms, ...employees, ...aircraft, ...photos, ...profiles, ...configs];
-    
+    const allEntities = [
+      ...forms,
+      ...employees,
+      ...aircraft,
+      ...photos,
+      ...profiles,
+      ...configs,
+    ];
+
     return {
       totalEntities: allEntities.length,
-      syncedEntities: allEntities.filter(e => e.syncStatus === "synced").length,
-      pendingEntities: allEntities.filter(e => e.syncStatus === "pending").length,
-      errorEntities: allEntities.filter(e => e.syncStatus === "error").length,
+      syncedEntities: allEntities.filter((e) => e.syncStatus === "synced")
+        .length,
+      pendingEntities: allEntities.filter((e) => e.syncStatus === "pending")
+        .length,
+      errorEntities: allEntities.filter((e) => e.syncStatus === "error").length,
       pendingOperations: operations.length,
       conflicts: conflicts.length,
     };
@@ -689,23 +792,27 @@ export class OfflineStorageService {
   // Cleanup and maintenance
   async performMaintenance(): Promise<void> {
     console.log("Performing offline storage maintenance...");
-    
+
     // Clear expired cache
     await this.clearExpiredCache();
-    
+
     // Clean up old sync logs (keep last 1000)
-    const metadataCount = await this.db.metadata.where("category").equals("sync").count();
+    const metadataCount = await this.db.metadata
+      .where("category")
+      .equals("sync")
+      .count();
     if (metadataCount > 1000) {
       const oldEntries = await this.db.metadata
-        .where("category").equals("sync")
+        .where("category")
+        .equals("sync")
         .orderBy("timestamp")
         .limit(metadataCount - 1000)
         .toArray();
-      
-      const keysToDelete = oldEntries.map(entry => entry.key);
+
+      const keysToDelete = oldEntries.map((entry) => entry.key);
       await this.db.metadata.bulkDelete(keysToDelete);
     }
-    
+
     await this.setMetadata("lastMaintenance", new Date().toISOString(), "sync");
     console.log("Maintenance completed");
   }
@@ -717,7 +824,16 @@ export class OfflineStorageService {
     metadata: OfflineMetadata[];
     timestamp: string;
   }> {
-    const [forms, employees, aircraft, photos, profiles, configs, operations, metadata] = await Promise.all([
+    const [
+      forms,
+      employees,
+      aircraft,
+      photos,
+      profiles,
+      configs,
+      operations,
+      metadata,
+    ] = await Promise.all([
       this.db.cleaningForms.toArray(),
       this.db.employees.toArray(),
       this.db.aircraft.toArray(),
@@ -756,7 +872,7 @@ export class OfflineStorageService {
       this.db.cache.clear(),
       this.db.metadata.clear(),
     ]);
-    
+
     await this.initializeMetadata();
     console.log("All offline data cleared");
   }

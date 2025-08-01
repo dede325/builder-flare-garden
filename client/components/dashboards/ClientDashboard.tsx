@@ -45,7 +45,7 @@ interface ServiceReport {
   interventionType: string;
   completedAt: string;
   technician: string;
-  status: 'pending_confirmation' | 'confirmed' | 'disputed';
+  status: "pending_confirmation" | "confirmed" | "disputed";
   rating?: number;
   photos: number;
   qualityScore: number;
@@ -60,7 +60,7 @@ export function ClientDashboard() {
     pendingConfirmations: 0,
     completedThisMonth: 0,
     averageRating: 4.8,
-    lastServiceDate: '',
+    lastServiceDate: "",
   });
   const [serviceReports, setServiceReports] = useState<ServiceReport[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,24 +73,30 @@ export function ClientDashboard() {
     setLoading(true);
     try {
       const reportsData = await loadServiceReports();
-      
+
       const currentMonth = new Date().getMonth();
       const currentYear = new Date().getFullYear();
-      
-      const completedThisMonth = reportsData.filter(report => {
+
+      const completedThisMonth = reportsData.filter((report) => {
         const completedDate = new Date(report.completedAt);
-        return completedDate.getMonth() === currentMonth && 
-               completedDate.getFullYear() === currentYear;
+        return (
+          completedDate.getMonth() === currentMonth &&
+          completedDate.getFullYear() === currentYear
+        );
       }).length;
 
       const pendingConfirmations = reportsData.filter(
-        report => report.status === 'pending_confirmation'
+        (report) => report.status === "pending_confirmation",
       ).length;
 
-      const lastService = reportsData.length > 0 ? 
-        reportsData.sort((a, b) => 
-          new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime()
-        )[0].completedAt : '';
+      const lastService =
+        reportsData.length > 0
+          ? reportsData.sort(
+              (a, b) =>
+                new Date(b.completedAt).getTime() -
+                new Date(a.completedAt).getTime(),
+            )[0].completedAt
+          : "";
 
       setMetrics({
         totalServices: reportsData.length,
@@ -118,57 +124,61 @@ export function ClientDashboard() {
       const savedForms = localStorage.getItem("cleaningForms");
       const savedAircraft = localStorage.getItem("aviation_aircraft");
       const savedEmployees = localStorage.getItem("aviation_employees");
-      
+
       if (savedForms && savedAircraft && savedEmployees) {
         const forms = JSON.parse(savedForms);
         const aircraft = JSON.parse(savedAircraft);
         const employees = JSON.parse(savedEmployees);
-        
+
         const reports: ServiceReport[] = [];
-        
+
         forms.slice(0, 8).forEach((form: any, index: number) => {
           const aircraftData = aircraft[index % aircraft.length] || {
-            registration: `D2-${String(index + 1).padStart(3, '0')}`,
+            registration: `D2-${String(index + 1).padStart(3, "0")}`,
             model: "Boeing 737",
-            location: "Terminal A"
+            location: "Terminal A",
           };
-          
+
           const employee = employees[index % employees.length] || {
-            name: "Técnico Desconhecido"
+            name: "Técnico Desconhecido",
           };
-          
+
           const interventions = [
-            "Limpeza Exterior", 
-            "Limpeza Interior", 
-            "Polimento", 
-            "Lavagem Profunda"
+            "Limpeza Exterior",
+            "Limpeza Interior",
+            "Polimento",
+            "Lavagem Profunda",
           ];
-          
-          const statuses: Array<'pending_confirmation' | 'confirmed' | 'disputed'> = 
-            ['pending_confirmation', 'confirmed', 'confirmed', 'confirmed'];
-          
+
+          const statuses: Array<
+            "pending_confirmation" | "confirmed" | "disputed"
+          > = ["pending_confirmation", "confirmed", "confirmed", "confirmed"];
+
           reports.push({
             id: form.id || `report-${index}`,
-            code: form.code || `SRV-${String(index + 1).padStart(4, '0')}`,
+            code: form.code || `SRV-${String(index + 1).padStart(4, "0")}`,
             aircraft: {
               registration: aircraftData.registration,
               model: aircraftData.model,
               location: aircraftData.location || "Terminal A",
             },
             interventionType: interventions[index % interventions.length],
-            completedAt: form.completedAt || 
-              new Date(Date.now() - (index * 24 * 60 * 60 * 1000)).toISOString(),
+            completedAt:
+              form.completedAt ||
+              new Date(Date.now() - index * 24 * 60 * 60 * 1000).toISOString(),
             technician: employee.name,
             status: statuses[index % statuses.length],
             rating: index < 6 ? 5 : undefined,
             photos: Math.floor(Math.random() * 8) + 3,
             qualityScore: 85 + Math.floor(Math.random() * 15),
-            duration: 30 + (index * 10),
+            duration: 30 + index * 10,
           });
         });
-        
-        return reports.sort((a, b) => 
-          new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime()
+
+        return reports.sort(
+          (a, b) =>
+            new Date(b.completedAt).getTime() -
+            new Date(a.completedAt).getTime(),
         );
       }
     } catch (error) {
@@ -179,25 +189,27 @@ export function ClientDashboard() {
 
   const handleConfirmService = async (reportId: string, rating: number) => {
     try {
-      const updatedReports = serviceReports.map(report => 
-        report.id === reportId ? { 
-          ...report, 
-          status: 'confirmed' as const,
-          rating 
-        } : report
+      const updatedReports = serviceReports.map((report) =>
+        report.id === reportId
+          ? {
+              ...report,
+              status: "confirmed" as const,
+              rating,
+            }
+          : report,
       );
       setServiceReports(updatedReports);
-      
+
       // Update metrics
       const pendingConfirmations = updatedReports.filter(
-        report => report.status === 'pending_confirmation'
+        (report) => report.status === "pending_confirmation",
       ).length;
-      
-      setMetrics(prev => ({
+
+      setMetrics((prev) => ({
         ...prev,
         pendingConfirmations,
       }));
-      
+
       toast({
         title: "Serviço confirmado",
         description: "Obrigado pela sua avaliação!",
@@ -213,14 +225,16 @@ export function ClientDashboard() {
 
   const handleDisputeService = async (reportId: string) => {
     try {
-      const updatedReports = serviceReports.map(report => 
-        report.id === reportId ? { 
-          ...report, 
-          status: 'disputed' as const 
-        } : report
+      const updatedReports = serviceReports.map((report) =>
+        report.id === reportId
+          ? {
+              ...report,
+              status: "disputed" as const,
+            }
+          : report,
       );
       setServiceReports(updatedReports);
-      
+
       toast({
         title: "Disputa registrada",
         description: "Nossa equipe entrará em contato em breve.",
@@ -250,13 +264,21 @@ export function ClientDashboard() {
     }
   };
 
-  const getStatusBadge = (status: ServiceReport['status']) => {
+  const getStatusBadge = (status: ServiceReport["status"]) => {
     switch (status) {
-      case 'confirmed':
-        return <Badge variant="secondary" className="bg-green-500/20 text-green-300">Confirmado</Badge>;
-      case 'pending_confirmation':
-        return <Badge className="bg-orange-500 hover:bg-orange-600">Aguardando Confirmação</Badge>;
-      case 'disputed':
+      case "confirmed":
+        return (
+          <Badge variant="secondary" className="bg-green-500/20 text-green-300">
+            Confirmado
+          </Badge>
+        );
+      case "pending_confirmation":
+        return (
+          <Badge className="bg-orange-500 hover:bg-orange-600">
+            Aguardando Confirmação
+          </Badge>
+        );
+      case "disputed":
         return <Badge variant="destructive">Em Disputa</Badge>;
       default:
         return <Badge variant="outline">Desconhecido</Badge>;
@@ -264,26 +286,30 @@ export function ClientDashboard() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-PT', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Date(dateString).toLocaleDateString("pt-PT", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
-  const renderStars = (rating: number, interactive: boolean = false, onRate?: (rating: number) => void) => {
+  const renderStars = (
+    rating: number,
+    interactive: boolean = false,
+    onRate?: (rating: number) => void,
+  ) => {
     return (
       <div className="flex items-center gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
             className={`h-4 w-4 ${
-              star <= rating 
-                ? 'text-yellow-400 fill-yellow-400' 
-                : 'text-gray-400'
-            } ${interactive ? 'cursor-pointer hover:text-yellow-300' : ''}`}
+              star <= rating
+                ? "text-yellow-400 fill-yellow-400"
+                : "text-gray-400"
+            } ${interactive ? "cursor-pointer hover:text-yellow-300" : ""}`}
             onClick={interactive && onRate ? () => onRate(star) : undefined}
           />
         ))}
@@ -295,8 +321,12 @@ export function ClientDashboard() {
     return (
       <div className="text-center py-8">
         <AlertCircle className="h-12 w-12 text-orange-400 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-white mb-2">Acesso Restrito</h3>
-        <p className="text-white/70">Você não tem permissão para acessar o dashboard de cliente.</p>
+        <h3 className="text-lg font-semibold text-white mb-2">
+          Acesso Restrito
+        </h3>
+        <p className="text-white/70">
+          Você não tem permissão para acessar o dashboard de cliente.
+        </p>
       </div>
     );
   }
@@ -403,31 +433,43 @@ export function ClientDashboard() {
           </CardHeader>
           <CardContent className="space-y-4">
             {serviceReports
-              .filter(report => report.status === 'pending_confirmation')
+              .filter((report) => report.status === "pending_confirmation")
               .map((report) => (
                 <div key={report.id} className="p-4 bg-white/5 rounded-lg">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h3 className="text-white font-semibold">{report.code}</h3>
+                      <h3 className="text-white font-semibold">
+                        {report.code}
+                      </h3>
                       <p className="text-white/80 text-sm">
-                        {report.aircraft.registration} - {report.interventionType}
+                        {report.aircraft.registration} -{" "}
+                        {report.interventionType}
                       </p>
                       <p className="text-white/60 text-xs mt-1">
-                        Concluído em {formatDate(report.completedAt)} por {report.technician}
+                        Concluído em {formatDate(report.completedAt)} por{" "}
+                        {report.technician}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-white/70 text-sm">Qualidade: {report.qualityScore}%</p>
-                      <p className="text-white/70 text-sm">Fotos: {report.photos}</p>
+                      <p className="text-white/70 text-sm">
+                        Qualidade: {report.qualityScore}%
+                      </p>
+                      <p className="text-white/70 text-sm">
+                        Fotos: {report.photos}
+                      </p>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-3">
                     <div>
-                      <p className="text-white text-sm mb-2">Avalie este serviço:</p>
-                      {renderStars(0, true, (rating) => handleConfirmService(report.id, rating))}
+                      <p className="text-white text-sm mb-2">
+                        Avalie este serviço:
+                      </p>
+                      {renderStars(0, true, (rating) =>
+                        handleConfirmService(report.id, rating),
+                      )}
                     </div>
-                    
+
                     <div className="flex gap-2">
                       <Button
                         onClick={() => handleDownloadReport(report.id)}
@@ -479,26 +521,29 @@ export function ClientDashboard() {
                       <Plane className="h-6 w-6 text-blue-400" />
                     </div>
                     <div>
-                      <h3 className="text-white font-semibold">{report.code}</h3>
+                      <h3 className="text-white font-semibold">
+                        {report.code}
+                      </h3>
                       <p className="text-white/80 text-sm">
-                        {report.aircraft.registration} - {report.interventionType}
+                        {report.aircraft.registration} -{" "}
+                        {report.interventionType}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
                     {getStatusBadge(report.status)}
                     {report.rating && (
-                      <div className="mt-1">
-                        {renderStars(report.rating)}
-                      </div>
+                      <div className="mt-1">{renderStars(report.rating)}</div>
                     )}
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
                     <p className="text-white/60">Data</p>
-                    <p className="text-white">{formatDate(report.completedAt)}</p>
+                    <p className="text-white">
+                      {formatDate(report.completedAt)}
+                    </p>
                   </div>
                   <div>
                     <p className="text-white/60">Técnico</p>
@@ -513,7 +558,7 @@ export function ClientDashboard() {
                     <p className="text-white">{report.qualityScore}%</p>
                   </div>
                 </div>
-                
+
                 <div className="flex gap-2 mt-3">
                   <Button
                     onClick={() => handleDownloadReport(report.id)}
@@ -564,13 +609,15 @@ export function ClientDashboard() {
             <h3 className="text-lg font-bold text-white mb-2">Feedback</h3>
             <p className="text-sm text-green-300">Enviar comentários</p>
           </CardContent>
-          </Card>
+        </Card>
 
         <Link to="/settings?tab=profile">
           <Card className="bg-gradient-to-br from-purple-500/20 to-purple-600/30 backdrop-blur-xl border border-purple-400/50 hover:scale-105 transition-all duration-300 cursor-pointer touch-manipulation">
             <CardContent className="p-6 text-center">
               <Shield className="h-12 w-12 text-purple-400 mx-auto mb-3" />
-              <h3 className="text-lg font-bold text-white mb-2">Configurações</h3>
+              <h3 className="text-lg font-bold text-white mb-2">
+                Configurações
+              </h3>
               <p className="text-sm text-purple-300">Preferências da conta</p>
             </CardContent>
           </Card>

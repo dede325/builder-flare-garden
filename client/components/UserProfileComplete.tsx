@@ -56,33 +56,33 @@ interface UserProfile {
   email: string;
   phone: string;
   avatar?: string;
-  
+
   // Professional Information
   role: string;
   department: string;
   employeeNumber: string;
   hireDate: string;
   supervisor?: string;
-  
+
   // Contact Information
   emergencyContact: string;
   emergencyPhone: string;
   address: string;
-  
+
   // Preferences
   language: string;
   timezone: string;
   theme: string;
-  
+
   // Notifications
   emailNotifications: boolean;
   pushNotifications: boolean;
   smsNotifications: boolean;
-  
+
   // Security
   twoFactorEnabled: boolean;
   lastPasswordChange: string;
-  
+
   // System
   lastLogin: string;
   isActive: boolean;
@@ -95,48 +95,55 @@ interface UserActivity {
   action: string;
   description: string;
   timestamp: string;
-  type: 'login' | 'profile_update' | 'password_change' | 'permission_change' | 'task_completion';
+  type:
+    | "login"
+    | "profile_update"
+    | "password_change"
+    | "permission_change"
+    | "task_completion";
 }
 
 export function UserProfileComplete() {
   const { user: authUser, updateProfile, hasPermission } = useAuth();
   const { toast } = useToast();
-  
+
   const [profile, setProfile] = useState<UserProfile>({
-    id: '',
-    name: '',
-    email: '',
-    phone: '',
-    role: '',
-    department: '',
-    employeeNumber: '',
-    hireDate: '',
-    emergencyContact: '',
-    emergencyPhone: '',
-    address: '',
-    language: 'pt',
-    timezone: 'Atlantic/Azores',
-    theme: 'aviation-blue',
+    id: "",
+    name: "",
+    email: "",
+    phone: "",
+    role: "",
+    department: "",
+    employeeNumber: "",
+    hireDate: "",
+    emergencyContact: "",
+    emergencyPhone: "",
+    address: "",
+    language: "pt",
+    timezone: "Atlantic/Azores",
+    theme: "aviation-blue",
     emailNotifications: true,
     pushNotifications: true,
     smsNotifications: false,
     twoFactorEnabled: false,
-    lastPasswordChange: '',
-    lastLogin: '',
+    lastPasswordChange: "",
+    lastLogin: "",
     isActive: true,
-    createdAt: '',
-    updatedAt: '',
+    createdAt: "",
+    updatedAt: "",
   });
 
   const [activities, setActivities] = useState<UserActivity[]>([]);
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [saveStatus, setSaveStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
   const [showPassword, setShowPassword] = useState(false);
   const [passwords, setPasswords] = useState({
-    current: '',
-    new: '',
-    confirm: '',
+    current: "",
+    new: "",
+    confirm: "",
   });
-  const [activeTab, setActiveTab] = useState('basic');
+  const [activeTab, setActiveTab] = useState("basic");
 
   useEffect(() => {
     loadUserProfile();
@@ -146,45 +153,46 @@ export function UserProfileComplete() {
   const loadUserProfile = async () => {
     try {
       // Load from localStorage first
-      const savedProfile = localStorage.getItem('userProfile');
+      const savedProfile = localStorage.getItem("userProfile");
       if (savedProfile) {
         const parsed = JSON.parse(savedProfile);
-        setProfile(prev => ({ ...prev, ...parsed }));
+        setProfile((prev) => ({ ...prev, ...parsed }));
       }
 
       // Load from auth user
       if (authUser) {
-        setProfile(prev => ({
+        setProfile((prev) => ({
           ...prev,
           id: authUser.id,
-          name: authUser.user_metadata?.name || authUser.email?.split('@')[0] || '',
-          email: authUser.email || '',
-          role: authUser.user_metadata?.role || 'Operacional',
-          lastLogin: authUser.last_sign_in_at || '',
-          createdAt: authUser.created_at || '',
-          updatedAt: authUser.updated_at || '',
+          name:
+            authUser.user_metadata?.name || authUser.email?.split("@")[0] || "",
+          email: authUser.email || "",
+          role: authUser.user_metadata?.role || "Operacional",
+          lastLogin: authUser.last_sign_in_at || "",
+          createdAt: authUser.created_at || "",
+          updatedAt: authUser.updated_at || "",
         }));
       }
 
       // Try to load from Supabase
       try {
-        const { supabase } = await import('@/lib/supabase');
+        const { supabase } = await import("@/lib/supabase");
         if (supabase && authUser) {
           const { data, error } = await supabase
-            .from('user_profiles')
-            .select('*')
-            .eq('id', authUser.id)
+            .from("user_profiles")
+            .select("*")
+            .eq("id", authUser.id)
             .single();
 
           if (data && !error) {
-            setProfile(prev => ({ ...prev, ...data }));
+            setProfile((prev) => ({ ...prev, ...data }));
           }
         }
       } catch (error) {
-        console.warn('Supabase not available for profile loading');
+        console.warn("Supabase not available for profile loading");
       }
     } catch (error) {
-      console.error('Error loading user profile:', error);
+      console.error("Error loading user profile:", error);
       toast({
         title: "Erro ao carregar perfil",
         description: "Falha ao carregar informações do perfil.",
@@ -198,25 +206,25 @@ export function UserProfileComplete() {
       // Generate mock activity data
       const mockActivities: UserActivity[] = [
         {
-          id: '1',
-          action: 'Login',
-          description: 'Login realizado com sucesso',
+          id: "1",
+          action: "Login",
+          description: "Login realizado com sucesso",
           timestamp: new Date().toISOString(),
-          type: 'login',
+          type: "login",
         },
         {
-          id: '2',
-          action: 'Perfil atualizado',
-          description: 'Informações pessoais atualizadas',
+          id: "2",
+          action: "Perfil atualizado",
+          description: "Informações pessoais atualizadas",
           timestamp: new Date(Date.now() - 86400000).toISOString(),
-          type: 'profile_update',
+          type: "profile_update",
         },
         {
-          id: '3',
-          action: 'Tarefa concluída',
-          description: 'Folha de limpeza FORM-001 concluída',
+          id: "3",
+          action: "Tarefa concluída",
+          description: "Folha de limpeza FORM-001 concluída",
           timestamp: new Date(Date.now() - 172800000).toISOString(),
-          type: 'task_completion',
+          type: "task_completion",
         },
       ];
 
@@ -224,70 +232,70 @@ export function UserProfileComplete() {
 
       // Try to load from Supabase
       try {
-        const { supabase } = await import('@/lib/supabase');
+        const { supabase } = await import("@/lib/supabase");
         if (supabase && authUser) {
           const { data, error } = await supabase
-            .from('user_activities')
-            .select('*')
-            .eq('user_id', authUser.id)
-            .order('created_at', { ascending: false })
+            .from("user_activities")
+            .select("*")
+            .eq("user_id", authUser.id)
+            .order("created_at", { ascending: false })
             .limit(10);
 
           if (data && !error) {
-            setActivities(data.map((item: any) => ({
-              id: item.id,
-              action: item.action,
-              description: item.description,
-              timestamp: item.created_at,
-              type: item.type || 'profile_update',
-            })));
+            setActivities(
+              data.map((item: any) => ({
+                id: item.id,
+                action: item.action,
+                description: item.description,
+                timestamp: item.created_at,
+                type: item.type || "profile_update",
+              })),
+            );
           }
         }
       } catch (error) {
-        console.warn('Supabase not available for activity loading');
+        console.warn("Supabase not available for activity loading");
       }
     } catch (error) {
-      console.error('Error loading user activity:', error);
+      console.error("Error loading user activity:", error);
     }
   };
 
   const handleSaveProfile = async () => {
-    setSaveStatus('loading');
+    setSaveStatus("loading");
     try {
       // Save to localStorage
-      localStorage.setItem('userProfile', JSON.stringify(profile));
+      localStorage.setItem("userProfile", JSON.stringify(profile));
 
       // Try to save to Supabase
       try {
-        const { supabase } = await import('@/lib/supabase');
+        const { supabase } = await import("@/lib/supabase");
         if (supabase && authUser) {
-          const { error } = await supabase
-            .from('user_profiles')
-            .upsert({
-              id: authUser.id,
-              name: profile.name,
-              phone: profile.phone,
-              department: profile.department,
-              employee_number: profile.employeeNumber,
-              hire_date: profile.hireDate,
-              emergency_contact: profile.emergencyContact,
-              emergency_phone: profile.emergencyPhone,
-              address: profile.address,
-              language: profile.language,
-              timezone: profile.timezone,
-              theme: profile.theme,
-              email_notifications: profile.emailNotifications,
-              push_notifications: profile.pushNotifications,
-              sms_notifications: profile.smsNotifications,
-              updated_at: new Date().toISOString(),
-            });
+          const { error } = await supabase.from("user_profiles").upsert({
+            id: authUser.id,
+            name: profile.name,
+            phone: profile.phone,
+            department: profile.department,
+            employee_number: profile.employeeNumber,
+            hire_date: profile.hireDate,
+            emergency_contact: profile.emergencyContact,
+            emergency_phone: profile.emergencyPhone,
+            address: profile.address,
+            language: profile.language,
+            timezone: profile.timezone,
+            theme: profile.theme,
+            email_notifications: profile.emailNotifications,
+            push_notifications: profile.pushNotifications,
+            sms_notifications: profile.smsNotifications,
+            updated_at: new Date().toISOString(),
+          });
 
           if (error) {
-            console.warn('Error saving to Supabase:', error);
+            console.warn("Error saving to Supabase:", error);
           }
         }
       } catch (error) {
-        console.warn('Supabase not available for profile saving');
+        console.warn("Supabase not available for profile saving");
       }
 
       // Update auth profile if available
@@ -299,23 +307,23 @@ export function UserProfileComplete() {
         });
       }
 
-      setSaveStatus('success');
+      setSaveStatus("success");
       toast({
         title: "Perfil atualizado",
         description: "Suas informações foram salvas com sucesso.",
       });
 
       // Reset status after 2 seconds
-      setTimeout(() => setSaveStatus('idle'), 2000);
+      setTimeout(() => setSaveStatus("idle"), 2000);
     } catch (error) {
-      console.error('Error saving profile:', error);
-      setSaveStatus('error');
+      console.error("Error saving profile:", error);
+      setSaveStatus("error");
       toast({
         title: "Erro ao salvar",
         description: "Falha ao atualizar o perfil.",
         variant: "destructive",
       });
-      setTimeout(() => setSaveStatus('idle'), 2000);
+      setTimeout(() => setSaveStatus("idle"), 2000);
     }
   };
 
@@ -346,9 +354,9 @@ export function UserProfileComplete() {
       });
 
       setPasswords({
-        current: '',
-        new: '',
-        confirm: '',
+        current: "",
+        new: "",
+        confirm: "",
       });
     } catch (error) {
       toast({
@@ -360,31 +368,31 @@ export function UserProfileComplete() {
   };
 
   const updateField = (field: keyof UserProfile, value: any) => {
-    setProfile(prev => ({ ...prev, [field]: value }));
+    setProfile((prev) => ({ ...prev, [field]: value }));
   };
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('pt-PT', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString("pt-PT", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
-  const getActivityIcon = (type: UserActivity['type']) => {
+  const getActivityIcon = (type: UserActivity["type"]) => {
     switch (type) {
-      case 'login':
+      case "login":
         return <User className="h-4 w-4 text-blue-400" />;
-      case 'profile_update':
+      case "profile_update":
         return <Settings className="h-4 w-4 text-green-400" />;
-      case 'password_change':
+      case "password_change":
         return <Lock className="h-4 w-4 text-orange-400" />;
-      case 'permission_change':
+      case "permission_change":
         return <Shield className="h-4 w-4 text-purple-400" />;
-      case 'task_completion':
+      case "task_completion":
         return <CheckCircle className="h-4 w-4 text-green-400" />;
       default:
         return <Activity className="h-4 w-4 text-gray-400" />;
@@ -402,14 +410,16 @@ export function UserProfileComplete() {
                 <AvatarImage src={profile.avatar} />
                 <AvatarFallback className="bg-blue-600 text-white text-xl">
                   {profile.name
-                    .split(' ')
-                    .map(n => n[0])
-                    .join('')
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
                     .toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h2 className="text-2xl font-bold text-white">{profile.name}</h2>
+                <h2 className="text-2xl font-bold text-white">
+                  {profile.name}
+                </h2>
                 <p className="text-blue-200">{profile.role}</p>
                 <p className="text-white/70 text-sm">{profile.department}</p>
                 <div className="flex items-center gap-2 mt-2">
@@ -419,7 +429,10 @@ export function UserProfileComplete() {
                     size="sm"
                   />
                   {profile.lastLogin && (
-                    <Badge variant="outline" className="text-white border-white/20">
+                    <Badge
+                      variant="outline"
+                      className="text-white border-white/20"
+                    >
                       Último login: {formatDate(profile.lastLogin)}
                     </Badge>
                   )}
@@ -441,23 +454,38 @@ export function UserProfileComplete() {
       {/* Profile Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-5 bg-white/10">
-          <TabsTrigger value="basic" className="text-white data-[state=active]:bg-white/20">
+          <TabsTrigger
+            value="basic"
+            className="text-white data-[state=active]:bg-white/20"
+          >
             <User className="h-4 w-4 mr-2" />
             Básico
           </TabsTrigger>
-          <TabsTrigger value="professional" className="text-white data-[state=active]:bg-white/20">
+          <TabsTrigger
+            value="professional"
+            className="text-white data-[state=active]:bg-white/20"
+          >
             <Briefcase className="h-4 w-4 mr-2" />
             Profissional
           </TabsTrigger>
-          <TabsTrigger value="preferences" className="text-white data-[state=active]:bg-white/20">
+          <TabsTrigger
+            value="preferences"
+            className="text-white data-[state=active]:bg-white/20"
+          >
             <Settings className="h-4 w-4 mr-2" />
             Preferências
           </TabsTrigger>
-          <TabsTrigger value="security" className="text-white data-[state=active]:bg-white/20">
+          <TabsTrigger
+            value="security"
+            className="text-white data-[state=active]:bg-white/20"
+          >
             <Shield className="h-4 w-4 mr-2" />
             Segurança
           </TabsTrigger>
-          <TabsTrigger value="activity" className="text-white data-[state=active]:bg-white/20">
+          <TabsTrigger
+            value="activity"
+            className="text-white data-[state=active]:bg-white/20"
+          >
             <Activity className="h-4 w-4 mr-2" />
             Atividade
           </TabsTrigger>
@@ -481,7 +509,7 @@ export function UserProfileComplete() {
                   <Label className="text-white">Nome Completo</Label>
                   <Input
                     value={profile.name}
-                    onChange={(e) => updateField('name', e.target.value)}
+                    onChange={(e) => updateField("name", e.target.value)}
                     className="bg-white/10 border-white/20 text-white"
                     placeholder="Seu nome completo"
                   />
@@ -491,7 +519,7 @@ export function UserProfileComplete() {
                   <Input
                     type="email"
                     value={profile.email}
-                    onChange={(e) => updateField('email', e.target.value)}
+                    onChange={(e) => updateField("email", e.target.value)}
                     className="bg-white/10 border-white/20 text-white"
                     placeholder="seu@email.com"
                   />
@@ -500,7 +528,7 @@ export function UserProfileComplete() {
                   <Label className="text-white">Telefone</Label>
                   <Input
                     value={profile.phone}
-                    onChange={(e) => updateField('phone', e.target.value)}
+                    onChange={(e) => updateField("phone", e.target.value)}
                     className="bg-white/10 border-white/20 text-white"
                     placeholder="+351 XXX XXX XXX"
                   />
@@ -509,7 +537,9 @@ export function UserProfileComplete() {
                   <Label className="text-white">Contacto de Emergência</Label>
                   <Input
                     value={profile.emergencyContact}
-                    onChange={(e) => updateField('emergencyContact', e.target.value)}
+                    onChange={(e) =>
+                      updateField("emergencyContact", e.target.value)
+                    }
                     className="bg-white/10 border-white/20 text-white"
                     placeholder="Nome do contacto"
                   />
@@ -518,18 +548,20 @@ export function UserProfileComplete() {
                   <Label className="text-white">Telefone de Emergência</Label>
                   <Input
                     value={profile.emergencyPhone}
-                    onChange={(e) => updateField('emergencyPhone', e.target.value)}
+                    onChange={(e) =>
+                      updateField("emergencyPhone", e.target.value)
+                    }
                     className="bg-white/10 border-white/20 text-white"
                     placeholder="+351 XXX XXX XXX"
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label className="text-white">Endereço</Label>
                 <Textarea
                   value={profile.address}
-                  onChange={(e) => updateField('address', e.target.value)}
+                  onChange={(e) => updateField("address", e.target.value)}
                   className="bg-white/10 border-white/20 text-white"
                   placeholder="Seu endereço completo"
                   rows={2}
@@ -543,9 +575,9 @@ export function UserProfileComplete() {
                     <AvatarImage src={profile.avatar} />
                     <AvatarFallback className="bg-blue-600 text-white">
                       {profile.name
-                        .split(' ')
-                        .map(n => n[0])
-                        .join('')
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
                         .toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -580,7 +612,7 @@ export function UserProfileComplete() {
                   <Label className="text-white">Função</Label>
                   <Select
                     value={profile.role}
-                    onValueChange={(value) => updateField('role', value)}
+                    onValueChange={(value) => updateField("role", value)}
                   >
                     <SelectTrigger className="bg-white/10 border-white/20 text-white">
                       <SelectValue />
@@ -597,7 +629,7 @@ export function UserProfileComplete() {
                   <Label className="text-white">Departamento</Label>
                   <Input
                     value={profile.department}
-                    onChange={(e) => updateField('department', e.target.value)}
+                    onChange={(e) => updateField("department", e.target.value)}
                     className="bg-white/10 border-white/20 text-white"
                     placeholder="Nome do departamento"
                   />
@@ -606,7 +638,9 @@ export function UserProfileComplete() {
                   <Label className="text-white">Número de Funcionário</Label>
                   <Input
                     value={profile.employeeNumber}
-                    onChange={(e) => updateField('employeeNumber', e.target.value)}
+                    onChange={(e) =>
+                      updateField("employeeNumber", e.target.value)
+                    }
                     className="bg-white/10 border-white/20 text-white"
                     placeholder="EMP001"
                   />
@@ -616,12 +650,12 @@ export function UserProfileComplete() {
                   <Input
                     type="date"
                     value={profile.hireDate}
-                    onChange={(e) => updateField('hireDate', e.target.value)}
+                    onChange={(e) => updateField("hireDate", e.target.value)}
                     className="bg-white/10 border-white/20 text-white"
                   />
                 </div>
               </div>
-              
+
               {profile.supervisor && (
                 <div className="space-y-2">
                   <Label className="text-white">Supervisor</Label>
@@ -654,7 +688,7 @@ export function UserProfileComplete() {
                   <Label className="text-white">Idioma</Label>
                   <Select
                     value={profile.language}
-                    onValueChange={(value) => updateField('language', value)}
+                    onValueChange={(value) => updateField("language", value)}
                   >
                     <SelectTrigger className="bg-white/10 border-white/20 text-white">
                       <SelectValue />
@@ -670,14 +704,18 @@ export function UserProfileComplete() {
                   <Label className="text-white">Fuso Horário</Label>
                   <Select
                     value={profile.timezone}
-                    onValueChange={(value) => updateField('timezone', value)}
+                    onValueChange={(value) => updateField("timezone", value)}
                   >
                     <SelectTrigger className="bg-white/10 border-white/20 text-white">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Atlantic/Azores">Açores (UTC-1)</SelectItem>
-                      <SelectItem value="Europe/Lisbon">Lisboa (UTC+0)</SelectItem>
+                      <SelectItem value="Atlantic/Azores">
+                        Açores (UTC-1)
+                      </SelectItem>
+                      <SelectItem value="Europe/Lisbon">
+                        Lisboa (UTC+0)
+                      </SelectItem>
                       <SelectItem value="UTC">UTC</SelectItem>
                     </SelectContent>
                   </Select>
@@ -694,32 +732,46 @@ export function UserProfileComplete() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <Label className="text-white">Notificações por Email</Label>
-                      <p className="text-white/60 text-sm">Receber atualizações importantes por email</p>
+                      <Label className="text-white">
+                        Notificações por Email
+                      </Label>
+                      <p className="text-white/60 text-sm">
+                        Receber atualizações importantes por email
+                      </p>
                     </div>
                     <Switch
                       checked={profile.emailNotifications}
-                      onCheckedChange={(checked) => updateField('emailNotifications', checked)}
+                      onCheckedChange={(checked) =>
+                        updateField("emailNotifications", checked)
+                      }
                     />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <Label className="text-white">Notificações Push</Label>
-                      <p className="text-white/60 text-sm">Notificações em tempo real no dispositivo</p>
+                      <p className="text-white/60 text-sm">
+                        Notificações em tempo real no dispositivo
+                      </p>
                     </div>
                     <Switch
                       checked={profile.pushNotifications}
-                      onCheckedChange={(checked) => updateField('pushNotifications', checked)}
+                      onCheckedChange={(checked) =>
+                        updateField("pushNotifications", checked)
+                      }
                     />
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <Label className="text-white">Notificações SMS</Label>
-                      <p className="text-white/60 text-sm">Alertas críticos por mensagem de texto</p>
+                      <p className="text-white/60 text-sm">
+                        Alertas críticos por mensagem de texto
+                      </p>
                     </div>
                     <Switch
                       checked={profile.smsNotifications}
-                      onCheckedChange={(checked) => updateField('smsNotifications', checked)}
+                      onCheckedChange={(checked) =>
+                        updateField("smsNotifications", checked)
+                      }
                     />
                   </div>
                 </div>
@@ -750,7 +802,12 @@ export function UserProfileComplete() {
                       <Input
                         type={showPassword ? "text" : "password"}
                         value={passwords.current}
-                        onChange={(e) => setPasswords(prev => ({ ...prev, current: e.target.value }))}
+                        onChange={(e) =>
+                          setPasswords((prev) => ({
+                            ...prev,
+                            current: e.target.value,
+                          }))
+                        }
                         className="bg-white/10 border-white/20 text-white pr-10"
                         placeholder="Digite sua senha atual"
                       />
@@ -760,7 +817,11 @@ export function UserProfileComplete() {
                         className="absolute right-2 top-1/2 -translate-y-1/2 text-white/60 hover:text-white"
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
                       </Button>
                     </div>
                   </div>
@@ -769,7 +830,12 @@ export function UserProfileComplete() {
                     <Input
                       type={showPassword ? "text" : "password"}
                       value={passwords.new}
-                      onChange={(e) => setPasswords(prev => ({ ...prev, new: e.target.value }))}
+                      onChange={(e) =>
+                        setPasswords((prev) => ({
+                          ...prev,
+                          new: e.target.value,
+                        }))
+                      }
                       className="bg-white/10 border-white/20 text-white"
                       placeholder="Digite a nova senha"
                     />
@@ -779,15 +845,22 @@ export function UserProfileComplete() {
                     <Input
                       type={showPassword ? "text" : "password"}
                       value={passwords.confirm}
-                      onChange={(e) => setPasswords(prev => ({ ...prev, confirm: e.target.value }))}
+                      onChange={(e) =>
+                        setPasswords((prev) => ({
+                          ...prev,
+                          confirm: e.target.value,
+                        }))
+                      }
                       className="bg-white/10 border-white/20 text-white"
                       placeholder="Confirme a nova senha"
                     />
                   </div>
-                  <Button 
+                  <Button
                     onClick={handleChangePassword}
                     className="bg-blue-600 hover:bg-blue-700 text-white"
-                    disabled={!passwords.current || !passwords.new || !passwords.confirm}
+                    disabled={
+                      !passwords.current || !passwords.new || !passwords.confirm
+                    }
                   >
                     <Lock className="h-4 w-4 mr-2" />
                     Alterar Senha
@@ -800,12 +873,18 @@ export function UserProfileComplete() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-white">Autenticação de Dois Fatores</Label>
-                    <p className="text-white/60 text-sm">Adicione uma camada extra de segurança</p>
+                    <Label className="text-white">
+                      Autenticação de Dois Fatores
+                    </Label>
+                    <p className="text-white/60 text-sm">
+                      Adicione uma camada extra de segurança
+                    </p>
                   </div>
                   <Switch
                     checked={profile.twoFactorEnabled}
-                    onCheckedChange={(checked) => updateField('twoFactorEnabled', checked)}
+                    onCheckedChange={(checked) =>
+                      updateField("twoFactorEnabled", checked)
+                    }
                   />
                 </div>
               </div>
@@ -813,11 +892,14 @@ export function UserProfileComplete() {
               <Separator className="bg-white/20" />
 
               <div className="space-y-2">
-                <h4 className="text-white font-medium">Informações de Segurança</h4>
+                <h4 className="text-white font-medium">
+                  Informações de Segurança
+                </h4>
                 <div className="space-y-2 text-sm">
                   {profile.lastPasswordChange && (
                     <p className="text-white/70">
-                      Última alteração de senha: {formatDate(profile.lastPasswordChange)}
+                      Última alteração de senha:{" "}
+                      {formatDate(profile.lastPasswordChange)}
                     </p>
                   )}
                   {profile.lastLogin && (
@@ -847,11 +929,18 @@ export function UserProfileComplete() {
               <div className="space-y-4">
                 {activities.length > 0 ? (
                   activities.map((activity) => (
-                    <div key={activity.id} className="flex items-start space-x-3 p-3 bg-white/5 rounded-lg">
+                    <div
+                      key={activity.id}
+                      className="flex items-start space-x-3 p-3 bg-white/5 rounded-lg"
+                    >
                       {getActivityIcon(activity.type)}
                       <div className="flex-1 min-w-0">
-                        <p className="text-white font-medium">{activity.action}</p>
-                        <p className="text-white/70 text-sm">{activity.description}</p>
+                        <p className="text-white font-medium">
+                          {activity.action}
+                        </p>
+                        <p className="text-white/70 text-sm">
+                          {activity.description}
+                        </p>
                         <p className="text-white/50 text-xs mt-1">
                           {formatDate(activity.timestamp)}
                         </p>
@@ -861,7 +950,9 @@ export function UserProfileComplete() {
                 ) : (
                   <div className="text-center py-8">
                     <Activity className="h-12 w-12 text-white/30 mx-auto mb-4" />
-                    <p className="text-white/60">Nenhuma atividade registrada</p>
+                    <p className="text-white/60">
+                      Nenhuma atividade registrada
+                    </p>
                   </div>
                 )}
               </div>

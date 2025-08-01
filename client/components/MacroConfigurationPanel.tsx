@@ -40,35 +40,35 @@ interface MacroConfiguration {
   companyLogo: string;
   timezone: string;
   language: string;
-  
+
   // Operation Settings
   maxTaskDurationMinutes: number;
   autoAssignTasks: boolean;
   requireSupervisorApproval: boolean;
   enablePhotoUpload: boolean;
   maxPhotosPerTask: number;
-  
+
   // Quality Control
   qualityScoreThreshold: number;
   enableQualityAlerts: boolean;
   requireQualityReview: boolean;
-  
+
   // Notifications
   enableEmailNotifications: boolean;
   enablePushNotifications: boolean;
   enableSmsNotifications: boolean;
-  
+
   // Data Management
   dataRetentionDays: number;
   autoBackupEnabled: boolean;
   backupFrequencyHours: number;
-  
+
   // Security
   sessionTimeoutMinutes: number;
   requireStrongPasswords: boolean;
   enableTwoFactorAuth: boolean;
   maxLoginAttempts: number;
-  
+
   // Performance
   enableCaching: boolean;
   cacheTimeoutMinutes: number;
@@ -106,7 +106,8 @@ const defaultConfiguration: MacroConfiguration = {
 };
 
 export function MacroConfigurationPanel() {
-  const [config, setConfig] = useState<MacroConfiguration>(defaultConfiguration);
+  const [config, setConfig] =
+    useState<MacroConfiguration>(defaultConfiguration);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
@@ -130,9 +131,9 @@ export function MacroConfigurationPanel() {
         const { supabase } = await import("@/lib/supabase");
         if (supabase) {
           const { data, error } = await supabase
-            .from('system_configurations')
-            .select('*')
-            .eq('key', 'macro_config')
+            .from("system_configurations")
+            .select("*")
+            .eq("key", "macro_config")
             .single();
 
           if (data && !error) {
@@ -166,9 +167,9 @@ export function MacroConfigurationPanel() {
         const { supabase } = await import("@/lib/supabase");
         if (supabase) {
           const { error } = await supabase
-            .from('system_configurations')
+            .from("system_configurations")
             .upsert({
-              key: 'macro_config',
+              key: "macro_config",
               value: JSON.stringify(config),
               updated_at: new Date().toISOString(),
             });
@@ -201,12 +202,13 @@ export function MacroConfigurationPanel() {
     setConfig(defaultConfiguration);
     toast({
       title: "Configurações resetadas",
-      description: "Todas as configurações foram restauradas aos valores padrão.",
+      description:
+        "Todas as configurações foram restauradas aos valores padrão.",
     });
   };
 
   const updateConfig = (key: keyof MacroConfiguration, value: any) => {
-    setConfig(prev => ({ ...prev, [key]: value }));
+    setConfig((prev) => ({ ...prev, [key]: value }));
   };
 
   if (loading) {
@@ -274,7 +276,7 @@ export function MacroConfigurationPanel() {
               <Label className="text-white">Nome da Empresa</Label>
               <Input
                 value={config.companyName}
-                onChange={(e) => updateConfig('companyName', e.target.value)}
+                onChange={(e) => updateConfig("companyName", e.target.value)}
                 className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 placeholder="Nome da empresa"
               />
@@ -283,26 +285,30 @@ export function MacroConfigurationPanel() {
               <Label className="text-white">Fuso Horário</Label>
               <Select
                 value={config.timezone}
-                onValueChange={(value) => updateConfig('timezone', value)}
+                onValueChange={(value) => updateConfig("timezone", value)}
               >
                 <SelectTrigger className="bg-white/10 border-white/20 text-white">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Atlantic/Azores">Açores (UTC-1)</SelectItem>
+                  <SelectItem value="Atlantic/Azores">
+                    Açores (UTC-1)
+                  </SelectItem>
                   <SelectItem value="Europe/Lisbon">Lisboa (UTC+0)</SelectItem>
                   <SelectItem value="UTC">UTC</SelectItem>
-                  <SelectItem value="America/New_York">New York (UTC-5)</SelectItem>
+                  <SelectItem value="America/New_York">
+                    New York (UTC-5)
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <Label className="text-white">Idioma do Sistema</Label>
             <Select
               value={config.language}
-              onValueChange={(value) => updateConfig('language', value)}
+              onValueChange={(value) => updateConfig("language", value)}
             >
               <SelectTrigger className="bg-white/10 border-white/20 text-white">
                 <SelectValue />
@@ -332,11 +338,15 @@ export function MacroConfigurationPanel() {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-white">Duração Máxima da Tarefa (minutos)</Label>
+              <Label className="text-white">
+                Duração Máxima da Tarefa (minutos)
+              </Label>
               <Input
                 type="number"
                 value={config.maxTaskDurationMinutes}
-                onChange={(e) => updateConfig('maxTaskDurationMinutes', Number(e.target.value))}
+                onChange={(e) =>
+                  updateConfig("maxTaskDurationMinutes", Number(e.target.value))
+                }
                 className="bg-white/10 border-white/20 text-white"
                 min="30"
                 max="480"
@@ -347,7 +357,9 @@ export function MacroConfigurationPanel() {
               <Input
                 type="number"
                 value={config.maxPhotosPerTask}
-                onChange={(e) => updateConfig('maxPhotosPerTask', Number(e.target.value))}
+                onChange={(e) =>
+                  updateConfig("maxPhotosPerTask", Number(e.target.value))
+                }
                 className="bg-white/10 border-white/20 text-white"
                 min="1"
                 max="50"
@@ -360,34 +372,48 @@ export function MacroConfigurationPanel() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div>
-                <Label className="text-white">Atribuição Automática de Tarefas</Label>
-                <p className="text-white/60 text-sm">Atribuir tarefas automaticamente aos funcionários disponíveis</p>
+                <Label className="text-white">
+                  Atribuição Automática de Tarefas
+                </Label>
+                <p className="text-white/60 text-sm">
+                  Atribuir tarefas automaticamente aos funcionários disponíveis
+                </p>
               </div>
               <Switch
                 checked={config.autoAssignTasks}
-                onCheckedChange={(checked) => updateConfig('autoAssignTasks', checked)}
+                onCheckedChange={(checked) =>
+                  updateConfig("autoAssignTasks", checked)
+                }
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div>
                 <Label className="text-white">Aprovação do Supervisor</Label>
-                <p className="text-white/60 text-sm">Exigir aprovação do supervisor para conclusão</p>
+                <p className="text-white/60 text-sm">
+                  Exigir aprovação do supervisor para conclusão
+                </p>
               </div>
               <Switch
                 checked={config.requireSupervisorApproval}
-                onCheckedChange={(checked) => updateConfig('requireSupervisorApproval', checked)}
+                onCheckedChange={(checked) =>
+                  updateConfig("requireSupervisorApproval", checked)
+                }
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div>
                 <Label className="text-white">Upload de Fotos</Label>
-                <p className="text-white/60 text-sm">Permitir upload de evidências fotográficas</p>
+                <p className="text-white/60 text-sm">
+                  Permitir upload de evidências fotográficas
+                </p>
               </div>
               <Switch
                 checked={config.enablePhotoUpload}
-                onCheckedChange={(checked) => updateConfig('enablePhotoUpload', checked)}
+                onCheckedChange={(checked) =>
+                  updateConfig("enablePhotoUpload", checked)
+                }
               />
             </div>
           </div>
@@ -407,11 +433,15 @@ export function MacroConfigurationPanel() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label className="text-white">Pontuação Mínima de Qualidade (%)</Label>
+            <Label className="text-white">
+              Pontuação Mínima de Qualidade (%)
+            </Label>
             <Input
               type="number"
               value={config.qualityScoreThreshold}
-              onChange={(e) => updateConfig('qualityScoreThreshold', Number(e.target.value))}
+              onChange={(e) =>
+                updateConfig("qualityScoreThreshold", Number(e.target.value))
+              }
               className="bg-white/10 border-white/20 text-white"
               min="0"
               max="100"
@@ -424,22 +454,30 @@ export function MacroConfigurationPanel() {
             <div className="flex items-center justify-between">
               <div>
                 <Label className="text-white">Alertas de Qualidade</Label>
-                <p className="text-white/60 text-sm">Notificar quando a qualidade estiver abaixo do limite</p>
+                <p className="text-white/60 text-sm">
+                  Notificar quando a qualidade estiver abaixo do limite
+                </p>
               </div>
               <Switch
                 checked={config.enableQualityAlerts}
-                onCheckedChange={(checked) => updateConfig('enableQualityAlerts', checked)}
+                onCheckedChange={(checked) =>
+                  updateConfig("enableQualityAlerts", checked)
+                }
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div>
                 <Label className="text-white">Revisão Obrigatória</Label>
-                <p className="text-white/60 text-sm">Exigir revisão manual para qualidade baixa</p>
+                <p className="text-white/60 text-sm">
+                  Exigir revisão manual para qualidade baixa
+                </p>
               </div>
               <Switch
                 checked={config.requireQualityReview}
-                onCheckedChange={(checked) => updateConfig('requireQualityReview', checked)}
+                onCheckedChange={(checked) =>
+                  updateConfig("requireQualityReview", checked)
+                }
               />
             </div>
           </div>
@@ -461,33 +499,45 @@ export function MacroConfigurationPanel() {
           <div className="flex items-center justify-between">
             <div>
               <Label className="text-white">Notificações por Email</Label>
-              <p className="text-white/60 text-sm">Enviar notificações importantes por email</p>
+              <p className="text-white/60 text-sm">
+                Enviar notificações importantes por email
+              </p>
             </div>
             <Switch
               checked={config.enableEmailNotifications}
-              onCheckedChange={(checked) => updateConfig('enableEmailNotifications', checked)}
+              onCheckedChange={(checked) =>
+                updateConfig("enableEmailNotifications", checked)
+              }
             />
           </div>
 
           <div className="flex items-center justify-between">
             <div>
               <Label className="text-white">Notificações Push</Label>
-              <p className="text-white/60 text-sm">Notificações em tempo real no dispositivo</p>
+              <p className="text-white/60 text-sm">
+                Notificações em tempo real no dispositivo
+              </p>
             </div>
             <Switch
               checked={config.enablePushNotifications}
-              onCheckedChange={(checked) => updateConfig('enablePushNotifications', checked)}
+              onCheckedChange={(checked) =>
+                updateConfig("enablePushNotifications", checked)
+              }
             />
           </div>
 
           <div className="flex items-center justify-between">
             <div>
               <Label className="text-white">Notificações SMS</Label>
-              <p className="text-white/60 text-sm">Enviar alertas críticos por SMS</p>
+              <p className="text-white/60 text-sm">
+                Enviar alertas críticos por SMS
+              </p>
             </div>
             <Switch
               checked={config.enableSmsNotifications}
-              onCheckedChange={(checked) => updateConfig('enableSmsNotifications', checked)}
+              onCheckedChange={(checked) =>
+                updateConfig("enableSmsNotifications", checked)
+              }
             />
           </div>
         </CardContent>
@@ -508,7 +558,9 @@ export function MacroConfigurationPanel() {
               <Input
                 type="number"
                 value={config.sessionTimeoutMinutes}
-                onChange={(e) => updateConfig('sessionTimeoutMinutes', Number(e.target.value))}
+                onChange={(e) =>
+                  updateConfig("sessionTimeoutMinutes", Number(e.target.value))
+                }
                 className="bg-white/10 border-white/20 text-white"
                 min="15"
                 max="480"
@@ -516,11 +568,15 @@ export function MacroConfigurationPanel() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-white">Máximo de Tentativas de Login</Label>
+              <Label className="text-white">
+                Máximo de Tentativas de Login
+              </Label>
               <Input
                 type="number"
                 value={config.maxLoginAttempts}
-                onChange={(e) => updateConfig('maxLoginAttempts', Number(e.target.value))}
+                onChange={(e) =>
+                  updateConfig("maxLoginAttempts", Number(e.target.value))
+                }
                 className="bg-white/10 border-white/20 text-white"
                 min="3"
                 max="10"
@@ -534,7 +590,9 @@ export function MacroConfigurationPanel() {
               </div>
               <Switch
                 checked={config.requireStrongPasswords}
-                onCheckedChange={(checked) => updateConfig('requireStrongPasswords', checked)}
+                onCheckedChange={(checked) =>
+                  updateConfig("requireStrongPasswords", checked)
+                }
               />
             </div>
           </CardContent>
@@ -549,11 +607,15 @@ export function MacroConfigurationPanel() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-white">Intervalo de Sincronização (minutos)</Label>
+              <Label className="text-white">
+                Intervalo de Sincronização (minutos)
+              </Label>
               <Input
                 type="number"
                 value={config.syncIntervalMinutes}
-                onChange={(e) => updateConfig('syncIntervalMinutes', Number(e.target.value))}
+                onChange={(e) =>
+                  updateConfig("syncIntervalMinutes", Number(e.target.value))
+                }
                 className="bg-white/10 border-white/20 text-white"
                 min="5"
                 max="60"
@@ -565,7 +627,9 @@ export function MacroConfigurationPanel() {
               <Input
                 type="number"
                 value={config.cacheTimeoutMinutes}
-                onChange={(e) => updateConfig('cacheTimeoutMinutes', Number(e.target.value))}
+                onChange={(e) =>
+                  updateConfig("cacheTimeoutMinutes", Number(e.target.value))
+                }
                 className="bg-white/10 border-white/20 text-white"
                 min="5"
                 max="120"
@@ -579,7 +643,9 @@ export function MacroConfigurationPanel() {
               </div>
               <Switch
                 checked={config.enableOfflineMode}
-                onCheckedChange={(checked) => updateConfig('enableOfflineMode', checked)}
+                onCheckedChange={(checked) =>
+                  updateConfig("enableOfflineMode", checked)
+                }
               />
             </div>
           </CardContent>
@@ -592,10 +658,13 @@ export function MacroConfigurationPanel() {
           <div className="flex items-start space-x-3">
             <AlertTriangle className="h-5 w-5 text-orange-400 mt-0.5" />
             <div>
-              <h4 className="font-medium text-white mb-1">Configurações Críticas</h4>
+              <h4 className="font-medium text-white mb-1">
+                Configurações Críticas
+              </h4>
               <p className="text-white/70 text-sm">
-                Algumas configurações podem afetar significativamente o funcionamento do sistema. 
-                Certifique-se de testar as alterações em um ambiente seguro antes de aplicar em produção.
+                Algumas configurações podem afetar significativamente o
+                funcionamento do sistema. Certifique-se de testar as alterações
+                em um ambiente seguro antes de aplicar em produção.
               </p>
             </div>
           </div>
