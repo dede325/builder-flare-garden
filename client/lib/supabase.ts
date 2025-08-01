@@ -181,47 +181,55 @@ const productionSession = {
   refresh_token: 'airplus-refresh'
 };
 
-// Auth helper functions
+// Auth helper functions for AirPlus production
 export const auth = {
   signUp: async (email: string, password: string) => {
-    if (!supabase) {
-      // Demo mode - simulate successful signup
-      return { data: { user: null, session: null }, error: null };
-    }
-    return await supabase.auth.signUp({ email, password });
+    return await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          company: 'AirPlus Aviation'
+        }
+      }
+    });
   },
 
   signIn: async (email: string, password: string) => {
-    if (!supabase) {
-      // Demo mode - simulate successful login
-      return { data: { user: demoUser, session: demoSession }, error: null };
-    }
     return await supabase.auth.signInWithPassword({ email, password });
   },
 
   signOut: async () => {
-    if (!supabase) {
-      // Demo mode - simulate successful logout
-      return { error: null };
-    }
     return await supabase.auth.signOut();
   },
 
   getSession: async () => {
-    if (!supabase) {
-      // Demo mode - return demo session
-      return { data: { session: demoSession }, error: null };
-    }
     return await supabase.auth.getSession();
   },
 
   onAuthStateChange: (callback: (event: string, session: any) => void) => {
-    if (!supabase) {
-      // Demo mode - simulate auth state change
-      setTimeout(() => callback('SIGNED_IN', demoSession), 100);
-      return { data: { subscription: { unsubscribe: () => {} } } };
-    }
     return supabase.auth.onAuthStateChange(callback);
+  },
+
+  // AirPlus specific auth functions
+  signInWithAirPlusEmail: async (email: string, password: string) => {
+    // Validate AirPlus email domain
+    if (!email.endsWith('@airplus.co')) {
+      return {
+        data: { user: null, session: null },
+        error: { message: 'Email deve ser do domínio @airplus.co' }
+      };
+    }
+    return await supabase.auth.signInWithPassword({ email, password });
+  },
+
+  createUserProfile: async (userId: string, funcionarioId: string, role: string = 'operacional') => {
+    return await supabase.from('usuarios').insert({
+      id: userId,
+      funcionario_id: funcionarioId,
+      role: role,
+      ativo: true
+    });
   }
 };
 
