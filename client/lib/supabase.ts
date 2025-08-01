@@ -30,29 +30,108 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   }
 });
 
-// Types for our database schema
-export interface Aircraft {
+// Types for AirPlus production database schema
+export interface Aeronave {
   id: string;
+  matricula: string;
+  modelo: string;
+  fabricante: string;
+  proprietario?: string;
+  status: 'ativa' | 'manutencao' | 'inativa';
+  horas_voo: number;
+  ultima_inspecao?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Funcionario {
+  id: string;
+  nome: string;
+  funcao: string;
+  numero_bilhete: string;
+  codigo_plano: string;
+  telefone: string;
+  foto_url?: string;
+  email: string;
+  ativo: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Usuario {
+  id: string;
+  funcionario_id?: string;
+  role: 'admin' | 'supervisor' | 'operacional' | 'cliente';
+  ativo: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Folha {
+  id: string;
+  codigo: string;
+  data: string;
+  turno: 'manha' | 'tarde' | 'noite';
+  local: string;
+  aeronave_id: string;
+  tipos_intervencao: string[];
+  observacoes?: string;
+  supervisor_id?: string;
+  cliente_confirmou: boolean;
+  assinatura_supervisor?: string;
+  assinatura_cliente?: string;
+  qr_code_data?: string;
+  pdf_url?: string;
+  sync_status: 'pendente' | 'sincronizado' | 'erro';
+  status: 'rascunho' | 'em_andamento' | 'concluida' | 'aprovada';
+  version: number;
+  change_history: any[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface FolhaFuncionario {
+  id: string;
+  folha_id: string;
+  funcionario_id: string;
+  tarefa: string;
+  hora_inicio: string;
+  hora_fim: string;
+  created_at: string;
+}
+
+export interface Foto {
+  id: string;
+  folha_id: string;
+  tipo: 'antes' | 'depois';
+  categoria: 'exterior' | 'interior' | 'detalhes';
+  url: string;
+  thumbnail_url?: string;
+  legenda?: string;
+  tamanho_arquivo?: number;
+  resolucao?: { width: number; height: number };
+  gps_coordinates?: { lat: number; lng: number };
+  metadata: any;
+  upload_status: 'pendente' | 'enviando' | 'enviado' | 'erro';
+  created_at: string;
+}
+
+// Legacy interfaces for compatibility
+export interface Aircraft extends Aeronave {
   registration: string;
   model: string;
   manufacturer: string;
   status: 'active' | 'maintenance' | 'inactive';
   last_inspection: string;
   flight_hours: number;
-  created_at: string;
-  updated_at: string;
 }
 
-export interface Employee {
-  id: string;
+export interface Employee extends Funcionario {
   name: string;
-  email: string;
   role: string;
   certifications: string[];
   hire_date: string;
   status: 'active' | 'inactive';
-  created_at: string;
-  updated_at: string;
 }
 
 export interface Task {
