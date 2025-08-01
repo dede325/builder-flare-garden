@@ -615,7 +615,7 @@ export default function CleaningForms() {
         const aircraftData = aircraft.find(
           (ac: any) => ac.id === formData.aircraftId,
         );
-        const pdfStorageUrl = await generateAndUploadPDF(
+        const pdfStorageUrl = await generateCleaningFormPDFToSupabase(
           updatedForm,
           aircraftData,
         );
