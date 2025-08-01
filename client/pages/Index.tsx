@@ -19,6 +19,8 @@ import {
   RefreshCw,
   Plus,
   Clock,
+  Eye,
+  Wrench,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -32,6 +34,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { MigrationNotification } from "@/components/MigrationNotification";
 import SyncStatusIndicator from "@/components/SyncStatusIndicator";
+import { AdminDashboard } from "@/components/dashboards/AdminDashboard";
+import { SupervisorDashboard } from "@/components/dashboards/SupervisorDashboard";
+import { OperationalDashboard } from "@/components/dashboards/OperationalDashboard";
+import { ClientDashboard } from "@/components/dashboards/ClientDashboard";
 
 export default function Index() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -43,7 +49,7 @@ export default function Index() {
     activeForms: 0,
     completedForms: 0,
   });
-  const { user: authUser, signOut } = useAuth();
+  const { user: authUser, signOut, hasRole, hasMinimumRoleLevel } = useAuth();
 
   // Fallback user data for demo mode
   const user = authUser
@@ -60,6 +66,21 @@ export default function Index() {
         role: "Gestor de Operações",
         email: "demo@aviation.com",
       };
+
+  // Determine dashboard type based on user role
+  const getDashboardType = () => {
+    if (hasRole('admin') || hasMinimumRoleLevel(90)) {
+      return 'admin';
+    } else if (hasRole('supervisor') || hasMinimumRoleLevel(70)) {
+      return 'supervisor';
+    } else if (hasRole('client') || hasRole('cliente')) {
+      return 'client';
+    } else {
+      return 'operational';
+    }
+  };
+
+  const dashboardType = getDashboardType();
 
   const handleSignOut = async () => {
     await signOut();
@@ -334,84 +355,39 @@ export default function Index() {
               <p className="text-blue-200 text-sm lg:text-lg">
                 Gestão completa de limpeza de aeronaves
               </p>
-            </div>
-
-            {/* Quick Stats */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20">
-                <CardContent className="p-4 text-center">
-                  <Plane className="h-6 w-6 text-blue-400 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-white">
-                    {systemStats.aircraft}
-                  </p>
-                  <p className="text-xs text-blue-200">Aeronaves</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20">
-                <CardContent className="p-4 text-center">
-                  <Users className="h-6 w-6 text-emerald-400 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-white">
-                    {systemStats.employees}
-                  </p>
-                  <p className="text-xs text-emerald-200">Funcionários</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20">
-                <CardContent className="p-4 text-center">
-                  <FileText className="h-6 w-6 text-orange-400 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-white">
-                    {systemStats.activeForms}
-                  </p>
-                  <p className="text-xs text-orange-200">Folhas Abertas</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20">
-                <CardContent className="p-4 text-center">
-                  <Activity className="h-6 w-6 text-cyan-400 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-white">
-                    {systemStats.completedForms}
-                  </p>
-                  <p className="text-xs text-cyan-200">Concluídas</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Main Actions */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">
-                Ações Principais
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {mainActions.map((action, index) => (
-                  <Link key={index} to={action.link}>
-                    <Card
-                      className={`bg-gradient-to-br ${action.bgGradient} backdrop-blur-xl border ${action.borderColor} hover:scale-105 transition-all duration-300 touch-manipulation`}
-                    >
-                      <CardContent className="p-6">
-                        <div className="flex items-center space-x-4">
-                          <div
-                            className={`p-3 rounded-xl bg-gradient-to-br ${action.gradient} shadow-lg`}
-                          >
-                            <action.icon className="h-8 w-8 text-white" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-lg font-bold text-white mb-1">
-                              {action.title}
-                            </h3>
-                            <p className={`text-sm ${action.textColor}`}>
-                              {action.description}
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))}
+              <div className="flex items-center justify-center gap-2 mt-2">
+                {dashboardType === 'admin' && (
+                  <Badge className="bg-red-500/20 text-red-300 border-red-400/50">
+                    <Shield className="h-3 w-3 mr-1" />
+                    Administrador
+                  </Badge>
+                )}
+                {dashboardType === 'supervisor' && (
+                  <Badge className="bg-blue-500/20 text-blue-300 border-blue-400/50">
+                    <Eye className="h-3 w-3 mr-1" />
+                    Supervisor
+                  </Badge>
+                )}
+                {dashboardType === 'operational' && (
+                  <Badge className="bg-green-500/20 text-green-300 border-green-400/50">
+                    <Wrench className="h-3 w-3 mr-1" />
+                    Operacional
+                  </Badge>
+                )}
+                {dashboardType === 'client' && (
+                  <Badge className="bg-purple-500/20 text-purple-300 border-purple-400/50">
+                    <Shield className="h-3 w-3 mr-1" />
+                    Cliente
+                  </Badge>
+                )}
               </div>
             </div>
+
+            {/* Role-Based Dashboard */}
+            {dashboardType === 'admin' && <AdminDashboard />}
+            {dashboardType === 'supervisor' && <SupervisorDashboard />}
+            {dashboardType === 'operational' && <OperationalDashboard />}
+            {dashboardType === 'client' && <ClientDashboard />}
 
             {/* Intelligent Sync Status */}
             <SyncStatusIndicator showManualSync={true} />
