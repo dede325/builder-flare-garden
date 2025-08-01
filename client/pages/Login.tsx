@@ -29,8 +29,20 @@ export default function Login() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center">
         <div className="text-center space-y-6">
-          <div className="h-20 w-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-2xl mx-auto">
-            <Plane className="h-10 w-10 text-white" />
+          <div className="mx-auto">
+            <img
+              src="/airplus-logo.png"
+              alt="AirPlus Aviation"
+              className="h-20 w-auto mx-auto object-contain"
+              onError={(e) => {
+                // Fallback to icon if logo fails to load
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.nextElementSibling?.classList.remove('hidden');
+              }}
+            />
+            <div className="h-20 w-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-2xl mx-auto hidden">
+              <Plane className="h-10 w-10 text-white" />
+            </div>
           </div>
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto"></div>
           <p className="text-white text-xl font-medium">Carregando...</p>
