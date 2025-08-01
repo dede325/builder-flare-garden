@@ -1,13 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://demo.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'demo-key-placeholder';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://fyngvoojdfjexbzasgiz.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ5bmd2b29qZGZqZXhiemFzZ2l6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MTM3MTAsImV4cCI6MjA2OTQ4OTcxMH0.0v2M2L2K1EbSXh6gx1ywdz8q7TxaNqW3fq3-fRx1mh0';
 
 // Check if we have real Supabase credentials
-const hasSupabaseCredentials = import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY;
+const hasSupabaseCredentials = supabaseUrl !== 'https://demo.supabase.co' && supabaseAnonKey !== 'demo-key-placeholder';
 
 if (!hasSupabaseCredentials) {
-  console.warn('Supabase environment variables not found. Running in demo mode.');
+  console.warn('Using fallback Supabase credentials. Ensure environment variables are set for production.');
+} else {
+  console.log('✅ Connected to AirPlus production Supabase:', supabaseUrl);
 }
 
 // Only create real Supabase client if we have credentials
