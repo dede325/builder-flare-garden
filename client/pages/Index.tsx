@@ -267,6 +267,16 @@ export default function Index() {
       borderColor: "border-gray-400/50",
       textColor: "text-gray-300",
     },
+    {
+      title: "Funcionalidades Avançadas",
+      description: "Mobile, Analytics, Automação, Segurança",
+      icon: Zap,
+      link: "/advanced-features",
+      gradient: "from-violet-500 to-violet-600",
+      bgGradient: "from-violet-500/20 to-violet-600/30",
+      borderColor: "border-violet-400/50",
+      textColor: "text-violet-300",
+    },
   ];
 
   return (
