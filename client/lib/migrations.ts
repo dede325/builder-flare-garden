@@ -125,7 +125,7 @@ export async function initializeOfflineDatabase(): Promise<MigrationResult> {
     // Initialize IndexedDB for offline storage
 
     const dbName = "aviation_cleaning_db";
-    const version = 1;
+    const version = 2; // Updated for VFINAL complete schema
 
     const db = await openDB(dbName, version, {
       upgrade(db, oldVersion, newVersion, transaction) {
@@ -177,6 +177,95 @@ export async function initializeOfflineDatabase(): Promise<MigrationResult> {
           formEmployeesStore.createIndex("needs_sync", "needs_sync");
         }
 
+        // New tables from VFINAL migration
+        if (!db.objectStoreNames.contains("photo_evidence")) {
+          const photoStore = db.createObjectStore("photo_evidence", {
+            keyPath: "id",
+          });
+          photoStore.createIndex("form_id", "form_id");
+          photoStore.createIndex("type_category", ["type", "category"]);
+          photoStore.createIndex("timestamp", "timestamp");
+          photoStore.createIndex("needs_sync", "needs_sync");
+        }
+
+        if (!db.objectStoreNames.contains("intervention_types")) {
+          const interventionStore = db.createObjectStore("intervention_types", {
+            keyPath: "id",
+          });
+          interventionStore.createIndex("is_active", "is_active");
+          interventionStore.createIndex("order", "order");
+          interventionStore.createIndex("needs_sync", "needs_sync");
+        }
+
+        if (!db.objectStoreNames.contains("shift_configs")) {
+          const shiftStore = db.createObjectStore("shift_configs", {
+            keyPath: "id",
+          });
+          shiftStore.createIndex("is_active", "is_active");
+          shiftStore.createIndex("order", "order");
+          shiftStore.createIndex("needs_sync", "needs_sync");
+        }
+
+        if (!db.objectStoreNames.contains("location_configs")) {
+          const locationStore = db.createObjectStore("location_configs", {
+            keyPath: "id",
+          });
+          locationStore.createIndex("is_active", "is_active");
+          locationStore.createIndex("order", "order");
+          locationStore.createIndex("needs_sync", "needs_sync");
+        }
+
+        if (!db.objectStoreNames.contains("notifications")) {
+          const notificationStore = db.createObjectStore("notifications", {
+            keyPath: "id",
+          });
+          notificationStore.createIndex("user_id", "user_id");
+          notificationStore.createIndex("read_at", "read_at");
+          notificationStore.createIndex("type_priority", ["type", "priority"]);
+          notificationStore.createIndex("needs_sync", "needs_sync");
+        }
+
+        if (!db.objectStoreNames.contains("qr_codes")) {
+          const qrStore = db.createObjectStore("qr_codes", {
+            keyPath: "id",
+          });
+          qrStore.createIndex("entity_type_id", ["entity_type", "entity_id"]);
+          qrStore.createIndex("qr_code", "qr_code", { unique: true });
+          qrStore.createIndex("is_active", "is_active");
+          qrStore.createIndex("needs_sync", "needs_sync");
+        }
+
+        if (!db.objectStoreNames.contains("user_activity_logs")) {
+          const logStore = db.createObjectStore("user_activity_logs", {
+            keyPath: "id",
+          });
+          logStore.createIndex("user_id", "user_id");
+          logStore.createIndex("action", "action");
+          logStore.createIndex("entity_type_id", ["entity_type", "entity_id"]);
+          logStore.createIndex("created_at", "created_at");
+        }
+
+        if (!db.objectStoreNames.contains("tasks")) {
+          const taskStore = db.createObjectStore("tasks", {
+            keyPath: "id",
+          });
+          taskStore.createIndex("assigned_to", "assigned_to");
+          taskStore.createIndex("aircraft_id", "aircraft_id");
+          taskStore.createIndex("status", "status");
+          taskStore.createIndex("due_date", "due_date");
+          taskStore.createIndex("needs_sync", "needs_sync");
+        }
+
+        if (!db.objectStoreNames.contains("flight_sheets")) {
+          const flightStore = db.createObjectStore("flight_sheets", {
+            keyPath: "id",
+          });
+          flightStore.createIndex("aircraft_id", "aircraft_id");
+          flightStore.createIndex("flight_number", "flight_number");
+          flightStore.createIndex("status", "status");
+          flightStore.createIndex("needs_sync", "needs_sync");
+        }
+
         if (!db.objectStoreNames.contains("system_settings")) {
           const settingsStore = db.createObjectStore("system_settings", {
             keyPath: "setting_key",
@@ -222,10 +311,17 @@ export async function initializeOfflineDatabase(): Promise<MigrationResult> {
     // Insert default data
     await insertDefaultOfflineData(db);
 
-    // Record migration
+    // Record migrations
     await db.put("migration_history", {
       version: "001",
       name: "Initial Schema",
+      applied_at: new Date().toISOString(),
+      success: true,
+    });
+
+    await db.put("migration_history", {
+      version: "vfinal_complete",
+      name: "VFINAL Complete Schema with All Tables",
       applied_at: new Date().toISOString(),
       success: true,
     });
@@ -332,7 +428,7 @@ async function insertDefaultOfflineData(db: IDBPDatabase): Promise<void> {
     },
     {
       key: "schema_version",
-      value: "001",
+      value: "vfinal_complete",
       updated_at: new Date().toISOString(),
     },
     { key: "total_records", value: "0", updated_at: new Date().toISOString() },
