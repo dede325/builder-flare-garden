@@ -234,6 +234,22 @@ export function AdminDashboard() {
       color: "from-green-500 to-green-600",
       permission: "data_management",
     },
+    {
+      title: "Funcionalidades Avançadas",
+      description: "Mobile, Analytics, Automação, Segurança",
+      icon: Zap,
+      link: "/advanced-features",
+      color: "from-violet-500 to-violet-600",
+      permission: "system_configuration",
+    },
+    {
+      title: "Analytics Executivo",
+      description: "Dashboard e métricas avançadas",
+      icon: Eye,
+      link: "#analytics",
+      color: "from-indigo-500 to-indigo-600",
+      permission: "view_reports",
+    },
   ];
 
   return (
