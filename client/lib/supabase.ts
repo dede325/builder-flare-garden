@@ -7,18 +7,12 @@ const supabaseAnonKey =
   import.meta.env.VITE_SUPABASE_ANON_KEY ||
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ5bmd2b29qZGZqZXhiemFzZ2l6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MTM3MTAsImV4cCI6MjA2OTQ4OTcxMH0.0v2M2L2K1EbSXh6gx1ywdz8q7TxaNqW3fq3-fRx1mh0";
 
-// Check if we have real Supabase credentials
-const hasSupabaseCredentials =
-  supabaseUrl !== "https://demo.supabase.co" &&
-  supabaseAnonKey !== "demo-key-placeholder";
-
-if (!hasSupabaseCredentials) {
-  console.warn(
-    "Using fallback Supabase credentials. Ensure environment variables are set for production.",
-  );
-} else {
-  console.log("✅ Connected to AirPlus production Supabase:", supabaseUrl);
+// Validate Supabase credentials
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Supabase URL and Anon Key must be configured in environment variables');
 }
+
+console.log("✅ Connected to AirPlus production Supabase:", supabaseUrl);
 
 // Create Supabase client for AirPlus production
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
@@ -245,71 +239,13 @@ export const auth = {
   },
 };
 
-// Fallback data for development/testing
-const fallbackAeronaves: Aeronave[] = [
-  {
-    id: "1",
-    matricula: "D2-ABC",
-    modelo: "Boeing 737-800",
-    fabricante: "Boeing",
-    proprietario: "TAAG Angola Airlines",
-    status: "ativa",
-    horas_voo: 15420,
-    ultima_inspecao: "2024-01-15",
-    created_at: "2024-01-01",
-    updated_at: "2024-01-15",
-  },
-  {
-    id: "2",
-    matricula: "D2-XYZ",
-    modelo: "Airbus A320",
-    fabricante: "Airbus",
-    proprietario: "Sonair",
-    status: "ativa",
-    horas_voo: 8750,
-    ultima_inspecao: "2024-01-10",
-    created_at: "2024-01-01",
-    updated_at: "2024-01-10",
-  },
-];
 
-const fallbackFuncionarios: Funcionario[] = [
-  {
-    id: "1",
-    nome: "AUGUSTO TOMÁS",
-    funcao: "TÉCNICO AUXILIAR DE PLACA",
-    numero_bilhete: "000862944ME035",
-    codigo_plano: "PL001",
-    telefone: "923000001",
-    email: "augusto.tomas@airplus.co",
-    ativo: true,
-    created_at: "2024-01-01",
-    updated_at: "2024-01-01",
-  },
-  {
-    id: "2",
-    nome: "AMIZANGUEL DA SILVA",
-    funcao: "DIRECTOR",
-    numero_bilhete: "001023626BA037",
-    codigo_plano: "PL002",
-    telefone: "923000002",
-    email: "amizanguel.silva@airplus.co",
-    ativo: true,
-    created_at: "2024-01-01",
-    updated_at: "2024-01-01",
-  },
-];
 
 // AirPlus production database helper functions
 export const db = {
   // Aeronaves operations
   getAeronaves: async () => {
-    try {
-      return await supabase.from("aeronaves").select("*").order("matricula");
-    } catch (error) {
-      console.warn("Error fetching aeronaves:", error);
-      return { data: fallbackAeronaves, error: null };
-    }
+    return await supabase.from("aeronaves").select("*").order("matricula");
   },
 
   createAeronave: async (
@@ -329,16 +265,11 @@ export const db = {
 
   // Funcionarios operations
   getFuncionarios: async () => {
-    try {
-      return await supabase
-        .from("funcionarios")
-        .select("*")
-        .eq("ativo", true)
-        .order("nome");
-    } catch (error) {
-      console.warn("Error fetching funcionarios:", error);
-      return { data: fallbackFuncionarios, error: null };
-    }
+    return await supabase
+      .from("funcionarios")
+      .select("*")
+      .eq("ativo", true)
+      .order("nome");
   },
 
   createFuncionario: async (
@@ -450,23 +381,6 @@ export const db = {
 
   // Task operations
   getTasks: async () => {
-    if (!supabase) {
-      const demoTasks = [
-        {
-          id: "1",
-          title: "Inspeção 100h PT-ABC",
-          description: "Inspeção programada de 100 horas",
-          assigned_to: "2",
-          aircraft_id: "1",
-          priority: "high" as const,
-          status: "pending" as const,
-          due_date: "2024-02-01",
-          created_at: "2024-01-15",
-          updated_at: "2024-01-15",
-        },
-      ];
-      return { data: demoTasks, error: null };
-    }
     return await supabase
       .from("tasks")
       .select(
@@ -480,25 +394,10 @@ export const db = {
   },
 
   createTask: async (task: Omit<Task, "id" | "created_at" | "updated_at">) => {
-    if (!supabase) {
-      const newTask = {
-        ...task,
-        id: Date.now().toString(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-      return { data: newTask, error: null };
-    }
     return await supabase.from("tasks").insert(task).select().single();
   },
 
   updateTask: async (id: string, updates: Partial<Task>) => {
-    if (!supabase) {
-      return {
-        data: { ...updates, id, updated_at: new Date().toISOString() },
-        error: null,
-      };
-    }
     return await supabase
       .from("tasks")
       .update(updates)
@@ -509,25 +408,6 @@ export const db = {
 
   // Flight sheet operations
   getFlightSheets: async () => {
-    if (!supabase) {
-      const demoSheets = [
-        {
-          id: "1",
-          flight_number: "AO001",
-          aircraft_id: "1",
-          pilot_id: "1",
-          departure_airport: "SBSP",
-          arrival_airport: "SBRJ",
-          departure_time: "2024-01-20T08:00:00Z",
-          flight_hours: 1.5,
-          fuel_consumption: 45,
-          status: "completed" as const,
-          created_at: "2024-01-20",
-          updated_at: "2024-01-20",
-        },
-      ];
-      return { data: demoSheets, error: null };
-    }
     return await supabase
       .from("flight_sheets")
       .select(
@@ -544,25 +424,10 @@ export const db = {
   createFlightSheet: async (
     sheet: Omit<FlightSheet, "id" | "created_at" | "updated_at">,
   ) => {
-    if (!supabase) {
-      const newSheet = {
-        ...sheet,
-        id: Date.now().toString(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-      return { data: newSheet, error: null };
-    }
     return await supabase.from("flight_sheets").insert(sheet).select().single();
   },
 
   updateFlightSheet: async (id: string, updates: Partial<FlightSheet>) => {
-    if (!supabase) {
-      return {
-        data: { ...updates, id, updated_at: new Date().toISOString() },
-        error: null,
-      };
-    }
     return await supabase
       .from("flight_sheets")
       .update(updates)

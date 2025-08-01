@@ -1,5 +1,5 @@
 /**
- * Advanced Authentication Service
+ * Production Authentication Service
  * Handles authentication, authorization, roles, and permissions
  */
 
@@ -9,13 +9,11 @@ import { User } from "@supabase/supabase-js";
 export interface UserProfile {
   id: string;
   employee_number?: string;
-  first_name?: string;
-  last_name?: string;
   display_name?: string;
-  avatar_url?: string;
   phone?: string;
-  emergency_contact?: string;
   department?: string;
+  emergency_contact?: string;
+  emergency_phone?: string;
   hire_date?: string;
   license_number?: string;
   certifications: string[];
@@ -66,12 +64,11 @@ class AuthService {
   private listeners: Array<(state: AuthState) => void> = [];
 
   constructor() {
-    // Set initial demo state immediately if Supabase is not configured
     if (!supabase) {
-      this.setDemoState();
-    } else {
-      this.initialize();
+      throw new Error('Supabase not configured. Please check environment variables.');
     }
+    
+    this.initialize();
   }
 
   /**
@@ -79,12 +76,6 @@ class AuthService {
    */
   private async initialize() {
     try {
-      // Check if we have real Supabase connection
-      if (!supabase) {
-        this.setDemoState();
-        return;
-      }
-
       // Get current session
       const {
         data: { session },
@@ -128,60 +119,8 @@ class AuthService {
       });
     } catch (error) {
       console.error("Auth initialization error:", error);
-      this.setDemoState();
+      this.setAuthState({ user: null, loading: false, initialized: true });
     }
-  }
-
-  /**
-   * Set demo state when Supabase is not available
-   */
-  private setDemoState() {
-    const demoUser: UserWithProfile = {
-      id: "demo-user",
-      email: "demo@aviation.com",
-      user_metadata: {
-        full_name: "João Silva (Demo)",
-      },
-      app_metadata: {},
-      aud: "authenticated",
-      created_at: new Date().toISOString(),
-      profile: {
-        id: "demo-user",
-        display_name: "João Silva (Demo)",
-        department: "Operações",
-        is_active: true,
-        certifications: [],
-        preferences: {},
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      },
-      roles: [
-        {
-          id: "demo-role",
-          name: "manager",
-          display_name: "Gestor",
-          level: 70,
-          is_system_role: false,
-        },
-      ],
-      permissions: [
-        "read_aircraft",
-        "update_aircraft",
-        "create_aircraft",
-        "read_employees",
-        "update_employees",
-        "create_employees",
-        "read_tasks",
-        "create_tasks",
-        "update_tasks",
-        "assign_tasks",
-        "read_cleaning_forms",
-        "create_cleaning_forms",
-        "update_cleaning_forms",
-      ],
-    };
-
-    this.setAuthState({ user: demoUser, loading: false, initialized: true });
   }
 
   /**
@@ -246,12 +185,7 @@ class AuthService {
    */
   async signIn(email: string, password: string) {
     if (!supabase) {
-      // Demo mode - simulate successful login
-      this.setDemoState();
-      return {
-        data: { user: this.authState.user, session: null },
-        error: null,
-      };
+      throw new Error('Supabase not configured. Please check environment variables.');
     }
 
     const result = await supabase.auth.signInWithPassword({ email, password });
@@ -270,15 +204,13 @@ class AuthService {
     email: string,
     password: string,
     userData?: {
-      first_name?: string;
-      last_name?: string;
       display_name?: string;
       department?: string;
       phone?: string;
     },
   ) {
     if (!supabase) {
-      return { data: { user: null, session: null }, error: null };
+      throw new Error('Supabase not configured. Please check environment variables.');
     }
 
     const result = await supabase.auth.signUp({
@@ -301,8 +233,7 @@ class AuthService {
    */
   async signOut() {
     if (!supabase) {
-      this.setAuthState({ user: null, loading: false, initialized: true });
-      return { error: null };
+      throw new Error('Supabase not configured. Please check environment variables.');
     }
 
     if (this.authState.user) {
@@ -347,22 +278,7 @@ class AuthService {
    */
   hasPermission(permission: string): boolean {
     const user = this.authState.user;
-    if (!user) return false;
-
-    // Demo mode - allow common permissions
-    if (!supabase) {
-      const commonPermissions = [
-        "read_aircraft",
-        "read_employees",
-        "read_tasks",
-        "read_cleaning_forms",
-        "create_tasks",
-        "update_tasks",
-        "create_cleaning_forms",
-        "update_cleaning_forms",
-      ];
-      return commonPermissions.includes(permission);
-    }
+    if (!user || !supabase) return false;
 
     return user.permissions?.includes(permission) || false;
   }
@@ -429,7 +345,7 @@ class AuthService {
    */
   async getRoles() {
     if (!supabase) {
-      return { data: [], error: null };
+      throw new Error('Supabase not configured');
     }
 
     return await supabase
@@ -439,25 +355,11 @@ class AuthService {
   }
 
   /**
-   * Get all permissions
-   */
-  async getPermissions() {
-    if (!supabase) {
-      return { data: [], error: null };
-    }
-
-    return await supabase
-      .from("permissions")
-      .select("*")
-      .order("resource", { ascending: true });
-  }
-
-  /**
    * Assign role to user (admin only)
    */
   async assignRole(userId: string, roleName: string) {
     if (!supabase) {
-      return { data: null, error: new Error("Supabase not configured") };
+      throw new Error('Supabase not configured');
     }
 
     if (!this.hasPermission("manage_user_roles")) {
@@ -484,41 +386,11 @@ class AuthService {
   }
 
   /**
-   * Remove role from user (admin only)
-   */
-  async removeRole(userId: string, roleName: string) {
-    if (!supabase) {
-      return { data: null, error: new Error("Supabase not configured") };
-    }
-
-    if (!this.hasPermission("manage_user_roles")) {
-      return { data: null, error: new Error("Insufficient permissions") };
-    }
-
-    try {
-      const { data, error } = await supabase.rpc("remove_user_role", {
-        target_user_id: userId,
-        role_name: roleName,
-      });
-
-      if (!error) {
-        await this.logActivity("role_removed", "user_roles", userId, {
-          role: roleName,
-        });
-      }
-
-      return { data, error };
-    } catch (error) {
-      return { data: null, error };
-    }
-  }
-
-  /**
    * Get all users (admin only)
    */
   async getUsers() {
     if (!supabase) {
-      return { data: [], error: null };
+      throw new Error('Supabase not configured');
     }
 
     if (!this.hasPermission("read_users")) {
@@ -536,7 +408,7 @@ class AuthService {
    */
   async updateUserStatus(userId: string, isActive: boolean) {
     if (!supabase) {
-      return { data: null, error: new Error("Supabase not configured") };
+      throw new Error('Supabase not configured');
     }
 
     if (!this.hasPermission("update_users")) {
@@ -562,6 +434,3 @@ class AuthService {
 
 // Export singleton instance
 export const authService = new AuthService();
-
-// Export types
-// Types are already exported above
