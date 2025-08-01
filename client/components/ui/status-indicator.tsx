@@ -22,7 +22,7 @@ import {
   Play,
   Upload,
   Download,
-  Sync,
+  RotateCw,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
