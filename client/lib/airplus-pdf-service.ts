@@ -39,11 +39,11 @@ interface AircraftData {
 class AirPlusPDFService {
   // AirPlus brand colors
   private readonly brandColors = {
-    primary: [37, 99, 235], // Blue
-    secondary: [71, 85, 105], // Gray
-    accent: [34, 197, 94], // Green
-    text: [15, 23, 42], // Dark blue
-    lightGray: [248, 250, 252], // Light gray
+    primary: [37, 99, 235] as [number, number, number], // Blue
+    secondary: [71, 85, 105] as [number, number, number], // Gray
+    accent: [34, 197, 94] as [number, number, number], // Green
+    text: [15, 23, 42] as [number, number, number], // Dark blue
+    lightGray: [248, 250, 252] as [number, number, number], // Light gray
   };
 
   // Company information
