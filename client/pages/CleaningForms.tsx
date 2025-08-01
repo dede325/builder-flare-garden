@@ -688,7 +688,7 @@ export default function CleaningForms() {
         const aircraftData = aircraft.find(
           (ac: any) => ac.id === formData.aircraftId,
         );
-        const pdfStorageUrl = await generateAndUploadPDF(newForm, aircraftData);
+        const pdfStorageUrl = await generateCleaningFormPDFToSupabase(newForm, aircraftData);
 
         // Generate QR code using the new service
         const qrCode = await generateQRCode(formCode, formId);
