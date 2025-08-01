@@ -103,8 +103,7 @@ export async function runSupabaseMigrations(): Promise<MigrationResult> {
       }
     }
 
-    // In a real scenario, migrations should be run via Supabase CLI
-    // This is just for demonstration
+    // Migrations should be run via Supabase CLI in production
     return {
       success: true,
       message: "Supabase migrations should be run via CLI: supabase db push",
@@ -123,8 +122,7 @@ export async function runSupabaseMigrations(): Promise<MigrationResult> {
  */
 export async function initializeOfflineDatabase(): Promise<MigrationResult> {
   try {
-    // This would typically be handled by Dexie.js
-    // For demonstration, we'll use a simplified approach
+    // Initialize IndexedDB for offline storage
 
     const dbName = "aviation_cleaning_db";
     const version = 1;
@@ -413,7 +411,7 @@ export async function runAllMigrations(): Promise<{
 }
 
 /**
- * Reset offline database (for development/testing)
+ * Reset offline database
  */
 export async function resetOfflineDatabase(): Promise<MigrationResult> {
   try {
