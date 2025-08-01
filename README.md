@@ -1,4 +1,4 @@
-# 🛩️ AirPlus Aviation Management System
+# ��️ AirPlus Aviation Management System
 
 <div align="center">
 
@@ -13,7 +13,7 @@
 [![Capacitor](https://img.shields.io/badge/Capacitor-119EFF?logo=capacitor&logoColor=white)](https://capacitorjs.com/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-[Demo](https://airplus-aviation.netlify.app) • [Documentação](docs/) • [API Reference](docs/api.md) • [Mobile Apps](MOBILE_APPS_STATUS.md)
+[Demo](https://airplus-aviation.netlify.app) • [Documentação](docs/) • [API Reference](docs/api.md) • [Mobile Apps](docs/mobile/MOBILE_APPS_STATUS.md)
 
 </div>
 
