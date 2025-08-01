@@ -77,8 +77,8 @@ export default function Settings() {
   });
 
   const [companySettings, setCompanySettings] = useState({
-    companyName: "AviationOps",
-    logo: "",
+    companyName: "AirPlus Aviation Services",
+    logo: "/airplus-logo.png",
     primaryColor: "#00b0ea",
     secondaryColor: "#009ddf",
     interventionTypes: [
@@ -87,6 +87,14 @@ export default function Settings() {
       "Polimento",
       "Lavagem Profunda Durante a Manutenção de Base",
     ],
+  });
+
+  const [logoSettings, setLogoSettings] = useState({
+    companyLogo: "/airplus-logo.png",
+    clientLogo: "",
+    clientName: "",
+    clientAddress: "",
+    clientContact: "",
   });
 
   // Fallback user data for demo mode
