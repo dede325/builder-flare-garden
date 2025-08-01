@@ -43,7 +43,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import {
   advancedFeaturesService,
-  MobileFeaturesConfig,
+  type MobileFeaturesConfig,
 } from "@/lib/advanced-features-service";
 import { mobileFeaturesService } from "@/lib/mobile-features-service";
 
@@ -183,7 +183,7 @@ export function MobileFeaturesConfig({ onConfigChange }: MobileFeaturesConfigPro
       const registered = await mobileFeaturesService.biometricAuth.register(userId);
       if (registered) {
         toast({
-          title: "Autenticaç��o biométrica configurada",
+          title: "Autenticação biométrica configurada",
           description: "A autenticação biométrica foi configurada com sucesso.",
         });
       } else {
