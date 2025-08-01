@@ -63,7 +63,7 @@ import PhotoEvidenceCapture, {
 import {
   downloadCleaningFormPDF,
   previewCleaningFormPDF,
-  generateAndUploadPDF,
+  generateCleaningFormPDFToSupabase,
 } from "@/lib/pdf-utils";
 import { supabaseStorage } from "@/lib/supabase-storage";
 import { useToast } from "@/hooks/use-toast";
