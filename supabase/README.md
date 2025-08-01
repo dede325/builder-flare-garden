@@ -126,11 +126,34 @@ Os seguintes funcionários foram criados com dados reais:
 
 ## Variáveis de Ambiente
 
-Configure no arquivo `.env`:
-
+### 🚀 Produção (Atual)
 ```env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
+# Configuração de Produção AirPlus Aviation
+VITE_SUPABASE_URL=https://fyngvoojdfjexbzasgiz.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ5bmd2b29qZGZqZXhiemFzZ2l6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MTM3MTAsImV4cCI6MjA2OTQ4OTcxMH0.0v2M2L2K1EbSXh6gx1ywdz8q7TxaNqW3fq3-fRx1mh0
+
+# Configuração da Aplicação
+VITE_APP_NAME=AirPlus Aviation
+VITE_APP_VERSION=1.0.0
+VITE_APP_ENVIRONMENT=production
+
+# Branding da Empresa
+VITE_COMPANY_NAME=AirPlus
+VITE_COMPANY_LOGO_URL=/airplus-logo.png
+
+# Features
+VITE_ENABLE_DEMO_MODE=false
+VITE_ENABLE_OFFLINE_MODE=true
+VITE_ENABLE_ANALYTICS=true
+```
+
+### 🔧 Desenvolvimento Local
+```env
+# Para desenvolvimento local
+VITE_SUPABASE_URL=http://localhost:54321
+VITE_SUPABASE_ANON_KEY=your-local-anon-key
+VITE_APP_ENVIRONMENT=development
+VITE_ENABLE_DEMO_MODE=true
 ```
 
 ## Comandos Úteis
@@ -142,7 +165,7 @@ supabase db status
 # Reset do banco local
 supabase db reset
 
-# Ver diferenças
+# Ver diferen��as
 supabase db diff
 
 # Gerar nova migration
