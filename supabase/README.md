@@ -146,6 +146,7 @@ Os seguintes funcionários foram criados com dados reais:
 ## Variáveis de Ambiente
 
 ### 🚀 Produção (Atual)
+
 ```env
 # Configuração de Produção AirPlus Aviation
 VITE_SUPABASE_URL=https://fyngvoojdfjexbzasgiz.supabase.co
@@ -167,6 +168,7 @@ VITE_ENABLE_ANALYTICS=true
 ```
 
 ### 🔧 Desenvolvimento Local
+
 ```env
 # Para desenvolvimento local
 VITE_SUPABASE_URL=http://localhost:54321

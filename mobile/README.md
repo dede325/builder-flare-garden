@@ -43,6 +43,7 @@ As aplicações móveis do AirPlus Aviation são construídas usando **Capacitor
 ## 📱 Plataformas Suportadas
 
 ### 🍎 iOS
+
 - **Versão Mínima**: iOS 14.0+
 - **Dispositivos**: iPhone, iPad
 - **Arquiteturas**: arm64, x86_64 (simulador)
@@ -54,6 +55,7 @@ As aplicações móveis do AirPlus Aviation são construídas usando **Capacitor
   - Background sync
 
 ### 🤖 Android
+
 - **API Mínima**: Android API 24 (Android 7.0)+
 - **Dispositivos**: Smartphones e tablets
 - **Arquiteturas**: arm64-v8a, armeabi-v7a
@@ -71,13 +73,13 @@ graph TB
     subgraph "React Web App"
         A[React Components] --> B[Capacitor Bridge]
     end
-    
+
     subgraph "Capacitor Layer"
         B --> C[iOS Bridge]
         B --> D[Android Bridge]
         B --> E[Web Bridge]
     end
-    
+
     subgraph "Native Plugins"
         F[Camera Plugin]
         G[Storage Plugin]
@@ -85,14 +87,14 @@ graph TB
         I[Device Plugin]
         J[Filesystem Plugin]
     end
-    
+
     subgraph "Platform Native"
         C --> K[iOS App]
         D --> L[Android App]
         K --> M[App Store]
         L --> N[Google Play]
     end
-    
+
     C --> F
     C --> G
     D --> F
@@ -161,39 +163,39 @@ mobile/
 
 ```typescript
 // capacitor.config.ts
-import { CapacitorConfig } from '@capacitor/cli';
+import { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: 'com.airplus.aviation',
-  appName: 'AirPlus Aviation',
-  webDir: 'dist/spa',
+  appId: "com.airplus.aviation",
+  appName: "AirPlus Aviation",
+  webDir: "dist/spa",
   server: {
-    androidScheme: 'https'
+    androidScheme: "https",
   },
   plugins: {
     Camera: {
-      permissions: ['camera', 'photos']
+      permissions: ["camera", "photos"],
     },
     Storage: {
-      group: 'AirPlusData'
+      group: "AirPlusData",
     },
     PushNotifications: {
-      presentationOptions: ['badge', 'sound', 'alert']
+      presentationOptions: ["badge", "sound", "alert"],
     },
     LocalNotifications: {
-      smallIcon: 'ic_stat_icon',
-      iconColor: '#00b0ea'
-    }
+      smallIcon: "ic_stat_icon",
+      iconColor: "#00b0ea",
+    },
   },
   ios: {
-    scheme: 'AirPlus Aviation'
+    scheme: "AirPlus Aviation",
   },
   android: {
     buildOptions: {
-      keystorePath: 'release.keystore',
-      keystoreAlias: 'airplus'
-    }
-  }
+      keystorePath: "release.keystore",
+      keystoreAlias: "airplus",
+    },
+  },
 };
 
 export default config;
@@ -236,7 +238,7 @@ export default config;
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
     android:theme="@style/AppTheme.NoActionBarLaunch">
-    
+
     <activity
         android:name="com.airplus.aviation.MainActivity"
         android:theme="@style/AppTheme.NoActionBarLaunch"
@@ -387,6 +389,7 @@ npm run build:android
 ### 🔐 Code Signing
 
 #### iOS Code Signing
+
 ```bash
 # Configurar certificados no Xcode
 # 1. Abrir ios/App/App.xcworkspace
@@ -397,6 +400,7 @@ npm run build:android
 ```
 
 #### Android Code Signing
+
 ```bash
 # Gerar keystore (apenas uma vez)
 keytool -genkey -v -keystore release.keystore -alias airplus -keyalg RSA -keysize 2048 -validity 10000
@@ -428,19 +432,19 @@ npx cap run android --list # Listar dispositivos Android
 
 ```typescript
 // Exemplo: Teste de camera plugin
-import { Camera, CameraResultType } from '@capacitor/camera';
+import { Camera, CameraResultType } from "@capacitor/camera";
 
 const testCamera = async () => {
   try {
     const image = await Camera.getPhoto({
       quality: 90,
       allowEditing: false,
-      resultType: CameraResultType.Uri
+      resultType: CameraResultType.Uri,
     });
-    
-    console.log('Camera test successful:', image.webPath);
+
+    console.log("Camera test successful:", image.webPath);
   } catch (error) {
-    console.error('Camera test failed:', error);
+    console.error("Camera test failed:", error);
   }
 };
 ```
@@ -468,6 +472,7 @@ const testCamera = async () => {
 ### 🍎 App Store (iOS)
 
 #### 1. Preparação
+
 ```bash
 # Build de produção
 npm run build:ios
@@ -477,6 +482,7 @@ npm run build:ios
 ```
 
 #### 2. App Store Connect
+
 - Criar app no App Store Connect
 - Configurar metadados da app
 - Upload de screenshots
@@ -484,6 +490,7 @@ npm run build:ios
 - Submeter para review
 
 #### 3. Informações da App
+
 ```
 Nome da App: AirPlus Aviation
 Bundle ID: com.airplus.aviation
@@ -495,6 +502,7 @@ Classificação: 4+
 ### 🤖 Google Play (Android)
 
 #### 1. Preparação
+
 ```bash
 # Build de produção
 npm run build:android
@@ -504,6 +512,7 @@ npm run build:android
 ```
 
 #### 2. Google Play Console
+
 - Criar app no Google Play Console
 - Upload do AAB (Android App Bundle)
 - Configurar listing da store
@@ -511,6 +520,7 @@ npm run build:android
 - Configurar pricing & distribution
 
 #### 3. Informações da App
+
 ```
 Nome da App: AirPlus Aviation
 Package: com.airplus.aviation
@@ -522,16 +532,19 @@ Target SDK: 34 (Android 14)
 ### 📋 Assets para Stores
 
 #### Screenshots (ambas as stores)
+
 - **iPhone**: 6.7", 6.5", 5.5"
 - **iPad**: 12.9", 11"
 - **Android Phone**: 16:9, 18:9
 - **Android Tablet**: 10"
 
 #### Ícones
+
 - **iOS**: 1024x1024 (App Store)
 - **Android**: 512x512 (Play Store)
 
 #### Descrições
+
 ```
 Título: AirPlus Aviation - Gestão Aeroportuária
 
@@ -539,7 +552,7 @@ Descrição Curta:
 Sistema completo de gestão aeroportuária para operações de aviação comercial e privada.
 
 Descrição Completa:
-O AirPlus Aviation é uma solução completa de gestão aeroportuária desenvolvida especificamente para operações de aviação em Angola. 
+O AirPlus Aviation é uma solução completa de gestão aeroportuária desenvolvida especificamente para operações de aviação em Angola.
 
 Características principais:
 • Gestão completa de aeronaves
@@ -558,20 +571,20 @@ Características principais:
 
 ```typescript
 // Configuração de live updates (opcional)
-import { CapacitorUpdater } from '@capgo/capacitor-updater';
+import { CapacitorUpdater } from "@capgo/capacitor-updater";
 
 const checkForUpdates = async () => {
   try {
     const latest = await CapacitorUpdater.download({
-      url: 'https://api.airplus.ao/updates/latest'
+      url: "https://api.airplus.ao/updates/latest",
     });
-    
+
     if (latest) {
       await CapacitorUpdater.set({ id: latest.id });
       await CapacitorUpdater.reload();
     }
   } catch (error) {
-    console.error('Update failed:', error);
+    console.error("Update failed:", error);
   }
 };
 ```
@@ -579,20 +592,22 @@ const checkForUpdates = async () => {
 ### 🔄 Processo de Atualização
 
 1. **Desenvolvimento**
+
    ```bash
    # Incrementar versão
    npm version patch
-   
+
    # Build e teste
    npm run build:mobile
    npm run test:mobile
    ```
 
 2. **Deploy**
+
    ```bash
    # Build de produção
    npm run build:production
-   
+
    # Upload para stores
    # iOS: Archive e upload via Xcode
    # Android: Upload AAB no Play Console
@@ -607,16 +622,16 @@ const checkForUpdates = async () => {
 
 ```typescript
 // Analytics de atualizações
-import { FirebaseAnalytics } from '@capacitor-firebase/analytics';
+import { FirebaseAnalytics } from "@capacitor-firebase/analytics";
 
 const trackAppUpdate = async (version: string) => {
   await FirebaseAnalytics.logEvent({
-    name: 'app_update',
+    name: "app_update",
     parameters: {
       version: version,
       platform: Capacitor.getPlatform(),
-      timestamp: new Date().toISOString()
-    }
+      timestamp: new Date().toISOString(),
+    },
   });
 };
 ```
@@ -627,7 +642,7 @@ const trackAppUpdate = async (version: string) => {
 
 **📱 Mobile Apps AirPlus Aviation**
 
-*Aplicações nativas de alta performance para iOS e Android*
+_Aplicações nativas de alta performance para iOS e Android_
 
 [⬅️ Voltar ao README principal](../README.md) • [📖 Guias Específicos](docs/)
 

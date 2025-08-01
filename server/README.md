@@ -47,7 +47,7 @@ graph TB
         A[React SPA] --> B[HTTP Requests]
         C[Mobile Apps] --> B
     end
-    
+
     subgraph "API Layer"
         B --> D[Express Server]
         D --> E[Route Handlers]
@@ -56,20 +56,20 @@ graph TB
         F --> H[CORS Middleware]
         F --> I[Error Handler]
     end
-    
+
     subgraph "Service Layer"
         E --> J[Business Logic]
         J --> K[Data Validation]
         J --> L[File Processing]
     end
-    
+
     subgraph "Data Layer"
         J --> M[Supabase Client]
         M --> N[PostgreSQL]
         M --> O[Supabase Auth]
         M --> P[Supabase Storage]
     end
-    
+
     subgraph "External Services"
         J --> Q[Email Service]
         J --> R[PDF Generation]
@@ -143,6 +143,7 @@ server/
 ## 🔌 API Endpoints
 
 ### 🏠 Base URL
+
 ```
 Development: http://localhost:8080/api
 Production: https://airplus-aviation.netlify.app/api
@@ -151,6 +152,7 @@ Production: https://airplus-aviation.netlify.app/api
 ### 🔐 Autenticação
 
 #### POST /api/auth/login
+
 ```typescript
 // Request
 {
@@ -175,6 +177,7 @@ Production: https://airplus-aviation.netlify.app/api
 ```
 
 #### POST /api/auth/logout
+
 ```typescript
 // Headers
 Authorization: Bearer jwt_token
@@ -187,6 +190,7 @@ Authorization: Bearer jwt_token
 ```
 
 #### GET /api/auth/me
+
 ```typescript
 // Headers
 Authorization: Bearer jwt_token
@@ -207,6 +211,7 @@ Authorization: Bearer jwt_token
 ### ✈️ Aeronaves
 
 #### GET /api/aircraft
+
 ```typescript
 // Query Parameters
 ?page=1&limit=10&search=PT-ABC&status=active
@@ -235,6 +240,7 @@ Authorization: Bearer jwt_token
 ```
 
 #### POST /api/aircraft
+
 ```typescript
 // Request
 {
@@ -261,6 +267,7 @@ Authorization: Bearer jwt_token
 ### 👥 Funcionários
 
 #### GET /api/employees
+
 ```typescript
 // Response
 {
@@ -280,6 +287,7 @@ Authorization: Bearer jwt_token
 ```
 
 #### POST /api/employees
+
 ```typescript
 // Request
 {
@@ -295,6 +303,7 @@ Authorization: Bearer jwt_token
 ### 🧽 Formulários de Limpeza
 
 #### GET /api/cleaning-forms
+
 ```typescript
 // Response
 {
@@ -325,6 +334,7 @@ Authorization: Bearer jwt_token
 ### 📊 Exportações
 
 #### POST /api/exports/pdf
+
 ```typescript
 // Request
 {
@@ -345,6 +355,7 @@ Content-Disposition: attachment; filename="cleaning-forms-2024-01.pdf"
 ### 📁 Gestão de Ficheiros
 
 #### POST /api/files/upload
+
 ```typescript
 // FormData
 file: File
@@ -368,6 +379,7 @@ entityType: "aircraft" | "employee" | "cleaning-form"
 ### 🔄 Sincronização
 
 #### POST /api/sync/upload
+
 ```typescript
 // Request
 {
@@ -395,6 +407,7 @@ entityType: "aircraft" | "employee" | "cleaning-form"
 ```
 
 #### GET /api/sync/download
+
 ```typescript
 // Query Parameters
 ?lastSyncAt=2024-01-20T10:00:00Z
@@ -419,6 +432,7 @@ entityType: "aircraft" | "employee" | "cleaning-form"
 ## 🔐 Autenticação
 
 ### 🎫 JWT Tokens
+
 ```typescript
 // Token Structure
 {
@@ -432,16 +446,19 @@ entityType: "aircraft" | "employee" | "cleaning-form"
 ```
 
 ### 🛡️ Middleware de Autenticação
+
 ```typescript
 // Uso em rotas protegidas
-app.get('/api/aircraft', 
-  authMiddleware,           // Verificar token JWT
-  permissionMiddleware(['aircraft.read']), // Verificar permissões
-  getAircraftHandler       // Handler da rota
+app.get(
+  "/api/aircraft",
+  authMiddleware, // Verificar token JWT
+  permissionMiddleware(["aircraft.read"]), // Verificar permissões
+  getAircraftHandler, // Handler da rota
 );
 ```
 
 ### 🔑 Níveis de Acesso
+
 - **Super Admin** - Acesso total ao sistema
 - **Admin** - Gestão de dados e utilizadores
 - **Manager** - Supervisão de operações
@@ -454,46 +471,46 @@ app.get('/api/aircraft',
 ## 💾 Base de Dados
 
 ### 🐘 PostgreSQL via Supabase
+
 ```typescript
 // Cliente Supabase
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY!
+  process.env.SUPABASE_SERVICE_KEY!,
 );
 ```
 
 ### 📊 Operações CRUD
+
 ```typescript
 // Example: Aircraft Service
 class AircraftService {
   async getAll(filters: AircraftFilters) {
-    let query = supabase
-      .from('aircraft')
-      .select('*');
-    
+    let query = supabase.from("aircraft").select("*");
+
     if (filters.status) {
-      query = query.eq('status', filters.status);
+      query = query.eq("status", filters.status);
     }
-    
+
     if (filters.search) {
-      query = query.ilike('registration', `%${filters.search}%`);
+      query = query.ilike("registration", `%${filters.search}%`);
     }
-    
+
     const { data, error } = await query;
     if (error) throw error;
-    
+
     return data;
   }
-  
+
   async create(aircraft: CreateAircraftDto) {
     const { data, error } = await supabase
-      .from('aircraft')
+      .from("aircraft")
       .insert(aircraft)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
@@ -501,20 +518,22 @@ class AircraftService {
 ```
 
 ### 🔄 Real-time Subscriptions
+
 ```typescript
 // Real-time updates
 const subscription = supabase
-  .channel('aircraft-changes')
-  .on('postgres_changes', 
-    { 
-      event: '*', 
-      schema: 'public', 
-      table: 'aircraft' 
+  .channel("aircraft-changes")
+  .on(
+    "postgres_changes",
+    {
+      event: "*",
+      schema: "public",
+      table: "aircraft",
     },
     (payload) => {
       // Broadcast changes to clients
-      io.emit('aircraft-updated', payload);
-    }
+      io.emit("aircraft-updated", payload);
+    },
   )
   .subscribe();
 ```
@@ -522,6 +541,7 @@ const subscription = supabase
 ## ⚙️ Configuração
 
 ### 🌍 Variáveis de Ambiente
+
 ```env
 # Server Configuration
 PORT=8080
@@ -551,12 +571,13 @@ RATE_LIMIT_MAX=100    # 100 requests per window
 ```
 
 ### 🔧 Configuração do Servidor
+
 ```typescript
 // server/index.ts
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import compression from 'compression';
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import compression from "compression";
 
 const app = express();
 
@@ -566,11 +587,11 @@ app.use(cors());
 app.use(compression());
 
 // Body parsing
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // API routes
-app.use('/api', apiRoutes);
+app.use("/api", apiRoutes);
 
 // Error handling
 app.use(errorHandler);
@@ -584,11 +605,12 @@ app.listen(PORT, () => {
 ## 🚀 Deploy
 
 ### 🌐 Netlify Functions (Serverless)
+
 ```typescript
 // netlify/functions/api.ts
-import { Handler } from '@netlify/functions';
-import serverless from 'serverless-http';
-import { app } from '../../server/index';
+import { Handler } from "@netlify/functions";
+import serverless from "serverless-http";
+import { app } from "../../server/index";
 
 const handler: Handler = serverless(app);
 
@@ -596,6 +618,7 @@ export { handler };
 ```
 
 ### 🐳 Docker (Alternativo)
+
 ```dockerfile
 # Dockerfile
 FROM node:18-alpine
@@ -614,6 +637,7 @@ CMD ["node", "dist/server/node-build.mjs"]
 ```
 
 ### ☁️ Deploy Commands
+
 ```bash
 # Netlify deploy
 npm run build
@@ -631,6 +655,7 @@ docker run -p 8080:8080 airplus-api
 ## 🛠️ Desenvolvimento
 
 ### 🚀 Scripts de Desenvolvimento
+
 ```bash
 # Iniciar servidor de desenvolvimento
 npm run dev
@@ -649,99 +674,104 @@ npm run lint
 ```
 
 ### 🧪 Testes
+
 ```typescript
 // Example: Aircraft API tests
-describe('Aircraft API', () => {
-  test('GET /api/aircraft should return aircraft list', async () => {
+describe("Aircraft API", () => {
+  test("GET /api/aircraft should return aircraft list", async () => {
     const response = await request(app)
-      .get('/api/aircraft')
-      .set('Authorization', `Bearer ${token}`)
+      .get("/api/aircraft")
+      .set("Authorization", `Bearer ${token}`)
       .expect(200);
-    
+
     expect(response.body.success).toBe(true);
     expect(response.body.data).toBeInstanceOf(Array);
   });
-  
-  test('POST /api/aircraft should create new aircraft', async () => {
+
+  test("POST /api/aircraft should create new aircraft", async () => {
     const aircraftData = {
-      registration: 'PT-TEST',
-      model: 'Test Aircraft',
-      manufacturer: 'Test Co'
+      registration: "PT-TEST",
+      model: "Test Aircraft",
+      manufacturer: "Test Co",
     };
-    
+
     const response = await request(app)
-      .post('/api/aircraft')
-      .set('Authorization', `Bearer ${token}`)
+      .post("/api/aircraft")
+      .set("Authorization", `Bearer ${token}`)
       .send(aircraftData)
       .expect(201);
-    
-    expect(response.body.data.registration).toBe('PT-TEST');
+
+    expect(response.body.data.registration).toBe("PT-TEST");
   });
 });
 ```
 
 ### 📝 Logging
+
 ```typescript
 // Logger configuration
-import winston from 'winston';
+import winston from "winston";
 
 const logger = winston.createLogger({
-  level: 'info',
+  level: "info",
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.errors({ stack: true }),
-    winston.format.json()
+    winston.format.json(),
   ),
   transports: [
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'combined.log' }),
-    new winston.transports.Console()
-  ]
+    new winston.transports.File({ filename: "error.log", level: "error" }),
+    new winston.transports.File({ filename: "combined.log" }),
+    new winston.transports.Console(),
+  ],
 });
 
 // Usage
-logger.info('Server started', { port: PORT });
-logger.error('Database connection failed', { error: error.message });
+logger.info("Server started", { port: PORT });
+logger.error("Database connection failed", { error: error.message });
 ```
 
 ## 📊 Monitorização
 
 ### 📈 Métricas de Performance
+
 - **Response Time**: Tempo médio de resposta
 - **Throughput**: Requests por segundo
 - **Error Rate**: Taxa de erros
 - **Database Queries**: Performance das queries
 
 ### 🔍 Health Checks
+
 ```typescript
 // GET /api/health
-app.get('/api/health', async (req, res) => {
+app.get("/api/health", async (req, res) => {
   try {
     // Check database connection
     const { error } = await supabase
-      .from('system_settings')
-      .select('id')
+      .from("system_settings")
+      .select("id")
       .limit(1);
-    
+
     if (error) throw error;
-    
+
     res.json({
-      status: 'healthy',
+      status: "healthy",
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
       memory: process.memoryUsage(),
-      database: 'connected'
+      database: "connected",
     });
   } catch (error) {
     res.status(500).json({
-      status: 'unhealthy',
-      error: error.message
+      status: "unhealthy",
+      error: error.message,
     });
   }
 });
 ```
 
 ### 📊 Analytics
+
 - **User Activity**: Logs de atividade dos utilizadores
 - **API Usage**: Estatísticas de uso da API
 - **Error Tracking**: Registo e análise de erros
@@ -753,7 +783,7 @@ app.get('/api/health', async (req, res) => {
 
 **🔧 Backend AirPlus Aviation**
 
-*API robusta e escalável para gestão aeroportuária*
+_API robusta e escalável para gestão aeroportuária_
 
 [⬅️ Voltar ao README principal](../README.md)
 

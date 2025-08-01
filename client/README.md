@@ -47,7 +47,7 @@ graph TB
     subgraph "React SPA"
         A[App.tsx] --> B[React Router]
         A --> C[Context Providers]
-        
+
         subgraph "Pages Layer"
             D[Index.tsx]
             E[Login.tsx]
@@ -55,27 +55,27 @@ graph TB
             G[EmployeeManager.tsx]
             H[CleaningForms.tsx]
         end
-        
+
         subgraph "Components Layer"
             I[UI Components]
             J[Dashboard Components]
             K[Feature Components]
         end
-        
+
         subgraph "Services Layer"
             L[Auth Service]
             M[Supabase Client]
             N[Offline Storage]
             O[Sync Service]
         end
-        
+
         subgraph "State Management"
             P[React Context]
             Q[Local State]
             R[Custom Hooks]
         end
     end
-    
+
     B --> D
     D --> I
     I --> L
@@ -160,6 +160,7 @@ client/
 ### Sistema de Design (48 Componentes)
 
 #### 🔘 Elementos Base
+
 ```typescript
 // Buttons
 <Button variant="default" size="md">Clique aqui</Button>
@@ -182,6 +183,7 @@ client/
 ```
 
 #### 📊 Componentes de Dados
+
 ```typescript
 // Tables
 <Table>
@@ -206,6 +208,7 @@ client/
 ```
 
 #### 🎭 Componentes de Interface
+
 ```typescript
 // Dialogs
 <Dialog>
@@ -229,12 +232,14 @@ toast({
 ### 🎯 Componentes Específicos
 
 #### Dashboard por Role
+
 - **AdminDashboard** - Métricas administrativas
 - **ClientDashboard** - Interface para clientes
 - **OperationalDashboard** - Operações do dia-a-dia
 - **SupervisorDashboard** - Supervisão e controlo
 
 #### Funcionalidades Avançadas
+
 - **PhotoEvidenceCapture** - Captura de evidências fotográficas
 - **SignatureCanvas** - Canvas para assinaturas digitais
 - **QRCodeDisplay** - Geração e exibição de QR codes
@@ -243,30 +248,35 @@ toast({
 ## 📱 Pages
 
 ### 🏠 Página Principal (Index.tsx)
+
 - Dashboard personalizado por role
 - Métricas em tempo real
 - Navegação principal
 - Quick actions
 
 ### 🔐 Autenticação (Login.tsx)
+
 - Login com email/password
 - Reset de password
 - Proteção de rotas
 - Redirecionamento por role
 
 ### ✈️ Gestão de Aeronaves (AircraftManager.tsx)
+
 - CRUD completo de aeronaves
 - Upload de documentos
 - Histórico de manutenção
 - Status operacional
 
 ### 👥 Gestão de Funcionários (EmployeeManager.tsx)
+
 - Cadastro de funcionários
 - Gestão de certificações
 - Atribuição de roles
 - Histórico de atividades
 
 ### 🧽 Formulários de Limpeza (CleaningForms.tsx)
+
 - Formulários digitais
 - Evidências fotográficas
 - Assinaturas digitais
@@ -283,18 +293,30 @@ toast({
 
 /* Glassmorphism */
 .glass-card {
-  background: linear-gradient(145deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.15));
+  background: linear-gradient(
+    145deg,
+    rgba(59, 130, 246, 0.1),
+    rgba(37, 99, 235, 0.15)
+  );
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Gradientes */
 .mobile-gradient-bg {
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 25%, #3730a3 50%, #1e3a8a 75%, #0f172a 100%);
+  background: linear-gradient(
+    135deg,
+    #0f172a 0%,
+    #1e3a8a 25%,
+    #3730a3 50%,
+    #1e3a8a 75%,
+    #0f172a 100%
+  );
 }
 ```
 
 ### 📐 Sistema de Spacing
+
 - **Base unit**: 4px (0.25rem)
 - **Small**: 8px (0.5rem)
 - **Medium**: 16px (1rem)
@@ -302,11 +324,13 @@ toast({
 - **XLarge**: 32px (2rem)
 
 ### 🔤 Tipografia
+
 - **Font Family**: Inter (system fallback)
 - **Sizes**: text-xs (12px) → text-6xl (60px)
 - **Weights**: font-light (300) → font-black (900)
 
 ### 📱 Breakpoints
+
 ```css
 /* Mobile First */
 sm: 640px   /* Tablets */
@@ -319,6 +343,7 @@ xl: 1280px  /* Desktops */
 ## 📦 Hooks Customizados
 
 ### 🔐 useAuth
+
 ```typescript
 const { user, login, logout, loading } = useAuth();
 
@@ -335,6 +360,7 @@ if (user) {
 ```
 
 ### 📱 useMobile
+
 ```typescript
 const { isMobile, isTablet, isDesktop } = useMobile();
 
@@ -344,6 +370,7 @@ const { isMobile, isTablet, isDesktop } = useMobile();
 ```
 
 ### 🍞 useToast
+
 ```typescript
 const { toast } = useToast();
 
@@ -351,23 +378,24 @@ const { toast } = useToast();
 toast({
   title: "Sucesso!",
   description: "Operação realizada",
-  variant: "default"
+  variant: "default",
 });
 
 // Error toast
 toast({
   title: "Erro!",
   description: "Algo correu mal",
-  variant: "destructive"
+  variant: "destructive",
 });
 ```
 
 ### 🔄 useSyncStatus
+
 ```typescript
 const { isOnline, isSyncing, lastSync } = useSyncStatus();
 
 // Sync indicator
-<SyncStatusIndicator 
+<SyncStatusIndicator
   isOnline={isOnline}
   isSyncing={isSyncing}
   lastSync={lastSync}
@@ -377,8 +405,9 @@ const { isOnline, isSyncing, lastSync } = useSyncStatus();
 ## ⚙️ Serviços
 
 ### 🔐 Auth Service
+
 ```typescript
-import { authService } from '@/lib/auth-service';
+import { authService } from "@/lib/auth-service";
 
 // Login
 await authService.login(email, password);
@@ -387,12 +416,13 @@ await authService.login(email, password);
 const user = authService.getCurrentUser();
 
 // Check permissions
-const canEdit = authService.hasPermission('aircraft.edit');
+const canEdit = authService.hasPermission("aircraft.edit");
 ```
 
 ### 💾 Offline Storage
+
 ```typescript
-import { offlineDB } from '@/lib/offline-db';
+import { offlineDB } from "@/lib/offline-db";
 
 // Store data offline
 await offlineDB.aircraft.add(aircraftData);
@@ -405,17 +435,18 @@ await offlineDB.syncAll();
 ```
 
 ### 📊 Export Service
+
 ```typescript
-import { exportService } from '@/lib/export-service';
+import { exportService } from "@/lib/export-service";
 
 // Export to PDF
-await exportService.exportToPDF(data, 'report.pdf');
+await exportService.exportToPDF(data, "report.pdf");
 
 // Export to Excel
-await exportService.exportToExcel(data, 'data.xlsx');
+await exportService.exportToExcel(data, "data.xlsx");
 
 // Export to CSV
-await exportService.exportToCSV(data, 'data.csv');
+await exportService.exportToCSV(data, "data.csv");
 ```
 
 ## 🛠️ Desenvolvimento
@@ -439,6 +470,7 @@ npm run format.fix
 ### 📝 Padrões de Código
 
 #### Componentes React
+
 ```typescript
 // Functional component com TypeScript
 interface Props {
@@ -448,7 +480,7 @@ interface Props {
 
 export function MyComponent({ title, onClose }: Props) {
   const [loading, setLoading] = useState(false);
-  
+
   return (
     <div className="glass-card p-6">
       <h2 className="text-xl font-semibold">{title}</h2>
@@ -459,32 +491,34 @@ export function MyComponent({ title, onClose }: Props) {
 ```
 
 #### Hooks Customizados
+
 ```typescript
 // Hook para gestão de estado
 export function useMyFeature() {
   const [data, setData] = useState<DataType[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     loadData();
   }, []);
-  
+
   const loadData = async () => {
     // Logic here
   };
-  
+
   return { data, loading, loadData };
 }
 ```
 
 #### Serviços
+
 ```typescript
 // Service class pattern
 class MyService {
   async getData(): Promise<DataType[]> {
     // API call logic
   }
-  
+
   async saveData(data: DataType): Promise<void> {
     // Save logic
   }
@@ -496,14 +530,15 @@ export const myService = new MyService();
 ### 🎨 Styling Guidelines
 
 #### TailwindCSS Classes
+
 ```typescript
 // Utility-first approach
 <div className="
-  bg-white/10 
-  backdrop-blur-md 
-  border 
-  border-white/20 
-  rounded-xl 
+  bg-white/10
+  backdrop-blur-md
+  border
+  border-white/20
+  rounded-xl
   shadow-xl
   p-6
   hover:bg-white/15
@@ -515,6 +550,7 @@ export const myService = new MyService();
 ```
 
 #### Responsive Design
+
 ```typescript
 // Mobile-first responsive
 <div className="
@@ -529,17 +565,19 @@ export const myService = new MyService();
 ## 📱 Mobile-First
 
 ### 🎯 Estratégia Mobile-First
+
 1. **Design para mobile primeiro**
 2. **Progressive enhancement para desktop**
 3. **Touch-friendly interactions**
 4. **Otimização de performance**
 
 ### 📐 Componentes Mobile-Optimized
+
 ```typescript
 // Touch-friendly buttons
 <button className="
-  min-h-[44px] 
-  min-w-[44px] 
+  min-h-[44px]
+  min-w-[44px]
   touch-manipulation
   active:scale-95
   transition-transform
@@ -557,6 +595,7 @@ export const myService = new MyService();
 ```
 
 ### 📱 Responsive Patterns
+
 ```typescript
 // Conditional mobile components
 {isMobile ? (
@@ -567,10 +606,10 @@ export const myService = new MyService();
 
 // Responsive grids
 <div className="
-  grid 
-  grid-cols-1 
+  grid
+  grid-cols-1
   gap-4
-  sm:grid-cols-2 
+  sm:grid-cols-2
   lg:grid-cols-3
   xl:grid-cols-4
 ">
@@ -581,12 +620,14 @@ export const myService = new MyService();
 ## ♿ Acessibilidade
 
 ### 🎯 WCAG 2.1 AA Compliance
+
 - **Contraste**: Mínimo 4.5:1 para texto normal
 - **Navegação**: Suporte completo a teclado
 - **Screen Readers**: Semantic HTML + ARIA
 - **Focus Management**: Indicadores visuais claros
 
 ### 🔧 Implementação
+
 ```typescript
 // Semantic HTML
 <main role="main">
@@ -599,7 +640,7 @@ export const myService = new MyService();
 </main>
 
 // ARIA attributes
-<button 
+<button
   aria-label="Fechar modal"
   aria-expanded={isOpen}
   onClick={onClose}
@@ -622,6 +663,7 @@ export const myService = new MyService();
 ```
 
 ### 🎨 Design Inclusivo
+
 - **High contrast mode** suportado
 - **Reduced motion** respeitado
 - **Text scaling** até 200%
@@ -633,7 +675,7 @@ export const myService = new MyService();
 
 **🎨 Frontend AirPlus Aviation**
 
-*Interface moderna, acessível e performante*
+_Interface moderna, acessível e performante_
 
 [⬅️ Voltar ao README principal](../README.md)
 

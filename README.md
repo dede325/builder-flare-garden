@@ -53,6 +53,7 @@ O **AirPlus Aviation Management System** é uma solução completa de gestão ae
 ## ✨ Características
 
 ### 🔧 Funcionais
+
 - ✅ **Gestão Completa de Aeronaves** - CRUD completo com histórico
 - ✅ **Sistema de Funcionários** - 14 funcionários específicos de Angola
 - ✅ **Formulários Digitais** - Limpeza, manutenção e inspeção
@@ -63,6 +64,7 @@ O **AirPlus Aviation Management System** é uma solução completa de gestão ae
 - ✅ **Sincronização Offline** - Dados persistem sem internet
 
 ### 🚀 Técnicas
+
 - ✅ **Progressive Web App (PWA)** - Instalável e offline
 - ✅ **Responsive Design** - Otimizado para todos os dispositivos
 - ✅ **Real-time Updates** - Websockets para atualizações live
@@ -81,7 +83,7 @@ graph TB
         A --> C[TailwindCSS]
         A --> D[Radix UI]
     end
-    
+
     subgraph "Backend Services"
         E[Express Server] --> F[API Routes]
         G[Supabase] --> H[PostgreSQL]
@@ -89,18 +91,18 @@ graph TB
         G --> J[Real-time]
         G --> K[Storage]
     end
-    
+
     subgraph "Mobile Apps"
         L[iOS App] --> M[Capacitor]
         N[Android App] --> M
         M --> A
     end
-    
+
     subgraph "Infrastructure"
         O[Netlify] --> P[CDN]
         O --> Q[Edge Functions]
     end
-    
+
     A --> E
     A --> G
     M --> G
@@ -137,39 +139,43 @@ airplus-aviation/
 ## 📱 Tecnologias
 
 ### Frontend Stack
-| Tecnologia | Versão | Propósito |
-|------------|--------|-----------|
-| **React** | 18.3.1 | Framework principal |
-| **TypeScript** | 5.5.3 | Tipagem estática |
-| **Vite** | 6.2.2 | Build tool e dev server |
-| **React Router** | 6.26.2 | Routing SPA |
-| **TailwindCSS** | 3.4.11 | Framework CSS |
-| **Radix UI** | Latest | Componentes acessíveis |
-| **Framer Motion** | 12.6.2 | Animações |
-| **Lucide React** | 0.462.0 | Ícones |
+
+| Tecnologia        | Versão  | Propósito               |
+| ----------------- | ------- | ----------------------- |
+| **React**         | 18.3.1  | Framework principal     |
+| **TypeScript**    | 5.5.3   | Tipagem estática        |
+| **Vite**          | 6.2.2   | Build tool e dev server |
+| **React Router**  | 6.26.2  | Routing SPA             |
+| **TailwindCSS**   | 3.4.11  | Framework CSS           |
+| **Radix UI**      | Latest  | Componentes acessíveis  |
+| **Framer Motion** | 12.6.2  | Animações               |
+| **Lucide React**  | 0.462.0 | Ícones                  |
 
 ### Backend Stack
-| Tecnologia | Versão | Propósito |
-|------------|--------|-----------|
-| **Node.js** | 18+ | Runtime JavaScript |
-| **Express** | 4.18.2 | Framework web |
-| **Supabase** | 2.53.0 | BaaS (Database + Auth) |
-| **PostgreSQL** | 15+ | Base de dados |
-| **Zod** | 3.23.8 | Validação de dados |
+
+| Tecnologia     | Versão | Propósito              |
+| -------------- | ------ | ---------------------- |
+| **Node.js**    | 18+    | Runtime JavaScript     |
+| **Express**    | 4.18.2 | Framework web          |
+| **Supabase**   | 2.53.0 | BaaS (Database + Auth) |
+| **PostgreSQL** | 15+    | Base de dados          |
+| **Zod**        | 3.23.8 | Validação de dados     |
 
 ### Mobile Stack
-| Tecnologia | Versão | Propósito |
-|------------|--------|-----------|
-| **Capacitor** | 7.4.2 | Framework híbrido |
-| **iOS** | 14.0+ | Plataforma Apple |
-| **Android** | API 24+ | Plataforma Google |
+
+| Tecnologia    | Versão  | Propósito         |
+| ------------- | ------- | ----------------- |
+| **Capacitor** | 7.4.2   | Framework híbrido |
+| **iOS**       | 14.0+   | Plataforma Apple  |
+| **Android**   | API 24+ | Plataforma Google |
 
 ### DevOps & Deploy
-| Tecnologia | Versão | Propósito |
-|------------|--------|-----------|
-| **Netlify** | Latest | Hosting e CI/CD |
-| **Netlify Functions** | Latest | Serverless |
-| **Vitest** | 3.1.4 | Framework de testes |
+
+| Tecnologia            | Versão | Propósito            |
+| --------------------- | ------ | -------------------- |
+| **Netlify**           | Latest | Hosting e CI/CD      |
+| **Netlify Functions** | Latest | Serverless           |
+| **Vitest**            | 3.1.4  | Framework de testes  |
 | **ESLint + Prettier** | Latest | Linting e formatação |
 
 ## 🚀 Instalação
@@ -231,15 +237,17 @@ A aplicação estará disponível em `http://localhost:8080`
 ### Configuração da Base de Dados
 
 1. **Criar projeto no Supabase**:
+
    ```bash
    # Fazer login no Supabase
    npx supabase login
-   
+
    # Conectar ao projeto
    npx supabase link --project-ref your-project-id
    ```
 
 2. **Executar migrations**:
+
    ```bash
    npx supabase db push
    ```
@@ -324,6 +332,7 @@ npm run verify:system    # Verificar sistema completo
 ## 📱 Mobile Apps
 
 ### Status Atual
+
 - ✅ **iOS App**: Pronta para deploy na App Store
 - ✅ **Android App**: Pronta para deploy no Google Play
 - ✅ **Capacitor**: Configurado e funcional
@@ -388,6 +397,7 @@ VITE_ENABLE_ANALYTICS=true
 O sistema utiliza **16 tabelas** no PostgreSQL via Supabase:
 
 #### Operacionais
+
 - `aircraft` - Gestão da frota (4 aeronaves)
 - `employees` - Funcionários (14 específicos de Angola)
 - `tasks` - Tarefas de manutenção
@@ -398,6 +408,7 @@ O sistema utiliza **16 tabelas** no PostgreSQL via Supabase:
 - `file_attachments` - Anexos e documentos
 
 #### Autenticação & Autorização
+
 - `roles` - 8 roles hierárquicas
 - `permissions` - 40+ permissões granulares
 - `role_permissions` - Relação roles/permissões
@@ -419,18 +430,21 @@ Para mais detalhes: [supabase/README.md](supabase/README.md)
 ## 🔒 Segurança
 
 ### Autenticação
+
 - **Supabase Auth** - Sistema robusto de autenticação
 - **JWT Tokens** - Segurança baseada em tokens
 - **Row Level Security (RLS)** - Acesso granular a dados
 - **Multi-factor Authentication** - 2FA opcional
 
 ### Autorização
+
 - **Role-based Access Control (RBAC)** - 8 níveis de acesso
 - **Permission-based** - 40+ permissões específicas
 - **Resource-level Security** - Controlo por recurso
 - **Audit Trail** - Log completo de atividades
 
 ### Dados
+
 - **Encriptação** - Dados sensíveis encriptados
 - **Backup Automático** - Supabase backup diário
 - **GDPR Compliance** - Conformidade com proteção de dados
@@ -501,7 +515,7 @@ MIT License - veja [LICENSE](LICENSE) para detalhes.
 
 **🛩️ AirPlus Aviation Management System**
 
-*Desenvolvido com ❤️ para a aviação Angolana*
+_Desenvolvido com ❤️ para a aviação Angolana_
 
 [Website](https://airplus-aviation.netlify.app) • [GitHub](https://github.com/airplus/aviation-management) • [Documentation](docs/) • [Support](mailto:support@airplus.ao)
 

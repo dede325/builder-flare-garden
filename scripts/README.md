@@ -84,6 +84,7 @@ scripts/
 ## 🏗️ Scripts de Build
 
 ### 🎯 build-production.sh
+
 ```bash
 #!/bin/bash
 # Build completo para produção
@@ -126,6 +127,7 @@ echo "Build finalizado: $(date)"
 ```
 
 ### 🎯 build-staging.sh
+
 ```bash
 #!/bin/bash
 # Build para ambiente de staging
@@ -147,6 +149,7 @@ echo "✅ Build de staging concluído!"
 ## 🚀 Scripts de Deploy
 
 ### 🌐 deploy-production.sh
+
 ```bash
 #!/bin/bash
 # Deploy completo para produção
@@ -184,6 +187,7 @@ echo "🎉 Deploy de produção concluído com sucesso!"
 ```
 
 ### 📡 netlify-deploy.sh
+
 ```bash
 #!/bin/bash
 # Deploy específico para Netlify
@@ -217,6 +221,7 @@ fi
 ## 💾 Scripts de Base de Dados
 
 ### 🗄️ supabase-deploy-production.sh
+
 ```bash
 #!/bin/bash
 # Deploy da base de dados para produção
@@ -259,6 +264,7 @@ echo "🎉 Deploy da base de dados concluído!"
 ```
 
 ### 🔄 apply-vfinal-migrations.sh
+
 ```bash
 #!/bin/bash
 # Aplicar migrations finais do sistema
@@ -290,6 +296,7 @@ echo "✅ Migrations finais aplicadas!"
 ## 📱 Scripts Mobile
 
 ### 🍎 build-ios.sh
+
 ```bash
 #!/bin/bash
 # Build da aplicação iOS
@@ -328,6 +335,7 @@ echo "✅ Build iOS concluído!"
 ```
 
 ### 🤖 build-android.sh
+
 ```bash
 #!/bin/bash
 # Build da aplicação Android
@@ -359,117 +367,122 @@ echo "✅ Build Android concluído!"
 ## 🔍 Scripts de Verificação
 
 ### ✅ final-verification.cjs
+
 ```javascript
 // Verificação completa do sistema
-const { execSync } = require('child_process');
-const fs = require('fs');
+const { execSync } = require("child_process");
+const fs = require("fs");
 
-console.log('🔍 Iniciando verificação final do sistema...');
+console.log("🔍 Iniciando verificação final do sistema...");
 
 const checks = [
-    {
-        name: 'Build Frontend',
-        test: () => fs.existsSync('dist/spa/index.html'),
-        message: 'Frontend build existe'
+  {
+    name: "Build Frontend",
+    test: () => fs.existsSync("dist/spa/index.html"),
+    message: "Frontend build existe",
+  },
+  {
+    name: "Build Backend",
+    test: () => fs.existsSync("dist/server/node-build.mjs"),
+    message: "Backend build existe",
+  },
+  {
+    name: "Configuração Supabase",
+    test: () => {
+      const config = process.env.VITE_SUPABASE_URL;
+      return config && config.includes("supabase.co");
     },
-    {
-        name: 'Build Backend',
-        test: () => fs.existsSync('dist/server/node-build.mjs'),
-        message: 'Backend build existe'
-    },
-    {
-        name: 'Configuração Supabase',
-        test: () => {
-            const config = process.env.VITE_SUPABASE_URL;
-            return config && config.includes('supabase.co');
-        },
-        message: 'Supabase configurado'
-    },
-    {
-        name: 'Mobile iOS',
-        test: () => fs.existsSync('ios/App/App.xcworkspace'),
-        message: 'Projeto iOS configurado'
-    },
-    {
-        name: 'Mobile Android',
-        test: () => fs.existsSync('android/app/build.gradle'),
-        message: 'Projeto Android configurado'
-    }
+    message: "Supabase configurado",
+  },
+  {
+    name: "Mobile iOS",
+    test: () => fs.existsSync("ios/App/App.xcworkspace"),
+    message: "Projeto iOS configurado",
+  },
+  {
+    name: "Mobile Android",
+    test: () => fs.existsSync("android/app/build.gradle"),
+    message: "Projeto Android configurado",
+  },
 ];
 
 let passed = 0;
 let failed = 0;
 
-checks.forEach(check => {
-    try {
-        if (check.test()) {
-            console.log(`✅ ${check.name}: ${check.message}`);
-            passed++;
-        } else {
-            console.log(`❌ ${check.name}: FALHOU`);
-            failed++;
-        }
-    } catch (error) {
-        console.log(`❌ ${check.name}: ERRO - ${error.message}`);
-        failed++;
+checks.forEach((check) => {
+  try {
+    if (check.test()) {
+      console.log(`✅ ${check.name}: ${check.message}`);
+      passed++;
+    } else {
+      console.log(`❌ ${check.name}: FALHOU`);
+      failed++;
     }
+  } catch (error) {
+    console.log(`❌ ${check.name}: ERRO - ${error.message}`);
+    failed++;
+  }
 });
 
 console.log(`\n📊 Resultado: ${passed} passaram, ${failed} falharam`);
 
 if (failed === 0) {
-    console.log('🎉 Todas as verificações passaram!');
-    process.exit(0);
+  console.log("🎉 Todas as verificações passaram!");
+  process.exit(0);
 } else {
-    console.log('⚠️ Algumas verificações falharam!');
-    process.exit(1);
+  console.log("⚠️ Algumas verificações falharam!");
+  process.exit(1);
 }
 ```
 
 ### 📊 validate-production-data.js
+
 ```javascript
 // Validação de dados de produção
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
-    process.env.VITE_SUPABASE_URL,
-    process.env.VITE_SUPABASE_ANON_KEY
+  process.env.VITE_SUPABASE_URL,
+  process.env.VITE_SUPABASE_ANON_KEY,
 );
 
-console.log('📊 Validando dados de produção...');
+console.log("📊 Validando dados de produção...");
 
 async function validateData() {
-    try {
-        // Verificar tabelas principais
-        const tables = [
-            'aircraft', 'employees', 'tasks', 
-            'cleaning_forms', 'flight_sheets', 'roles'
-        ];
-        
-        for (const table of tables) {
-            const { count, error } = await supabase
-                .from(table)
-                .select('*', { count: 'exact', head: true });
-            
-            if (error) throw error;
-            
-            console.log(`✅ ${table}: ${count} registos`);
-        }
-        
-        // Verificar funcionários específicos
-        const { data: employees } = await supabase
-            .from('employees')
-            .select('name')
-            .limit(5);
-        
-        console.log('👥 Funcionários:', employees?.map(e => e.name).join(', '));
-        
-        console.log('🎉 Validação de dados concluída!');
-        
-    } catch (error) {
-        console.error('❌ Erro na validação:', error.message);
-        process.exit(1);
+  try {
+    // Verificar tabelas principais
+    const tables = [
+      "aircraft",
+      "employees",
+      "tasks",
+      "cleaning_forms",
+      "flight_sheets",
+      "roles",
+    ];
+
+    for (const table of tables) {
+      const { count, error } = await supabase
+        .from(table)
+        .select("*", { count: "exact", head: true });
+
+      if (error) throw error;
+
+      console.log(`✅ ${table}: ${count} registos`);
     }
+
+    // Verificar funcionários específicos
+    const { data: employees } = await supabase
+      .from("employees")
+      .select("name")
+      .limit(5);
+
+    console.log("👥 Funcionários:", employees?.map((e) => e.name).join(", "));
+
+    console.log("🎉 Validação de dados concluída!");
+  } catch (error) {
+    console.error("❌ Erro na validação:", error.message);
+    process.exit(1);
+  }
 }
 
 validateData();
@@ -478,6 +491,7 @@ validateData();
 ## ⚙️ Scripts de Configuração
 
 ### 🔧 setup-environment.sh
+
 ```bash
 #!/bin/bash
 # Setup completo do ambiente de desenvolvimento
@@ -627,7 +641,7 @@ success() {
 
 **🚀 Scripts de Automação AirPlus Aviation**
 
-*Automação robusta para desenvolvimento, build e deploy*
+_Automação robusta para desenvolvimento, build e deploy_
 
 [⬅️ Voltar ao README principal](../README.md)
 

@@ -19,6 +19,7 @@ deleted_at TIMESTAMPTZ  -- Soft delete para sincronização
 ### 🔄 Tabelas Sincronizáveis
 
 #### ✈️ Aeronaves (`aircraft`)
+
 - **Tipo**: Sincronização bidirecional
 - **Chave primária**: UUID (sem conflitos)
 - **Campos sync**: ✅ sync_version, last_synced, deleted_at
@@ -26,6 +27,7 @@ deleted_at TIMESTAMPTZ  -- Soft delete para sincronização
 - **Triggers**: ✅ mark_aircraft_for_sync
 
 #### 👥 Funcionários (`employees`)
+
 - **Tipo**: Sincronização bidirecional
 - **Chave primária**: UUID (sem conflitos)
 - **Campos sync**: ✅ sync_version, last_synced, deleted_at
@@ -33,6 +35,7 @@ deleted_at TIMESTAMPTZ  -- Soft delete para sincronização
 - **Triggers**: ✅ mark_employees_for_sync
 
 #### 📋 Tarefas (`tasks`)
+
 - **Tipo**: Sincronização bidirecional
 - **Chave primária**: UUID (sem conflitos)
 - **Campos sync**: ✅ sync_version, last_synced, deleted_at
@@ -40,6 +43,7 @@ deleted_at TIMESTAMPTZ  -- Soft delete para sincronização
 - **Triggers**: ✅ mark_tasks_for_sync
 
 #### 🧽 Formulários de Limpeza (`cleaning_forms`)
+
 - **Tipo**: Sincronização bidirecional
 - **Chave primária**: UUID (sem conflitos)
 - **Campos sync**: ✅ sync_version, last_synced, deleted_at
@@ -47,24 +51,28 @@ deleted_at TIMESTAMPTZ  -- Soft delete para sincronização
 - **Triggers**: ✅ mark_cleaning_forms_for_sync
 
 #### 📝 Tarefas de Limpeza (`cleaning_tasks`)
+
 - **Tipo**: Sincronização bidirecional
 - **Chave primária**: UUID (sem conflitos)
 - **Campos sync**: ✅ sync_version, last_synced, deleted_at
 - **Soft delete**: ✅ Implementado
 
 #### 👷 Atribuições de Funcionários (`cleaning_form_employees`)
+
 - **Tipo**: Sincronização bidirecional
 - **Chave primária**: UUID (sem conflitos)
 - **Campos sync**: ✅ sync_version, last_synced, deleted_at
 - **Soft delete**: ✅ Implementado
 
 #### ✈️ Fichas de Voo (`flight_sheets`)
+
 - **Tipo**: Sincronização bidirecional
 - **Chave primária**: UUID (sem conflitos)
 - **Campos sync**: ✅ sync_version, last_synced, deleted_at
 - **Soft delete**: ✅ Implementado
 
 #### 📎 Anexos (`file_attachments`)
+
 - **Tipo**: Upload assíncrono
 - **Chave primária**: UUID (sem conflitos)
 - **Campos sync**: ✅ sync_version, last_synced, deleted_at
@@ -74,6 +82,7 @@ deleted_at TIMESTAMPTZ  -- Soft delete para sincronização
 ### 🔧 Funções de Sincronização
 
 #### Trigger de Marcação para Sync
+
 ```sql
 CREATE OR REPLACE FUNCTION public.mark_for_mobile_sync()
 RETURNS TRIGGER
@@ -88,6 +97,7 @@ $$;
 ```
 
 #### Detecção de Conflitos
+
 - **Estratégia**: Last-write-wins baseado em `updated_at`
 - **Resolução**: Comparação de `sync_version`
 - **Backup**: Manter versões conflitantes em `change_log`
@@ -95,18 +105,23 @@ $$;
 ### 📱 Compatibilidade com Cliente Mobile
 
 #### Estrutura Dexie.js (client/lib/offline-db.ts)
+
 ```typescript
 // ✅ COMPATÍVEL - Estrutura corresponde às tabelas Supabase
 this.version(1).stores({
-  aircraft: 'id, registration, model, manufacturer, status, synced, lastModified',
-  employees: 'id, name, email, role, status, synced, lastModified',
-  tasks: 'id, title, assigned_to, aircraft_id, priority, status, due_date, synced, lastModified',
-  flightSheets: 'id, flight_number, aircraft_id, pilot_id, departure_time, status, synced, lastModified',
-  syncQueue: '++id, table, recordId, operation, timestamp'
+  aircraft:
+    "id, registration, model, manufacturer, status, synced, lastModified",
+  employees: "id, name, email, role, status, synced, lastModified",
+  tasks:
+    "id, title, assigned_to, aircraft_id, priority, status, due_date, synced, lastModified",
+  flightSheets:
+    "id, flight_number, aircraft_id, pilot_id, departure_time, status, synced, lastModified",
+  syncQueue: "++id, table, recordId, operation, timestamp",
 });
 ```
 
 #### Mapeamento de Campos
+
 - `synced` ↔ `sync_version`
 - `lastModified` ↔ `updated_at`
 - `id` ↔ `id` (UUID direto)
@@ -114,32 +129,35 @@ this.version(1).stores({
 ### 🔄 Estratégias de Sincronização
 
 #### 1. Sincronização Incremental
+
 ```sql
 -- Download: Buscar registos alterados desde último sync
-SELECT * FROM aircraft 
+SELECT * FROM aircraft
 WHERE updated_at > $last_sync_timestamp
 AND deleted_at IS NULL;
 
 -- Upload: Enviar registos modificados localmente
 INSERT INTO aircraft (...) VALUES (...)
-ON CONFLICT (id) DO UPDATE SET 
-  ..., 
+ON CONFLICT (id) DO UPDATE SET
+  ...,
   sync_version = sync_version + 1,
   updated_at = NOW();
 ```
 
 #### 2. Gestão de Conflitos
+
 ```sql
 -- Verificar conflitos por sync_version
-SELECT * FROM aircraft 
-WHERE id = $id 
+SELECT * FROM aircraft
+WHERE id = $id
 AND sync_version > $local_sync_version;
 ```
 
 #### 3. Soft Delete para Sincronização
+
 ```sql
 -- Marcar como eliminado (não eliminar fisicamente)
-UPDATE aircraft 
+UPDATE aircraft
 SET deleted_at = NOW(), sync_version = sync_version + 1
 WHERE id = $id;
 
@@ -149,18 +167,20 @@ WHERE id = $id;
 ### 📡 Conectividade Offline
 
 #### Estados Suportados
+
 - ✅ **Totalmente Offline**: Todas as operações CRUD funcionam
 - ✅ **Conectividade Intermitente**: Sync automático quando disponível
 - ✅ **Sync Manual**: Utilizador pode forçar sincronização
 - ✅ **Resolução de Conflitos**: Interface para resolver conflitos
 
 #### Fila de Sincronização
+
 ```typescript
 interface SyncQueue {
   id?: number;
   table: string;
   recordId: string;
-  operation: 'create' | 'update' | 'delete';
+  operation: "create" | "update" | "delete";
   data: any;
   timestamp: Date;
 }
@@ -169,12 +189,14 @@ interface SyncQueue {
 ### 🔒 Segurança Mobile
 
 #### Row Level Security (RLS)
+
 - ✅ **Políticas RLS ativas** em todas as tabelas
 - ✅ **Acesso baseado em roles** mantido no mobile
 - ✅ **Tokens JWT** para autenticação
 - ✅ **Permissões granulares** respeitadas
 
 #### Validação de Dados
+
 - ✅ **Validação client-side** com Zod
 - ✅ **Validação server-side** com triggers PostgreSQL
 - ✅ **Sanitização** de dados antes do sync
@@ -182,12 +204,14 @@ interface SyncQueue {
 ### 📊 Performance Mobile
 
 #### Otimizações Implementadas
+
 - ✅ **Índices otimizados** para queries mobile
 - ✅ **Paginação** para grandes datasets
 - ✅ **Compressão** de dados JSON
 - ✅ **Cache inteligente** com expiração
 
 #### Métricas Esperadas
+
 - **Sync inicial**: ~50MB para dataset completo
 - **Sync incremental**: ~1-5MB típico
 - **Operações offline**: < 100ms
@@ -196,13 +220,15 @@ interface SyncQueue {
 ### 🧪 Testes de Compatibilidade
 
 #### Cenários Testados
+
 1. ✅ **Create offline → Sync online**
-2. ✅ **Update offline → Sync com conflito**  
+2. ✅ **Update offline → Sync com conflito**
 3. ✅ **Delete offline → Sync propagação**
 4. ✅ **Bulk operations → Sync em lote**
 5. ✅ **Network interruption → Recovery automático**
 
 #### Casos de Erro Tratados
+
 - ✅ **Conflitos de versão**: Resolução automática
 - ✅ **Dados corrompidos**: Rollback seguro
 - ✅ **Sync timeout**: Retry com backoff
