@@ -153,14 +153,14 @@ console.log('\n');
 // 4. Verificar configuração PWA
 console.log('📱 Verificando Configuração PWA...');
 const manifestFile = 'public/manifest.json';
-if (fs.existsExists(manifestFile)) {
+if (fs.existsSync(manifestFile)) {
   try {
     const manifest = JSON.parse(fs.readFileSync(manifestFile, 'utf8'));
     
     if (manifest.name === "AirPlus Aviation - Sistema de Limpeza de Aeronaves") {
       console.log('✅ Manifest PWA configurado corretamente');
     } else {
-      warnings.push('���️ Nome do PWA pode estar desatualizado');
+      warnings.push('⚠️ Nome do PWA pode estar desatualizado');
     }
     
     if (manifest.icons && manifest.icons.length >= 7) {
