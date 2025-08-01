@@ -541,8 +541,34 @@ export function AdminDashboard() {
             <Activity className="h-4 w-4 mr-2" />
             Sincronização Forçada
           </Button>
+          <Button
+            onClick={() => setShowAnalytics(!showAnalytics)}
+            variant="outline"
+            className="border-indigo-400/50 text-indigo-300 hover:bg-indigo-500/20"
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            {showAnalytics ? "Ocultar" : "Mostrar"} Analytics
+          </Button>
         </CardContent>
       </Card>
+
+      {/* Advanced Analytics Dashboard */}
+      {showAnalytics && (
+        <Card className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Analytics Executivo Avançado
+            </CardTitle>
+            <CardDescription className="text-white/70">
+              Dashboard com métricas avançadas, relatórios automáticos e alertas de compliance
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AdvancedAnalyticsDashboard />
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
