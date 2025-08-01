@@ -43,11 +43,7 @@ import {
 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { migrationService } from "@/lib/migration-service";
-import {
-  populateDemoData,
-  clearOfflineData,
-  getOfflineDataSummary,
-} from "@/lib/demo-data";
+
 import { useToast } from "@/hooks/use-toast";
 
 export default function Settings() {
@@ -175,30 +171,25 @@ export default function Settings() {
   };
 
   const handlePopulateDemoData = async () => {
-    try {
-      await populateDemoData();
-      await checkMigrationStatus();
-      toast({
-        title: "Dados demo criados",
-        description:
-          "Dados de demonstração foram adicionados ao banco offline.",
-      });
-    } catch (error) {
-      toast({
-        title: "Erro",
-        description: "Falha ao criar dados demo.",
-        variant: "destructive",
-      });
-    }
+    toast({
+      title: "Funcionalidade removida",
+      description: "Os dados demo foram removidos. Use apenas dados reais de produção.",
+      variant: "destructive",
+    });
   };
 
   const handleClearOfflineData = async () => {
     try {
-      await clearOfflineData();
+      // Clear local storage data instead
+      localStorage.removeItem("aviation_aircraft");
+      localStorage.removeItem("aviation_employees");
+      localStorage.removeItem("aviation_tasks");
+      localStorage.removeItem("aviation_flight_sheets");
+
       await checkMigrationStatus();
       toast({
-        title: "Dados limpos",
-        description: "Todos os dados offline foram removidos.",
+        title: "Dados locais limpos",
+        description: "Cache local foi removido.",
       });
     } catch (error) {
       toast({
@@ -1162,9 +1153,10 @@ export default function Settings() {
                       onClick={handlePopulateDemoData}
                       variant="outline"
                       className="border-white/20 text-white hover:bg-white/10"
+                      disabled
                     >
                       <Upload className="h-4 w-4 mr-2" />
-                      Criar Dados Demo
+                      Dados Demo (Removido)
                     </Button>
 
                     <Button
@@ -1177,8 +1169,8 @@ export default function Settings() {
                     </Button>
                   </div>
                   <p className="text-xs text-white/60">
-                    Use os dados demo para testar a migração. Limpe os dados
-                    offline quando necessário.
+                    Dados demo foram removidos para produção. Use apenas dados reais.
+                    Limpe o cache local quando necessário.
                   </p>
                 </div>
 
