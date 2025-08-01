@@ -89,18 +89,18 @@ class AirPlusPDFService {
       try {
         if (logoSettings?.companyLogo) {
           // Add company logo from base64
-          pdf.addImage(logoSettings.companyLogo, 'PNG', margin, 8, 40, 20);
+          pdf.addImage(logoSettings.companyLogo, "PNG", margin, 8, 40, 20);
         } else {
           // Fallback to default AirPlus logo
           try {
             // Try to load the default AirPlus logo
             const img = new Image();
-            img.src = '/airplus-logo.png';
+            img.src = "/airplus-logo.png";
             await new Promise((resolve, reject) => {
               img.onload = resolve;
               img.onerror = reject;
             });
-            pdf.addImage(img, 'PNG', margin, 8, 40, 20);
+            pdf.addImage(img, "PNG", margin, 8, 40, 20);
           } catch {
             // Ultimate fallback - text logo
             pdf.setFillColor(255, 255, 255);
@@ -131,9 +131,9 @@ class AirPlusPDFService {
       if (logoSettings?.clientLogo) {
         try {
           // Add client logo
-          pdf.addImage(logoSettings.clientLogo, 'PNG', clientAreaX, 8, 25, 25);
+          pdf.addImage(logoSettings.clientLogo, "PNG", clientAreaX, 8, 25, 25);
         } catch (error) {
-          console.warn('Failed to add client logo:', error);
+          console.warn("Failed to add client logo:", error);
         }
       }
 

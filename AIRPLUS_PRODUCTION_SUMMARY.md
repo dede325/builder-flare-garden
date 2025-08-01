@@ -70,7 +70,7 @@ WILSON HONGOLO - TÉCNICO AUXILIAR DE PLACA - wilson.hongolo@airplus.co
 ### ✅ **6. Sistema de Fotografias Completo**
 
 - **Evidências dos Funcionários**: Fotos de perfil no PDF
-- **Evidências de Intervenção**: 
+- **Evidências de Intervenção**:
   - ANTES (Exterior, Interior, Detalhes)
   - DEPOIS (Exterior, Interior, Detalhes)
 - **Upload**: Câmera ou arquivo
@@ -115,7 +115,7 @@ npm run build:production
 # Deploy para plataforma de hosting
 # Upload da pasta 'dist' para:
 # - Vercel
-# - Netlify  
+# - Netlify
 # - Cloudflare Pages
 ```
 

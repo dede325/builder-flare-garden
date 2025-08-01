@@ -1,13 +1,13 @@
-import React from 'react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { CheckCircle, AlertCircle, XCircle, Info } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle, AlertCircle, XCircle, Info } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ValidationRule {
   field: string;
   message: string;
-  type: 'error' | 'warning' | 'info';
+  type: "error" | "warning" | "info";
   required?: boolean;
 }
 
@@ -24,16 +24,21 @@ interface FormValidationProps {
   className?: string;
 }
 
-export function FormValidation({ 
-  validationResult, 
-  showSuccess = true, 
-  className 
+export function FormValidation({
+  validationResult,
+  showSuccess = true,
+  className,
 }: FormValidationProps) {
   const { isValid, errors, warnings, info } = validationResult;
 
   if (isValid && showSuccess && errors.length === 0 && warnings.length === 0) {
     return (
-      <Alert className={cn("border-green-200 bg-green-50 dark:bg-green-950/20", className)}>
+      <Alert
+        className={cn(
+          "border-green-200 bg-green-50 dark:bg-green-950/20",
+          className,
+        )}
+      >
         <CheckCircle className="h-4 w-4 text-green-600" />
         <AlertDescription className="text-green-700 dark:text-green-400">
           Todos os campos estão válidos. ✓
@@ -55,7 +60,10 @@ export function FormValidation({
               </p>
               <ul className="space-y-1">
                 {errors.map((error, index) => (
-                  <li key={index} className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
+                  <li
+                    key={index}
+                    className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400"
+                  >
                     <Badge variant="destructive" className="text-xs">
                       {error.field}
                     </Badge>
@@ -79,8 +87,14 @@ export function FormValidation({
               </p>
               <ul className="space-y-1">
                 {warnings.map((warning, index) => (
-                  <li key={index} className="flex items-center gap-2 text-sm text-yellow-600 dark:text-yellow-400">
-                    <Badge variant="secondary" className="text-xs bg-yellow-100 text-yellow-700">
+                  <li
+                    key={index}
+                    className="flex items-center gap-2 text-sm text-yellow-600 dark:text-yellow-400"
+                  >
+                    <Badge
+                      variant="secondary"
+                      className="text-xs bg-yellow-100 text-yellow-700"
+                    >
                       {warning.field}
                     </Badge>
                     {warning.message}
@@ -103,8 +117,14 @@ export function FormValidation({
               </p>
               <ul className="space-y-1">
                 {info.map((infoItem, index) => (
-                  <li key={index} className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
-                    <Badge variant="secondary" className="text-xs bg-blue-100 text-blue-700">
+                  <li
+                    key={index}
+                    className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400"
+                  >
+                    <Badge
+                      variant="secondary"
+                      className="text-xs bg-blue-100 text-blue-700"
+                    >
                       {infoItem.field}
                     </Badge>
                     {infoItem.message}
@@ -129,46 +149,49 @@ export function useFormValidation() {
     // Validações obrigatórias
     if (!formData.aircraftId) {
       errors.push({
-        field: 'Aeronave',
-        message: 'Selecione uma aeronave',
-        type: 'error',
-        required: true
+        field: "Aeronave",
+        message: "Selecione uma aeronave",
+        type: "error",
+        required: true,
       });
     }
 
     if (!formData.employees || formData.employees.length === 0) {
       errors.push({
-        field: 'Funcionários',
-        message: 'Adicione pelo menos um funcionário',
-        type: 'error',
-        required: true
+        field: "Funcionários",
+        message: "Adicione pelo menos um funcionário",
+        type: "error",
+        required: true,
       });
     }
 
-    if (!formData.interventionTypes || formData.interventionTypes.length === 0) {
+    if (
+      !formData.interventionTypes ||
+      formData.interventionTypes.length === 0
+    ) {
       errors.push({
-        field: 'Tipos de Intervenção',
-        message: 'Selecione pelo menos um tipo de intervenção',
-        type: 'error',
-        required: true
+        field: "Tipos de Intervenção",
+        message: "Selecione pelo menos um tipo de intervenção",
+        type: "error",
+        required: true,
       });
     }
 
     if (!formData.location?.trim()) {
       errors.push({
-        field: 'Local',
-        message: 'Especifique o local da intervenção',
-        type: 'error',
-        required: true
+        field: "Local",
+        message: "Especifique o local da intervenção",
+        type: "error",
+        required: true,
       });
     }
 
     if (!formData.shift) {
       errors.push({
-        field: 'Turno',
-        message: 'Selecione o turno de trabalho',
-        type: 'error',
-        required: true
+        field: "Turno",
+        message: "Selecione o turno de trabalho",
+        type: "error",
+        required: true,
       });
     }
 
@@ -178,32 +201,32 @@ export function useFormValidation() {
         if (!emp.name?.trim()) {
           errors.push({
             field: `Funcionário ${index + 1}`,
-            message: 'Nome é obrigatório',
-            type: 'error'
+            message: "Nome é obrigatório",
+            type: "error",
           });
         }
 
         if (!emp.task?.trim()) {
           errors.push({
             field: `Funcionário ${index + 1}`,
-            message: 'Tarefa é obrigatória',
-            type: 'error'
+            message: "Tarefa é obrigatória",
+            type: "error",
           });
         }
 
         if (!emp.startTime) {
           warnings.push({
             field: `Funcionário ${index + 1}`,
-            message: 'Hora de início não definida',
-            type: 'warning'
+            message: "Hora de início não definida",
+            type: "warning",
           });
         }
 
         if (!emp.photo) {
           warnings.push({
             field: `Funcionário ${index + 1}`,
-            message: 'Foto do funcionário não adicionada',
-            type: 'warning'
+            message: "Foto do funcionário não adicionada",
+            type: "warning",
           });
         }
       });
@@ -212,26 +235,26 @@ export function useFormValidation() {
     // Validações de assinaturas
     if (!formData.supervisorSignature) {
       warnings.push({
-        field: 'Assinatura',
-        message: 'Assinatura do supervisor não capturada',
-        type: 'warning'
+        field: "Assinatura",
+        message: "Assinatura do supervisor não capturada",
+        type: "warning",
       });
     }
 
     if (!formData.clientSignature && !formData.clientConfirmed) {
       info.push({
-        field: 'Cliente',
-        message: 'Considere obter assinatura ou confirmação do cliente',
-        type: 'info'
+        field: "Cliente",
+        message: "Considere obter assinatura ou confirmação do cliente",
+        type: "info",
       });
     }
 
     // Informações úteis
     if (formData.employees && formData.employees.length > 5) {
       info.push({
-        field: 'Equipe',
+        field: "Equipe",
         message: `Equipe grande (${formData.employees.length} funcionários) - verifique se todos são necessários`,
-        type: 'info'
+        type: "info",
       });
     }
 
@@ -239,7 +262,7 @@ export function useFormValidation() {
       isValid: errors.length === 0,
       errors,
       warnings,
-      info
+      info,
     };
   };
 
@@ -251,49 +274,49 @@ export function useFormValidation() {
     // Validações obrigatórias
     if (!employeeData.name?.trim()) {
       errors.push({
-        field: 'Nome',
-        message: 'Nome completo é obrigatório',
-        type: 'error',
-        required: true
+        field: "Nome",
+        message: "Nome completo é obrigatório",
+        type: "error",
+        required: true,
       });
     }
 
     if (!employeeData.email?.trim()) {
       errors.push({
-        field: 'Email',
-        message: 'Email é obrigatório',
-        type: 'error',
-        required: true
+        field: "Email",
+        message: "Email é obrigatório",
+        type: "error",
+        required: true,
       });
     } else if (!/\S+@\S+\.\S+/.test(employeeData.email)) {
       errors.push({
-        field: 'Email',
-        message: 'Formato de email inválido',
-        type: 'error'
+        field: "Email",
+        message: "Formato de email inválido",
+        type: "error",
       });
     }
 
     if (!employeeData.phone?.trim()) {
       warnings.push({
-        field: 'Telefone',
-        message: 'Telefone não informado',
-        type: 'warning'
+        field: "Telefone",
+        message: "Telefone não informado",
+        type: "warning",
       });
     }
 
     if (!employeeData.department?.trim()) {
       warnings.push({
-        field: 'Departamento',
-        message: 'Departamento não especificado',
-        type: 'warning'
+        field: "Departamento",
+        message: "Departamento não especificado",
+        type: "warning",
       });
     }
 
     if (!employeeData.photo) {
       info.push({
-        field: 'Foto',
-        message: 'Adicionar foto ajuda na identificação',
-        type: 'info'
+        field: "Foto",
+        message: "Adicionar foto ajuda na identificação",
+        type: "info",
       });
     }
 
@@ -301,13 +324,13 @@ export function useFormValidation() {
       isValid: errors.length === 0,
       errors,
       warnings,
-      info
+      info,
     };
   };
 
   return {
     validateCleaningForm,
-    validateEmployee
+    validateEmployee,
   };
 }
 

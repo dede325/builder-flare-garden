@@ -797,7 +797,8 @@ export default function Settings() {
                         Logo da Empresa
                       </h3>
                       <p className="text-sm text-white/70">
-                        Este logo aparecerá no cabeçalho dos relatórios PDF e na interface do sistema.
+                        Este logo aparecerá no cabeçalho dos relatórios PDF e na
+                        interface do sistema.
                       </p>
 
                       <LogoUpload
@@ -807,7 +808,7 @@ export default function Settings() {
                         onChange={(base64) =>
                           setLogoSettings({
                             ...logoSettings,
-                            companyLogo: base64 || ""
+                            companyLogo: base64 || "",
                           })
                         }
                         maxWidth={400}
@@ -825,7 +826,8 @@ export default function Settings() {
                         Logo do Cliente
                       </h3>
                       <p className="text-sm text-white/70">
-                        Logo do cliente aparecerá no canto superior direito dos relatórios PDF.
+                        Logo do cliente aparecerá no canto superior direito dos
+                        relatórios PDF.
                       </p>
 
                       <LogoUpload
@@ -835,7 +837,7 @@ export default function Settings() {
                         onChange={(base64) =>
                           setLogoSettings({
                             ...logoSettings,
-                            clientLogo: base64 || ""
+                            clientLogo: base64 || "",
                           })
                         }
                         maxWidth={200}
@@ -860,7 +862,9 @@ export default function Settings() {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-white">Endereço do Cliente</Label>
+                          <Label className="text-white">
+                            Endereço do Cliente
+                          </Label>
                           <Input
                             value={logoSettings.clientAddress}
                             onChange={(e) =>
@@ -875,7 +879,9 @@ export default function Settings() {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-white">Contacto do Cliente</Label>
+                          <Label className="text-white">
+                            Contacto do Cliente
+                          </Label>
                           <Input
                             value={logoSettings.clientContact}
                             onChange={(e) =>
@@ -895,7 +901,9 @@ export default function Settings() {
 
                 {/* Preview Section */}
                 <div className="space-y-4 pt-6 border-t border-white/10">
-                  <h3 className="text-lg font-semibold text-white">Preview dos Logos</h3>
+                  <h3 className="text-lg font-semibold text-white">
+                    Preview dos Logos
+                  </h3>
                   <div className="bg-white/5 rounded-lg p-6">
                     <div className="bg-white rounded-lg p-4 shadow-lg">
                       {/* Simulated PDF Header */}
@@ -926,7 +934,9 @@ export default function Settings() {
                             </div>
                           )}
                           {logoSettings.clientName && (
-                            <p className="text-xs text-gray-600 mt-1">{logoSettings.clientName}</p>
+                            <p className="text-xs text-gray-600 mt-1">
+                              {logoSettings.clientName}
+                            </p>
                           )}
                         </div>
                       </div>

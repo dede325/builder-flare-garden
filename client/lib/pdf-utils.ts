@@ -47,22 +47,26 @@ export const generateCleaningFormPDF = async (
 ) => {
   // Load logo settings from localStorage
   const logoSettings = JSON.parse(localStorage.getItem("logoSettings") || "{}");
-  
+
   // Use AirPlus PDF Service with logo settings
-  const { AirPlusPDFService } = await import('./airplus-pdf-service');
+  const { AirPlusPDFService } = await import("./airplus-pdf-service");
   const pdfService = new AirPlusPDFService();
-  
+
   // Transform data format if needed
   const transformedFormData = {
     id: formData.id,
     codigo: formData.code,
     data: formData.date,
-    turno: formData.shift === 'morning' ? 'manha' as const : 
-           formData.shift === 'afternoon' ? 'tarde' as const : 'noite' as const,
+    turno:
+      formData.shift === "morning"
+        ? ("manha" as const)
+        : formData.shift === "afternoon"
+          ? ("tarde" as const)
+          : ("noite" as const),
     local: formData.location,
     tipos_intervencao: formData.interventionTypes,
     aeronave_id: formData.aircraftId,
-    funcionarios: formData.employees.map(emp => ({
+    funcionarios: formData.employees.map((emp) => ({
       id: emp.id,
       nome: emp.name,
       tarefa: emp.task,
@@ -81,17 +85,19 @@ export const generateCleaningFormPDF = async (
     created_at: formData.createdAt,
   };
 
-  const transformedAircraftData = aircraftData ? {
-    matricula: aircraftData.registration,
-    modelo: aircraftData.model,
-    fabricante: aircraftData.manufacturer,
-    proprietario: aircraftData.owner,
-  } : undefined;
+  const transformedAircraftData = aircraftData
+    ? {
+        matricula: aircraftData.registration,
+        modelo: aircraftData.model,
+        fabricante: aircraftData.manufacturer,
+        proprietario: aircraftData.owner,
+      }
+    : undefined;
 
   return await pdfService.generateCleaningFormPDF(
-    transformedFormData, 
+    transformedFormData,
     transformedAircraftData,
-    logoSettings
+    logoSettings,
   );
 };
 
@@ -170,7 +176,7 @@ export const previewCleaningFormPDF = async (
   const logoSettings = JSON.parse(localStorage.getItem("logoSettings") || "{}");
 
   // Use AirPlus PDF Service with logo settings
-  const { AirPlusPDFService } = await import('./airplus-pdf-service');
+  const { AirPlusPDFService } = await import("./airplus-pdf-service");
   const pdfService = new AirPlusPDFService();
 
   // Transform data format if needed
@@ -178,12 +184,16 @@ export const previewCleaningFormPDF = async (
     id: formData.id,
     codigo: formData.code,
     data: formData.date,
-    turno: formData.shift === 'morning' ? 'manha' as const :
-           formData.shift === 'afternoon' ? 'tarde' as const : 'noite' as const,
+    turno:
+      formData.shift === "morning"
+        ? ("manha" as const)
+        : formData.shift === "afternoon"
+          ? ("tarde" as const)
+          : ("noite" as const),
     local: formData.location,
     tipos_intervencao: formData.interventionTypes,
     aeronave_id: formData.aircraftId,
-    funcionarios: formData.employees.map(emp => ({
+    funcionarios: formData.employees.map((emp) => ({
       id: emp.id,
       nome: emp.name,
       tarefa: emp.task,
@@ -202,14 +212,19 @@ export const previewCleaningFormPDF = async (
     created_at: formData.createdAt,
   };
 
-  const transformedAircraftData = aircraftData ? {
-    matricula: aircraftData.registration,
-    modelo: aircraftData.model,
-    fabricante: aircraftData.manufacturer,
-    proprietario: aircraftData.owner,
-  } : undefined;
+  const transformedAircraftData = aircraftData
+    ? {
+        matricula: aircraftData.registration,
+        modelo: aircraftData.model,
+        fabricante: aircraftData.manufacturer,
+        proprietario: aircraftData.owner,
+      }
+    : undefined;
 
-  return await pdfService.previewPDF(transformedFormData, transformedAircraftData);
+  return await pdfService.previewPDF(
+    transformedFormData,
+    transformedAircraftData,
+  );
 };
 
 // Backward compatibility alias

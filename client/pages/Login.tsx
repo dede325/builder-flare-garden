@@ -36,8 +36,8 @@ export default function Login() {
               className="h-20 w-auto mx-auto object-contain"
               onError={(e) => {
                 // Fallback to icon if logo fails to load
-                e.currentTarget.style.display = 'none';
-                e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                e.currentTarget.style.display = "none";
+                e.currentTarget.nextElementSibling?.classList.remove("hidden");
               }}
             />
             <div className="h-20 w-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-2xl mx-auto hidden">
@@ -118,8 +118,8 @@ export default function Login() {
               className="h-16 w-auto object-contain"
               onError={(e) => {
                 // Fallback to icon if logo fails to load
-                e.currentTarget.style.display = 'none';
-                e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                e.currentTarget.style.display = "none";
+                e.currentTarget.nextElementSibling?.classList.remove("hidden");
               }}
             />
             <div className="h-20 w-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-2xl hidden">

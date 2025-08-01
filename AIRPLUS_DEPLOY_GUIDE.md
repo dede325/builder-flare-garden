@@ -11,6 +11,7 @@ Este guia cobre o processo completo de deployment do sistema AirPlus Aviation de
 ## 🏗️ Checklist Pré-Deployment ✅
 
 ### ✅ Configuração do Ambiente
+
 - [x] Credenciais Supabase reais configuradas
 - [x] Schema de base de dados produção criado
 - [x] Dados de funcionários AirPlus carregados
@@ -19,6 +20,7 @@ Este guia cobre o processo completo de deployment do sistema AirPlus Aviation de
 - [x] Variáveis de ambiente de produção documentadas
 
 ### ✅ Configuração da Base de Dados
+
 ```sql
 -- URL Supabase Produção ✅
 https://fyngvoojdfjexbzasgiz.supabase.co
@@ -35,6 +37,7 @@ https://fyngvoojdfjexbzasgiz.supabase.co
 ```
 
 ### ✅ Funcionalidades Validadas
+
 - [x] Sistema de autenticação funcional
 - [x] Criação de folhas de limpeza completa
 - [x] Upload de fotografias funcionando
@@ -82,6 +85,7 @@ vercel --prod
 ```
 
 **Variáveis no Vercel:**
+
 ```env
 VITE_SUPABASE_URL=https://fyngvoojdfjexbzasgiz.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ5bmd2b29qZGZqZXhiemFzZ2l6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MTM3MTAsImV4cCI6MjA2OTQ4OTcxMH0.0v2M2L2K1EbSXh6gx1ywdz8q7TxaNqW3fq3-fRx1mh0
@@ -105,6 +109,7 @@ npm run build:production
 ```
 
 **Configuração Netlify:**
+
 - Build command: `npm run build:production`
 - Publish directory: `dist`
 - Functions directory: `netlify/functions`
@@ -147,6 +152,7 @@ npx cap sync
 ### 2. Build Android (APK/AAB)
 
 #### **Pré-requisitos Android:**
+
 - Android Studio instalado
 - Java Development Kit (JDK) 11+
 - Android SDK (API level 22+)
@@ -191,6 +197,7 @@ android {
 ### 3. Build iOS (App Store)
 
 #### **Pré-requisitos iOS:**
+
 - macOS com Xcode 14+
 - Apple Developer Account ($99/ano)
 - iOS Deployment Target: iOS 13+
@@ -244,6 +251,7 @@ npm run db:migrate
 ### 2. Verificar Dados
 
 **Checklist da Base de Dados:**
+
 - [ ] Tabela `funcionarios` tem 14 funcionários AirPlus
 - [ ] Tabela `aeronaves` tem aeronaves de exemplo
 - [ ] Políticas RLS estão ativas
@@ -262,6 +270,7 @@ npm run db:migrate
 3. **Configurar políticas RLS para cada bucket**
 
 **Exemplo de política RLS para bucket `photos`:**
+
 ```sql
 -- Permitir upload para usuários autenticados
 CREATE POLICY "Users can upload photos"
@@ -283,6 +292,7 @@ USING (bucket_id = 'photos');
 ### 1. Segurança Supabase
 
 **Já Configurado:** ✅
+
 - Row Level Security (RLS) habilitado
 - Autenticação JWT configurada
 - Chaves API com scope apropriado
@@ -291,6 +301,7 @@ USING (bucket_id = 'photos');
 ### 2. Segurança Mobile
 
 **Já Configurado:** ✅
+
 - Certificados de assinatura configurados
 - Permissões de app apropriadamente definidas
 - HTTPS obrigatório (sem HTTP em produção)
@@ -299,6 +310,7 @@ USING (bucket_id = 'photos');
 ### 3. Segurança Web
 
 **Já Configurado:** ✅
+
 - HTTPS obrigatório
 - Content Security Policy configurada
 - Fluxo de autenticação seguro
@@ -328,6 +340,7 @@ npx serve dist
 ### 2. Testes Mobile
 
 **Checklist Mobile:**
+
 - [ ] Testar em dispositivos físicos
 - [ ] Verificar funcionalidade da câmera
 - [ ] Testar sincronização de dados offline
@@ -337,6 +350,7 @@ npx serve dist
 ### 3. Testes de Integração
 
 **Checklist Integração:**
+
 - [ ] Login com funcionários AirPlus
 - [ ] Criação completa de folha de limpeza
 - [ ] Upload de fotos antes/depois
@@ -352,6 +366,7 @@ npx serve dist
 ### 1. Dashboard Supabase
 
 **Monitorizar:**
+
 - Performance da base de dados
 - Uso da API
 - Logs de autenticação
@@ -361,12 +376,14 @@ npx serve dist
 ### 2. Monitorização da Aplicação
 
 **Configurar (Opcional):**
+
 - Error tracking (Sentry)
 - Performance metrics
 - User engagement
 - Sucesso de sincronização offline
 
 **Implementação Sentry (Opcional):**
+
 ```bash
 npm install @sentry/react @sentry/vite-plugin
 
@@ -393,6 +410,7 @@ export default {
 ### 1. Checklist Final
 
 **Pré-Go-Live:**
+
 - [ ] Base de dados produção populada
 - [ ] Todos os funcionários conseguem fazer login
 - [ ] Geração de PDFs funcional
@@ -405,6 +423,7 @@ export default {
 ### 2. Passos de Deployment
 
 **Ordem de Deployment:**
+
 1. **Deploy aplicação web** para hosting
 2. **Atualizar DNS** (se necessário)
 3. **Submeter apps mobile** para revisão
@@ -414,12 +433,14 @@ export default {
 ### 3. Pós-Launch
 
 **Primeira Semana:**
+
 - Monitorizar performance do sistema
 - Recolher feedback dos utilizadores
 - Resolver issues menores
 - Planear atualizações futuras
 
 **Primeira Mês:**
+
 - Análise de uso e performance
 - Otimizações baseadas em dados reais
 - Training adicional se necessário
@@ -443,6 +464,7 @@ export default {
 ### KPIs de Performance
 
 **Targets de Performance:**
+
 - Tempo de carregamento inicial: < 3s
 - Tempo de geração de PDF: < 5s
 - Upload de foto: < 10s
@@ -456,6 +478,7 @@ export default {
 ### Suporte Técnico
 
 **Para Issues Técnicos:**
+
 - **Documentação**: Consultar arquivos .md do projeto
 - **Supabase Issues**: Portal de suporte Supabase
 - **Mobile App Issues**: Suporte específico da plataforma
@@ -464,6 +487,7 @@ export default {
 ### Contactos AirPlus
 
 **Para Training e Suporte Interno:**
+
 - **IT Team**: Equipa interna de TI AirPlus
 - **Operations**: Departamento de operações
 - **Management**: Gestão para aprovações
@@ -503,6 +527,7 @@ export default {
 ### Issues Web
 
 **Problema:** Aplicação não carrega
+
 ```bash
 # Verificar:
 1. Variáveis de ambiente configuradas
@@ -512,6 +537,7 @@ export default {
 ```
 
 **Problema:** Autenticação falhando
+
 ```bash
 # Verificar:
 1. Supabase keys corretas
@@ -523,6 +549,7 @@ export default {
 ### Issues Mobile
 
 **Problema:** App não instala
+
 ```bash
 # Android:
 1. Verificar signing certificates
@@ -536,6 +563,7 @@ export default {
 ```
 
 **Problema:** Funcionalidades não funcionam
+
 ```bash
 # Verificar:
 1. Permissions configuradas

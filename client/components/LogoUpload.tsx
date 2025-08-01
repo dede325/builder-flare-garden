@@ -1,10 +1,10 @@
-import React, { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Upload, X, Image as ImageIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React, { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Upload, X, Image as ImageIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface LogoUploadProps {
   label: string;
@@ -13,7 +13,7 @@ interface LogoUploadProps {
   onChange: (base64: string | null) => void;
   maxWidth?: number;
   maxHeight?: number;
-  aspectRatio?: 'square' | 'landscape' | 'auto';
+  aspectRatio?: "square" | "landscape" | "auto";
   className?: string;
 }
 
@@ -24,16 +24,16 @@ export function LogoUpload({
   onChange,
   maxWidth = 400,
   maxHeight = 200,
-  aspectRatio = 'auto',
-  className
+  aspectRatio = "auto",
+  className,
 }: LogoUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [preview, setPreview] = useState<string | null>(value || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (file: File) => {
-    if (!file.type.startsWith('image/')) {
-      alert('Por favor, selecione apenas arquivos de imagem.');
+    if (!file.type.startsWith("image/")) {
+      alert("Por favor, selecione apenas arquivos de imagem.");
       return;
     }
 
@@ -42,26 +42,30 @@ export function LogoUpload({
       setPreview(resizedImage);
       onChange(resizedImage);
     } catch (error) {
-      console.error('Erro ao processar imagem:', error);
-      alert('Erro ao processar a imagem. Tente novamente.');
+      console.error("Erro ao processar imagem:", error);
+      alert("Erro ao processar a imagem. Tente novamente.");
     }
   };
 
-  const resizeImage = (file: File, maxWidth: number, maxHeight: number): Promise<string> => {
+  const resizeImage = (
+    file: File,
+    maxWidth: number,
+    maxHeight: number,
+  ): Promise<string> => {
     return new Promise((resolve, reject) => {
       const img = new Image();
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
 
       img.onload = () => {
         // Calcular dimensões mantendo proporção
         let { width, height } = img;
-        
+
         if (width > maxWidth) {
           height = (height * maxWidth) / width;
           width = maxWidth;
         }
-        
+
         if (height > maxHeight) {
           width = (width * maxHeight) / height;
           height = maxHeight;
@@ -74,11 +78,11 @@ export function LogoUpload({
         ctx?.drawImage(img, 0, 0, width, height);
 
         // Converter para base64
-        const base64 = canvas.toDataURL('image/png', 0.9);
+        const base64 = canvas.toDataURL("image/png", 0.9);
         resolve(base64);
       };
 
-      img.onerror = () => reject(new Error('Erro ao carregar a imagem'));
+      img.onerror = () => reject(new Error("Erro ao carregar a imagem"));
       img.src = URL.createObjectURL(file);
     });
   };
@@ -86,7 +90,7 @@ export function LogoUpload({
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    
+
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 0) {
       handleFileSelect(files[0]);
@@ -113,32 +117,32 @@ export function LogoUpload({
     setPreview(null);
     onChange(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
   const getAspectRatioClass = () => {
     switch (aspectRatio) {
-      case 'square':
-        return 'aspect-square';
-      case 'landscape':
-        return 'aspect-[2/1]';
+      case "square":
+        return "aspect-square";
+      case "landscape":
+        return "aspect-[2/1]";
       default:
-        return 'aspect-[3/2]';
+        return "aspect-[3/2]";
     }
   };
 
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn("space-y-2", className)}>
       <Label className="text-sm font-medium">{label}</Label>
       {description && (
         <p className="text-xs text-muted-foreground">{description}</p>
       )}
-      
+
       <Card className="overflow-hidden">
         <CardContent className="p-0">
           {preview ? (
-            <div className={cn('relative group', getAspectRatioClass())}>
+            <div className={cn("relative group", getAspectRatioClass())}>
               <img
                 src={preview}
                 alt="Preview do logo"
@@ -171,10 +175,10 @@ export function LogoUpload({
           ) : (
             <div
               className={cn(
-                'border-2 border-dashed border-gray-300 dark:border-gray-600 transition-colors rounded-lg',
-                'hover:border-blue-400 dark:hover:border-blue-500',
-                isDragging && 'border-blue-500 bg-blue-50 dark:bg-blue-950/20',
-                getAspectRatioClass()
+                "border-2 border-dashed border-gray-300 dark:border-gray-600 transition-colors rounded-lg",
+                "hover:border-blue-400 dark:hover:border-blue-500",
+                isDragging && "border-blue-500 bg-blue-50 dark:bg-blue-950/20",
+                getAspectRatioClass(),
               )}
               onDrop={handleDrop}
               onDragOver={handleDragOver}
