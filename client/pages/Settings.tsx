@@ -775,6 +775,179 @@ export default function Settings() {
             </Card>
           </TabsContent>
 
+          {/* Logo Settings */}
+          <TabsContent value="logos">
+            <Card className="glass-card border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center space-x-2">
+                  <ImageIcon className="h-5 w-5" />
+                  <span>Configurações de Logos</span>
+                </CardTitle>
+                <CardDescription className="text-white/70">
+                  Configure os logos da empresa e cliente para relatórios
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Company Logo Section */}
+                  <div className="space-y-6">
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                        <Plane className="h-5 w-5 text-blue-400" />
+                        Logo da Empresa
+                      </h3>
+                      <p className="text-sm text-white/70">
+                        Este logo aparecerá no cabeçalho dos relatórios PDF e na interface do sistema.
+                      </p>
+
+                      <LogoUpload
+                        label="Logo Principal"
+                        description="Recomendado: 400x200px, formato PNG ou JPG"
+                        value={logoSettings.companyLogo}
+                        onChange={(base64) =>
+                          setLogoSettings({
+                            ...logoSettings,
+                            companyLogo: base64 || ""
+                          })
+                        }
+                        maxWidth={400}
+                        maxHeight={200}
+                        aspectRatio="landscape"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Client Logo Section */}
+                  <div className="space-y-6">
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                        <Shield className="h-5 w-5 text-green-400" />
+                        Logo do Cliente
+                      </h3>
+                      <p className="text-sm text-white/70">
+                        Logo do cliente aparecerá no canto superior direito dos relatórios PDF.
+                      </p>
+
+                      <LogoUpload
+                        label="Logo do Cliente"
+                        description="Recomendado: 200x200px, formato PNG ou JPG"
+                        value={logoSettings.clientLogo}
+                        onChange={(base64) =>
+                          setLogoSettings({
+                            ...logoSettings,
+                            clientLogo: base64 || ""
+                          })
+                        }
+                        maxWidth={200}
+                        maxHeight={200}
+                        aspectRatio="square"
+                      />
+
+                      <div className="space-y-4 pt-4 border-t border-white/10">
+                        <div className="space-y-2">
+                          <Label className="text-white">Nome do Cliente</Label>
+                          <Input
+                            value={logoSettings.clientName}
+                            onChange={(e) =>
+                              setLogoSettings({
+                                ...logoSettings,
+                                clientName: e.target.value,
+                              })
+                            }
+                            placeholder="Ex: TAAG Angola Airlines"
+                            className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label className="text-white">Endereço do Cliente</Label>
+                          <Input
+                            value={logoSettings.clientAddress}
+                            onChange={(e) =>
+                              setLogoSettings({
+                                ...logoSettings,
+                                clientAddress: e.target.value,
+                              })
+                            }
+                            placeholder="Ex: Aeroporto 4 de Fevereiro, Luanda"
+                            className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label className="text-white">Contacto do Cliente</Label>
+                          <Input
+                            value={logoSettings.clientContact}
+                            onChange={(e) =>
+                              setLogoSettings({
+                                ...logoSettings,
+                                clientContact: e.target.value,
+                              })
+                            }
+                            placeholder="Ex: +244 222 000 000"
+                            className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Preview Section */}
+                <div className="space-y-4 pt-6 border-t border-white/10">
+                  <h3 className="text-lg font-semibold text-white">Preview dos Logos</h3>
+                  <div className="bg-white/5 rounded-lg p-6">
+                    <div className="bg-white rounded-lg p-4 shadow-lg">
+                      {/* Simulated PDF Header */}
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex items-center">
+                          {logoSettings.companyLogo ? (
+                            <img
+                              src={logoSettings.companyLogo}
+                              alt="Logo da empresa"
+                              className="h-12 object-contain"
+                            />
+                          ) : (
+                            <div className="h-12 w-24 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">
+                              Logo Empresa
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          {logoSettings.clientLogo ? (
+                            <img
+                              src={logoSettings.clientLogo}
+                              alt="Logo do cliente"
+                              className="h-12 w-12 object-contain ml-auto"
+                            />
+                          ) : (
+                            <div className="h-12 w-12 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500">
+                              Logo Cliente
+                            </div>
+                          )}
+                          {logoSettings.clientName && (
+                            <p className="text-xs text-gray-600 mt-1">{logoSettings.clientName}</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-center text-gray-400 text-sm py-8 border-2 border-dashed border-gray-300">
+                        Preview do cabeçalho do relatório PDF
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <Button
+                  onClick={handleSaveLogoSettings}
+                  className="aviation-button w-full"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  Salvar Configurações de Logos
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Data Management */}
           <TabsContent value="data">
             <Card className="glass-card border-white/20">
