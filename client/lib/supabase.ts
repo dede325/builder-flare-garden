@@ -244,52 +244,112 @@ const fallbackFuncionarios: Funcionario[] = [
   { id: '2', nome: 'AMIZANGUEL DA SILVA', funcao: 'DIRECTOR', numero_bilhete: '001023626BA037', codigo_plano: 'PL002', telefone: '923000002', email: 'amizanguel.silva@airplus.co', ativo: true, created_at: '2024-01-01', updated_at: '2024-01-01' }
 ];
 
-// Database helper functions
+// AirPlus production database helper functions
 export const db = {
-  // Aircraft operations
+  // Aeronaves operations
+  getAeronaves: async () => {
+    try {
+      return await supabase.from('aeronaves').select('*').order('matricula');
+    } catch (error) {
+      console.warn('Error fetching aeronaves:', error);
+      return { data: fallbackAeronaves, error: null };
+    }
+  },
+
+  createAeronave: async (aeronave: Omit<Aeronave, 'id' | 'created_at' | 'updated_at'>) => {
+    return await supabase.from('aeronaves').insert(aeronave).select().single();
+  },
+
+  updateAeronave: async (id: string, updates: Partial<Aeronave>) => {
+    return await supabase.from('aeronaves').update(updates).eq('id', id).select().single();
+  },
+
+  // Funcionarios operations
+  getFuncionarios: async () => {
+    try {
+      return await supabase.from('funcionarios').select('*').eq('ativo', true).order('nome');
+    } catch (error) {
+      console.warn('Error fetching funcionarios:', error);
+      return { data: fallbackFuncionarios, error: null };
+    }
+  },
+
+  createFuncionario: async (funcionario: Omit<Funcionario, 'id' | 'created_at' | 'updated_at'>) => {
+    return await supabase.from('funcionarios').insert(funcionario).select().single();
+  },
+
+  updateFuncionario: async (id: string, updates: Partial<Funcionario>) => {
+    return await supabase.from('funcionarios').update(updates).eq('id', id).select().single();
+  },
+
+  // Folhas operations
+  getFolhas: async () => {
+    return await supabase
+      .from('folhas')
+      .select(`
+        *,
+        aeronave:aeronaves(*),
+        supervisor:funcionarios!supervisor_id(*),
+        folha_funcionarios(
+          *,
+          funcionario:funcionarios(*)
+        ),
+        fotos(*)
+      `)
+      .order('created_at', { ascending: false });
+  },
+
+  createFolha: async (folha: Omit<Folha, 'id' | 'created_at' | 'updated_at'>) => {
+    return await supabase.from('folhas').insert(folha).select().single();
+  },
+
+  updateFolha: async (id: string, updates: Partial<Folha>) => {
+    return await supabase.from('folhas').update(updates).eq('id', id).select().single();
+  },
+
+  // Fotos operations
+  createFoto: async (foto: Omit<Foto, 'id' | 'created_at'>) => {
+    return await supabase.from('fotos').insert(foto).select().single();
+  },
+
+  getFotosByFolha: async (folhaId: string) => {
+    return await supabase.from('fotos').select('*').eq('folha_id', folhaId).order('created_at');
+  },
+
+  // Legacy compatibility functions
   getAircraft: async () => {
-    if (!supabase) {
-      return { data: demoAircraft, error: null };
+    const result = await db.getAeronaves();
+    if (result.data) {
+      // Transform to legacy format
+      const transformedData = result.data.map((aeronave: Aeronave) => ({
+        ...aeronave,
+        registration: aeronave.matricula,
+        model: aeronave.modelo,
+        manufacturer: aeronave.fabricante,
+        status: aeronave.status === 'ativa' ? 'active' : aeronave.status === 'manutencao' ? 'maintenance' : 'inactive',
+        last_inspection: aeronave.ultima_inspecao || '',
+        flight_hours: aeronave.horas_voo
+      }));
+      return { data: transformedData, error: result.error };
     }
-    return await supabase.from('aircraft').select('*').order('registration');
+    return result;
   },
 
-  createAircraft: async (aircraft: Omit<Aircraft, 'id' | 'created_at' | 'updated_at'>) => {
-    if (!supabase) {
-      const newAircraft = { ...aircraft, id: Date.now().toString(), created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
-      return { data: newAircraft, error: null };
-    }
-    return await supabase.from('aircraft').insert(aircraft).select().single();
-  },
-
-  updateAircraft: async (id: string, updates: Partial<Aircraft>) => {
-    if (!supabase) {
-      return { data: { ...updates, id, updated_at: new Date().toISOString() }, error: null };
-    }
-    return await supabase.from('aircraft').update(updates).eq('id', id).select().single();
-  },
-
-  // Employee operations
   getEmployees: async () => {
-    if (!supabase) {
-      return { data: demoEmployees, error: null };
+    const result = await db.getFuncionarios();
+    if (result.data) {
+      // Transform to legacy format
+      const transformedData = result.data.map((funcionario: Funcionario) => ({
+        ...funcionario,
+        name: funcionario.nome,
+        role: funcionario.funcao,
+        certifications: [],
+        hire_date: funcionario.created_at.split('T')[0],
+        status: funcionario.ativo ? 'active' : 'inactive'
+      }));
+      return { data: transformedData, error: result.error };
     }
-    return await supabase.from('employees').select('*').order('name');
-  },
-
-  createEmployee: async (employee: Omit<Employee, 'id' | 'created_at' | 'updated_at'>) => {
-    if (!supabase) {
-      const newEmployee = { ...employee, id: Date.now().toString(), created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
-      return { data: newEmployee, error: null };
-    }
-    return await supabase.from('employees').insert(employee).select().single();
-  },
-
-  updateEmployee: async (id: string, updates: Partial<Employee>) => {
-    if (!supabase) {
-      return { data: { ...updates, id, updated_at: new Date().toISOString() }, error: null };
-    }
-    return await supabase.from('employees').update(updates).eq('id', id).select().single();
+    return result;
   },
 
   // Task operations
