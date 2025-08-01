@@ -233,15 +233,15 @@ export const auth = {
   }
 };
 
-// Demo data for when Supabase is not configured
-const demoAircraft: Aircraft[] = [
-  { id: '1', registration: 'PT-ABC', model: 'Cessna 172', manufacturer: 'Cessna', status: 'active', last_inspection: '2024-01-15', flight_hours: 1250, created_at: '2024-01-01', updated_at: '2024-01-15' },
-  { id: '2', registration: 'PT-XYZ', model: 'Piper Cherokee', manufacturer: 'Piper', status: 'maintenance', last_inspection: '2024-01-10', flight_hours: 890, created_at: '2024-01-01', updated_at: '2024-01-10' }
+// Fallback data for development/testing
+const fallbackAeronaves: Aeronave[] = [
+  { id: '1', matricula: 'D2-ABC', modelo: 'Boeing 737-800', fabricante: 'Boeing', proprietario: 'TAAG Angola Airlines', status: 'ativa', horas_voo: 15420, ultima_inspecao: '2024-01-15', created_at: '2024-01-01', updated_at: '2024-01-15' },
+  { id: '2', matricula: 'D2-XYZ', modelo: 'Airbus A320', fabricante: 'Airbus', proprietario: 'Sonair', status: 'ativa', horas_voo: 8750, ultima_inspecao: '2024-01-10', created_at: '2024-01-01', updated_at: '2024-01-10' }
 ];
 
-const demoEmployees: Employee[] = [
-  { id: '1', name: 'Maria Santos', email: 'maria@aviation.com', role: 'Piloto Comercial', certifications: ['ANAC', 'IFR'], hire_date: '2023-06-01', status: 'active', created_at: '2023-06-01', updated_at: '2024-01-01' },
-  { id: '2', name: 'Carlos Lima', email: 'carlos@aviation.com', role: 'Mecânico', certifications: ['ANAC Manutenção'], hire_date: '2023-08-15', status: 'active', created_at: '2023-08-15', updated_at: '2024-01-01' }
+const fallbackFuncionarios: Funcionario[] = [
+  { id: '1', nome: 'AUGUSTO TOMÁS', funcao: 'TÉCNICO AUXILIAR DE PLACA', numero_bilhete: '000862944ME035', codigo_plano: 'PL001', telefone: '923000001', email: 'augusto.tomas@airplus.co', ativo: true, created_at: '2024-01-01', updated_at: '2024-01-01' },
+  { id: '2', nome: 'AMIZANGUEL DA SILVA', funcao: 'DIRECTOR', numero_bilhete: '001023626BA037', codigo_plano: 'PL002', telefone: '923000002', email: 'amizanguel.silva@airplus.co', ativo: true, created_at: '2024-01-01', updated_at: '2024-01-01' }
 ];
 
 // Database helper functions
