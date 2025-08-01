@@ -80,49 +80,115 @@ class AirPlusPDFService {
     let currentY = margin;
 
     // Helper function to add header with AirPlus branding
-    const addBrandedHeader = (): number => {
+    const addBrandedHeader = async (): Promise<number> => {
       // Header background
       pdf.setFillColor(primaryR, primaryG, primaryB);
-      pdf.rect(0, 0, pageWidth, 35, "F");
+      pdf.rect(0, 0, pageWidth, 45, "F"); // Increased height for client logo
 
-      // Add logo placeholder (in production, replace with actual logo)
-      pdf.setFillColor(255, 255, 255);
-      pdf.roundedRect(margin, 8, 40, 20, 3, 3, "F");
+      // Company logo (left side)
+      try {
+        if (logoSettings?.companyLogo) {
+          // Add company logo from base64
+          pdf.addImage(logoSettings.companyLogo, 'PNG', margin, 8, 40, 20);
+        } else {
+          // Fallback to default AirPlus logo
+          try {
+            // Try to load the default AirPlus logo
+            const img = new Image();
+            img.src = '/airplus-logo.png';
+            await new Promise((resolve, reject) => {
+              img.onload = resolve;
+              img.onerror = reject;
+            });
+            pdf.addImage(img, 'PNG', margin, 8, 40, 20);
+          } catch {
+            // Ultimate fallback - text logo
+            pdf.setFillColor(255, 255, 255);
+            pdf.roundedRect(margin, 8, 40, 20, 3, 3, "F");
+            pdf.setTextColor(primaryR, primaryG, primaryB);
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(14);
+            pdf.text("AirPlus", margin + 20, 15, { align: "center" });
+            pdf.setFontSize(8);
+            pdf.text("AVIATION", margin + 20, 20, { align: "center" });
+          }
+        }
+      } catch {
+        // Fallback to text logo
+        pdf.setFillColor(255, 255, 255);
+        pdf.roundedRect(margin, 8, 40, 20, 3, 3, "F");
+        pdf.setTextColor(primaryR, primaryG, primaryB);
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(14);
+        pdf.text("AirPlus", margin + 20, 15, { align: "center" });
+        pdf.setFontSize(8);
+        pdf.text("AVIATION", margin + 20, 20, { align: "center" });
+      }
 
-      // Logo text placeholder
-      pdf.setTextColor(primaryR, primaryG, primaryB);
+      // Client logo and info (right side)
+      const clientAreaX = pageWidth - margin - 60; // Reserve 60mm for client area
+
+      if (logoSettings?.clientLogo) {
+        try {
+          // Add client logo
+          pdf.addImage(logoSettings.clientLogo, 'PNG', clientAreaX, 8, 25, 25);
+        } catch (error) {
+          console.warn('Failed to add client logo:', error);
+        }
+      }
+
+      // Client information
+      pdf.setTextColor(255, 255, 255);
       pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(14);
-      pdf.text("AirPlus", margin + 20, 15, { align: "center" });
-      pdf.setFontSize(8);
-      pdf.text("AVIATION", margin + 20, 20, { align: "center" });
+      pdf.setFontSize(10);
 
-      // Company title
+      if (logoSettings?.clientName) {
+        pdf.text(logoSettings.clientName, pageWidth - margin - 30, 12, {
+          align: "right",
+        });
+      }
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(8);
+
+      if (logoSettings?.clientAddress) {
+        pdf.text(logoSettings.clientAddress, pageWidth - margin - 30, 18, {
+          align: "right",
+        });
+      }
+
+      if (logoSettings?.clientContact) {
+        pdf.text(logoSettings.clientContact, pageWidth - margin - 30, 24, {
+          align: "right",
+        });
+      }
+
+      // Company title (center)
       pdf.setTextColor(255, 255, 255);
       pdf.setFont("helvetica", "bold");
       pdf.setFontSize(16);
-      pdf.text("FOLHA DE LIMPEZA DE AERONAVE", pageWidth - margin, 12, {
-        align: "right",
+      pdf.text("FOLHA DE LIMPEZA DE AERONAVE", pageWidth / 2, 12, {
+        align: "center",
       });
 
       pdf.setFont("helvetica", "normal");
       pdf.setFontSize(10);
-      pdf.text("Sistema Profissional de Gestão", pageWidth - margin, 18, {
-        align: "right",
+      pdf.text("Sistema Profissional de Gestão", pageWidth / 2, 18, {
+        align: "center",
       });
 
       pdf.setFontSize(8);
-      pdf.text(this.companyInfo.address, pageWidth - margin, 24, {
-        align: "right",
+      pdf.text(this.companyInfo.address, pageWidth / 2, 24, {
+        align: "center",
       });
       pdf.text(
         `${this.companyInfo.phone} | ${this.companyInfo.email}`,
-        pageWidth - margin,
+        pageWidth / 2,
         28,
-        { align: "right" },
+        { align: "center" },
       );
 
-      return 45; // Return Y position after header
+      return 55; // Return Y position after header (increased for larger header)
     };
 
     // Page 1: Main form data
