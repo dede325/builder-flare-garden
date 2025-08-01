@@ -82,6 +82,14 @@ class IntelligentSyncDatabase extends Dexie {
   forms!: Table<OfflineForm>;
   employees!: Table<OfflineEmployee>;
   aircraft!: Table<OfflineAircraft>;
+  photoEvidence!: Table<any>;
+  interventionTypes!: Table<any>;
+  shiftConfigs!: Table<any>;
+  locationConfigs!: Table<any>;
+  notifications!: Table<any>;
+  qrCodes!: Table<any>;
+  tasks!: Table<any>;
+  flightSheets!: Table<any>;
   syncOperations!: Table<SyncOperation>;
   syncLogs!: Table<SyncLog>;
   metadata!: Table<{ key: string; value: any; timestamp: string }>;
@@ -89,10 +97,18 @@ class IntelligentSyncDatabase extends Dexie {
   constructor() {
     super("IntelligentSyncDB");
 
-    this.version(1).stores({
+    this.version(2).stores({
       forms: "id, syncStatus, lastModified, retryCount, createdOffline",
       employees: "id, syncStatus, lastModified, retryCount, isCached",
       aircraft: "id, syncStatus, lastModified, retryCount, isCached",
+      photoEvidence: "id, form_id, type, category, timestamp, syncStatus",
+      interventionTypes: "id, name, is_active, order, syncStatus",
+      shiftConfigs: "id, name, is_active, order, syncStatus",
+      locationConfigs: "id, name, is_active, order, syncStatus",
+      notifications: "id, user_id, read_at, type, priority, syncStatus",
+      qrCodes: "id, entity_type, entity_id, qr_code, is_active, syncStatus",
+      tasks: "id, assigned_to, aircraft_id, status, due_date, syncStatus",
+      flightSheets: "id, aircraft_id, flight_number, status, syncStatus",
       syncOperations:
         "++id, type, entity, entityId, timestamp, retryCount, priority",
       syncLogs: "++id, timestamp, type, entity, entityId",
@@ -443,7 +459,7 @@ class IntelligentSyncService {
   // Sync Operations
   private async addSyncOperation(
     type: "create" | "update" | "delete",
-    entity: "form" | "employee" | "aircraft" | "photo",
+    entity: "form" | "employee" | "aircraft" | "photo" | "intervention_type" | "shift_config" | "location_config" | "notification" | "qr_code" | "task" | "flight_sheet",
     entityId: string,
     data: any,
     priority: "low" | "normal" | "high" = "normal",
@@ -770,14 +786,22 @@ class IntelligentSyncService {
 
   // Sync Status and Statistics
   async getSyncStats(): Promise<SyncStats> {
-    const [forms, employees, aircraft, pendingOps] = await Promise.all([
+    const [forms, employees, aircraft, photos, interventions, shifts, locations, notifications, qrCodes, tasks, flightSheets, pendingOps] = await Promise.all([
       this.db.forms.toArray(),
       this.db.employees.toArray(),
       this.db.aircraft.toArray(),
+      this.db.photoEvidence.toArray(),
+      this.db.interventionTypes.toArray(),
+      this.db.shiftConfigs.toArray(),
+      this.db.locationConfigs.toArray(),
+      this.db.notifications.toArray(),
+      this.db.qrCodes.toArray(),
+      this.db.tasks.toArray(),
+      this.db.flightSheets.toArray(),
       this.db.syncOperations.toArray(),
     ]);
 
-    const allItems = [...forms, ...employees, ...aircraft];
+    const allItems = [...forms, ...employees, ...aircraft, ...photos, ...interventions, ...shifts, ...locations, ...notifications, ...qrCodes, ...tasks, ...flightSheets];
     const totalItems = allItems.length;
     const syncedItems = allItems.filter(
       (item) => item.syncStatus === "synced",
@@ -961,6 +985,14 @@ class IntelligentSyncService {
       this.db.forms.clear(),
       this.db.employees.clear(),
       this.db.aircraft.clear(),
+      this.db.photoEvidence.clear(),
+      this.db.interventionTypes.clear(),
+      this.db.shiftConfigs.clear(),
+      this.db.locationConfigs.clear(),
+      this.db.notifications.clear(),
+      this.db.qrCodes.clear(),
+      this.db.tasks.clear(),
+      this.db.flightSheets.clear(),
       this.db.syncOperations.clear(),
       this.db.syncLogs.clear(),
       this.db.metadata.clear(),
