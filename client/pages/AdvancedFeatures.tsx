@@ -79,6 +79,7 @@ import { MobileFeaturesConfig as MobileFeaturesConfigComponent } from "@/compone
 import { AdvancedAnalyticsDashboard } from "@/components/AdvancedAnalyticsDashboard";
 import { MobileFeaturesShowcase } from "@/components/MobileFeaturesShowcase";
 import { SmartAutomationDashboard } from "@/components/SmartAutomationDashboard";
+import { AdvancedSecurityDashboard } from "@/components/AdvancedSecurityDashboard";
 
 const CategoryIcons = {
   MOBILE: Smartphone,
