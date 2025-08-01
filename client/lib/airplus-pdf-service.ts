@@ -477,7 +477,7 @@ class AirPlusPDFService {
     // Signatures section
     if (currentY + 80 > pageHeight - 30) {
       pdf.addPage();
-      currentY = addBrandedHeader();
+      currentY = await addBrandedHeader();
     }
 
     this.addSection(
