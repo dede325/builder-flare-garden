@@ -12,24 +12,23 @@ if (!hasSupabaseCredentials) {
   console.log('✅ Connected to AirPlus production Supabase:', supabaseUrl);
 }
 
-// Only create real Supabase client if we have credentials
-export const supabase = hasSupabaseCredentials
-  ? createClient(import.meta.env.VITE_SUPABASE_URL!, import.meta.env.VITE_SUPABASE_ANON_KEY!, {
-      auth: {
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: true
-      },
-      db: {
-        schema: 'public'
-      },
-      global: {
-        headers: {
-          'X-Client-Info': 'aviation-ops'
-        }
-      }
-    })
-  : null;
+// Create Supabase client for AirPlus production
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true,
+    flowType: 'pkce'
+  },
+  db: {
+    schema: 'public'
+  },
+  global: {
+    headers: {
+      'X-Client-Info': 'airplus-aviation-v1.0'
+    }
+  }
+});
 
 // Types for our database schema
 export interface Aircraft {
