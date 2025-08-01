@@ -43,7 +43,9 @@
     "verify:system": "node scripts/final-verification.cjs",
     "test:production": "node scripts/final-verification.cjs",
     "validate:mobile": "node scripts/validate-mobile-sync.js",
-    "sync:check": "node scripts/validate-mobile-sync.js"
+    "sync:check": "node scripts/validate-mobile-sync.js",
+    "deploy:vercel": "bash scripts/deploy-vercel.sh",
+    "vercel:build": "npm run build:production"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.2",
