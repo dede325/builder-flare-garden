@@ -59,6 +59,13 @@ class AirPlusPDFService {
   async generateCleaningFormPDF(
     formData: CleaningFormData,
     aircraftData?: AircraftData,
+    logoSettings?: {
+      companyLogo?: string;
+      clientLogo?: string;
+      clientName?: string;
+      clientAddress?: string;
+      clientContact?: string;
+    },
   ): Promise<jsPDF> {
     const pdf = new jsPDF("p", "mm", "a4");
     const pageWidth = pdf.internal.pageSize.getWidth();
