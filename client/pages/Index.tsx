@@ -40,6 +40,7 @@ import { SupervisorDashboard } from "@/components/dashboards/SupervisorDashboard
 import { OperationalDashboard } from "@/components/dashboards/OperationalDashboard";
 import { ClientDashboard } from "@/components/dashboards/ClientDashboard";
 import { TutorialSystem, tutorialData } from "@/components/TutorialSystem";
+import { NotificationCenter } from "@/components/NotificationCenter";
 
 export default function Index() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
