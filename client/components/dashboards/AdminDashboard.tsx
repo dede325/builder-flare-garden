@@ -30,6 +30,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { AdvancedAnalyticsDashboard } from "@/components/AdvancedAnalyticsDashboard";
+import { PerformanceMonitor } from "@/components/PerformanceMonitor";
 
 interface SystemMetrics {
   totalUsers: number;
@@ -487,7 +488,7 @@ export function AdminDashboard() {
               <AlertTriangle className="h-4 w-4 text-orange-400 mt-0.5" />
               <div className="flex-1 min-w-0">
                 <p className="text-white text-sm">
-                  Falha de sincronização resolvida
+                  Falha de sincronizaç��o resolvida
                 </p>
                 <p className="text-white/60 text-xs">há 6 horas</p>
               </div>
