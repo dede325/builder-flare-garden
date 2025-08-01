@@ -17,7 +17,7 @@ import {
   Clock,
   Camera,
   Lock,
-  Sync,
+  RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
