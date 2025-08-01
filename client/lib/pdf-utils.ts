@@ -44,6 +44,54 @@ export const generateCleaningFormPDF = async (
   formData: CleaningFormData,
   aircraftData?: any,
 ) => {
+  // Load logo settings from localStorage
+  const logoSettings = JSON.parse(localStorage.getItem("logoSettings") || "{}");
+
+  // Use AirPlus PDF Service with logo settings
+  const { AirPlusPDFService } = await import('./airplus-pdf-service');
+  const pdfService = new AirPlusPDFService();
+
+  // Transform data format if needed
+  const transformedFormData = {
+    id: formData.id,
+    codigo: formData.code,
+    data: formData.date,
+    turno: formData.shift === 'morning' ? 'manha' as const :
+           formData.shift === 'afternoon' ? 'tarde' as const : 'noite' as const,
+    local: formData.location,
+    tipos_intervencao: formData.interventionTypes,
+    aeronave_id: formData.aircraftId,
+    funcionarios: formData.employees.map(emp => ({
+      id: emp.id,
+      nome: emp.name,
+      tarefa: emp.task,
+      hora_inicio: emp.startTime,
+      hora_fim: emp.endTime,
+      telefone: emp.phone,
+      numero_bilhete: emp.idNumber,
+      foto: emp.photo,
+    })),
+    observacoes: formData.notes,
+    assinatura_supervisor: formData.supervisorSignature,
+    assinatura_cliente: formData.clientSignature,
+    cliente_confirmou: formData.clientConfirmed,
+    qr_code_data: formData.qrCodeData,
+    status: formData.status,
+    created_at: formData.createdAt,
+  };
+
+  const transformedAircraftData = aircraftData ? {
+    matricula: aircraftData.registration,
+    modelo: aircraftData.model,
+    fabricante: aircraftData.manufacturer,
+    proprietario: aircraftData.owner,
+  } : undefined;
+
+  return await pdfService.generateCleaningFormPDF(
+    transformedFormData,
+    transformedAircraftData,
+    logoSettings
+  );
   const pdf = new jsPDF("p", "mm", "a4");
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
@@ -676,7 +724,7 @@ export const generateCleaningFormPDF = async (
     let interventionY = addModernHeader();
 
     interventionY = addSectionHeader(
-      "EVIDÊNCIAS FOTOGRÁFICAS DA INTERVENÇÃO",
+      "EVID��NCIAS FOTOGRÁFICAS DA INTERVENÇÃO",
       interventionY,
     );
 
