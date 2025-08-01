@@ -24,9 +24,12 @@ import {
   Plus,
   Database,
   BarChart3,
+  Zap,
+  Eye,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { AdvancedAnalyticsDashboard } from "@/components/AdvancedAnalyticsDashboard";
 
 interface SystemMetrics {
   totalUsers: number;
