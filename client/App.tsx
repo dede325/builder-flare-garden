@@ -176,7 +176,7 @@ const AppContent = () => {
         <Route
           path="/user-management"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute role="admin">
               <UserManagement />
             </ProtectedRoute>
           }
