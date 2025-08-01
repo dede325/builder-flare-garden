@@ -11,12 +11,12 @@
  * Usage: node scripts/final-verification.js
  */
 
-const { createClient } = require('@supabase/supabase-js');
-const { readFile } = require('fs/promises');
-const path = require('path');
-const { fileURLToPath } = require('url');
+const { createClient } = require("@supabase/supabase-js");
+const { readFile } = require("fs/promises");
+const path = require("path");
+const { fileURLToPath } = require("url");
 
-const __filename = __filename || 'scripts/final-verification.js';
+const __filename = __filename || "scripts/final-verification.js";
 const __dirname = __dirname || path.dirname(__filename);
 
 // ANSI color codes for console output
@@ -232,7 +232,11 @@ class AirPlusVerification {
         .from("photos")
         .list("", { limit: 1 });
 
-      if (error && !error.message.includes("not found") && !error.message.includes("does not exist")) {
+      if (
+        error &&
+        !error.message.includes("not found") &&
+        !error.message.includes("does not exist")
+      ) {
         throw new Error(`Photo storage access failed: ${error.message}`);
       }
     });

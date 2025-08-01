@@ -70,14 +70,17 @@ class CacheService {
   async isCacheValid(type: "employees" | "aircraft"): Promise<boolean> {
     try {
       // Get metadata through public methods
-      const cachedData = type === "employees"
-        ? await this.getCachedEmployees()
-        : await this.getCachedAircraft();
+      const cachedData =
+        type === "employees"
+          ? await this.getCachedEmployees()
+          : await this.getCachedAircraft();
 
       if (cachedData.length === 0) return false;
 
       // Check if we have recent cache (simplified check)
-      const metadata = { timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString() };
+      const metadata = {
+        timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+      };
 
       if (!metadata) return false;
       return !this.isExpired(metadata.timestamp);

@@ -11,9 +11,9 @@
  * Usage: node scripts/final-verification.cjs
  */
 
-const { createClient } = require('@supabase/supabase-js');
-const { readFile } = require('fs/promises');
-const path = require('path');
+const { createClient } = require("@supabase/supabase-js");
+const { readFile } = require("fs/promises");
+const path = require("path");
 
 // ANSI color codes for console output
 const colors = {
@@ -102,27 +102,27 @@ class AirPlusVerification {
     log.header("VERIFYING RLS POLICIES");
 
     // Test 1: Check basic table access
-    await this.runTest(
-      "rls",
-      "Basic table access",
-      async () => {
-        const { data, error } = await this.supabase
-          .from("user_profiles")
-          .select("id")
-          .limit(1);
-        
-        // RLS should block unauthenticated access or return empty results
-        if (error && !error.message.includes("0 rows") && !error.message.includes("JWT")) {
-          throw new Error(`Unexpected table access error: ${error.message}`);
-        }
-      },
-    );
+    await this.runTest("rls", "Basic table access", async () => {
+      const { data, error } = await this.supabase
+        .from("user_profiles")
+        .select("id")
+        .limit(1);
+
+      // RLS should block unauthenticated access or return empty results
+      if (
+        error &&
+        !error.message.includes("0 rows") &&
+        !error.message.includes("JWT")
+      ) {
+        throw new Error(`Unexpected table access error: ${error.message}`);
+      }
+    });
 
     // Test 2: Check if tables exist with proper structure
     await this.runTest("rls", "Critical tables exist", async () => {
       const tables = [
         "user_profiles",
-        "cleaning_forms", 
+        "cleaning_forms",
         "aircraft",
         "employees",
       ];
@@ -146,8 +146,12 @@ class AirPlusVerification {
         .from("system_settings")
         .select("key, value")
         .limit(1);
-        
-      if (error && !error.message.includes("0 rows") && !error.message.includes("does not exist")) {
+
+      if (
+        error &&
+        !error.message.includes("0 rows") &&
+        !error.message.includes("does not exist")
+      ) {
         log.warning(`System settings access: ${error.message}`);
       }
     });
@@ -158,20 +162,16 @@ class AirPlusVerification {
     log.header("VERIFYING PHOTO FUNCTIONALITY");
 
     // Test 1: Check if photo_evidence table exists and is accessible
-    await this.runTest(
-      "photos",
-      "Photo evidence table exists",
-      async () => {
-        const { data, error } = await this.supabase
-          .from("photo_evidence")
-          .select("id")
-          .limit(1);
+    await this.runTest("photos", "Photo evidence table exists", async () => {
+      const { data, error } = await this.supabase
+        .from("photo_evidence")
+        .select("id")
+        .limit(1);
 
-        if (error && error.message.includes("does not exist")) {
-          throw new Error("Photo evidence table does not exist");
-        }
-      },
-    );
+      if (error && error.message.includes("does not exist")) {
+        throw new Error("Photo evidence table does not exist");
+      }
+    });
 
     // Test 2: Check Supabase Storage buckets
     await this.runTest("photos", "Storage configuration", async () => {
@@ -191,8 +191,12 @@ class AirPlusVerification {
       const { data, error } = await this.supabase.storage
         .from("photos")
         .list("", { limit: 1 });
-        
-      if (error && !error.message.includes("not found") && !error.message.includes("does not exist")) {
+
+      if (
+        error &&
+        !error.message.includes("not found") &&
+        !error.message.includes("does not exist")
+      ) {
         log.warning(`Photos bucket access: ${error.message}`);
       }
     });
@@ -202,11 +206,15 @@ class AirPlusVerification {
       const { error } = await this.supabase
         .from("photo_evidence")
         .select(
-          "id, form_id, type, category, description, timestamp, captured_by"
+          "id, form_id, type, category, description, timestamp, captured_by",
         )
         .limit(1);
 
-      if (error && error.message.includes("column") && error.message.includes("does not exist")) {
+      if (
+        error &&
+        error.message.includes("column") &&
+        error.message.includes("does not exist")
+      ) {
         throw new Error(`Photo metadata structure invalid: ${error.message}`);
       }
     });
@@ -234,7 +242,11 @@ class AirPlusVerification {
         .from("documents")
         .list("", { limit: 1 });
 
-      if (error && !error.message.includes("not found") && !error.message.includes("does not exist")) {
+      if (
+        error &&
+        !error.message.includes("not found") &&
+        !error.message.includes("does not exist")
+      ) {
         log.warning(`Documents bucket access: ${error.message}`);
       }
     });
@@ -281,7 +293,7 @@ class AirPlusVerification {
     // Test 2: Test QR code generation pattern
     await this.runTest("qr", "QR code pattern validation", async () => {
       const mockFormCode = "AP-PS-SNR01-010125123045";
-      
+
       if (!mockFormCode.match(/^AP-PS-SNR\d{2}-\d{12}$/)) {
         throw new Error("QR code form pattern is invalid");
       }
@@ -294,7 +306,11 @@ class AirPlusVerification {
           .from("documents")
           .createSignedUrl("test/sample.pdf", 3600);
 
-        if (error && !error.message.includes("Object not found") && !error.message.includes("not found")) {
+        if (
+          error &&
+          !error.message.includes("Object not found") &&
+          !error.message.includes("not found")
+        ) {
           log.warning(`Signed URL test: ${error.message}`);
         }
       } catch (error) {
@@ -333,18 +349,18 @@ class AirPlusVerification {
     // Test 3: Basic query performance
     await this.runTest("system", "Query performance", async () => {
       const startTime = Date.now();
-      
+
       const { data, error } = await this.supabase
         .from("user_profiles")
         .select("id")
         .limit(5);
-        
+
       const duration = Date.now() - startTime;
-      
+
       if (duration > 5000) {
         log.warning(`Query took ${duration}ms - may be slow`);
       }
-      
+
       log.info(`Query completed in ${duration}ms`);
     });
   }
@@ -446,23 +462,27 @@ async function main() {
   // Load environment
   const env = await loadEnv();
   const supabaseUrl =
-    env.VITE_SUPABASE_URL || 
+    env.VITE_SUPABASE_URL ||
     process.env.VITE_SUPABASE_URL ||
     "https://fyngvoojdfjexbzasgiz.supabase.co";
-  const supabaseKey = 
-    env.VITE_SUPABASE_ANON_KEY || 
+  const supabaseKey =
+    env.VITE_SUPABASE_ANON_KEY ||
     process.env.VITE_SUPABASE_ANON_KEY ||
     "your-anon-key-here";
 
   if (!supabaseUrl || supabaseUrl === "your-supabase-url") {
     log.error("❌ Supabase URL not configured properly");
-    log.info("Set VITE_SUPABASE_URL environment variable or .env.production file");
+    log.info(
+      "Set VITE_SUPABASE_URL environment variable or .env.production file",
+    );
     process.exit(1);
   }
 
   if (!supabaseKey || supabaseKey === "your-anon-key-here") {
     log.error("❌ Supabase anon key not configured properly");
-    log.info("Set VITE_SUPABASE_ANON_KEY environment variable or .env.production file");
+    log.info(
+      "Set VITE_SUPABASE_ANON_KEY environment variable or .env.production file",
+    );
     process.exit(1);
   }
 
@@ -494,7 +514,7 @@ async function main() {
 // Run if called directly
 if (require.main === module) {
   main().catch((error) => {
-    console.error('Critical error:', error);
+    console.error("Critical error:", error);
     process.exit(1);
   });
 }
